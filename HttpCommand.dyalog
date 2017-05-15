@@ -196,8 +196,31 @@
       r←(⎕NEW ⎕THIS(eis args)).Run
     ∇
 
+    ∇ LDRC←ResolveCongaRef CongaRef;z
+    ⍝ CongaRef could be a charvec, reference to the Conga or DRC namespaces, or reference to an iConga instance
+      :Access public shared  ⍝!!! testing only  - remove :Access after testing
+      LDRC←''
+      :Select ⎕NC⊂'CongaRef' ⍝ what is it?
+      :Case 9.1 ⍝ namespace?  e.g. CongaRef←DRC or Conga
+          :If 0≡⊃z←CongaRef.Init'' ⍝ DRC?
+              LDRC←CongaRef
+              {}LDRC.Init''
+          :ElseIf 9.2=⎕NC⊂,'z'    ⍝ Conga?
+              LDRC←z
+          :EndIf
+      :Case 9.2 ⍝ instance?  e.g. CongaRef←Conga.Init ''
+          LDRC←CongaRef ⍝ an instance is already initialized
+      :Case 2.1 ⍝ variable?  e.g. CongaRef←'#.Conga'
+          :Trap 0
+              LDRC←ResolveCongaRef(⍎∊⍕CongaRef)
+          :EndTrap
+      :EndSelect
+      :If ''≡LDRC
+          ⎕←'*** CongaRef "',(∊⍕CongaRef),'" does not refer to a valid object.'
+      :EndIf
+    ∇
 
-    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;pars;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;dyalog;FileSep;donetime;congaCopied;formContentType;ind;len;mode;obj;evt;dat;ref;nc;ns;n;class;clt;z
+    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;pars;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;dyalog;donetime;congaCopied;formContentType;ind;len;mode;obj;evt;dat;ref;nc;ns;n;class;clt;z
 ⍝ issue an HTTP command
 ⍝ certs - optional [X509Cert [SSLValidation [Priority]]]
 ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/page[?query_string]]
@@ -213,25 +236,22 @@
       (url parms hdrs)←args,(⍴args)↓''(⎕NS'')''
       →0⍴⍨0∊⍴url ⍝ exit early if no URL
      
-      congaCopied←0
-     
-      :If ''≡{6::⍵ ⋄ LDRC}'' ⍝ if
-          :If 0∊⍴CongaRef
-              class←⊃⊃⎕CLASS ⎕THIS
+      :If ''≡{6::⍵ ⋄ LDRC}'' ⍝ if LDRC exists, we assume Conga has been initialized and just carry on
+          :If ~0∊⍴CongaRef  ⍝ did the user supply a reference to Conga?
+              →0⍴⍨''≡LDRC←ResolveCongaRef CongaRef
+          :Else
               ref nc←{1↑¨⍵{(×⍵)∘/¨⍺ ⍵}#.⎕NC ⍵}ns←'Conga' 'DRC'
               :Select ⊃⌊nc
               :Case 9
-                  :If ref≡,⊂'Conga'
-                      LDRC←#.Conga.Init''
-                  :Else
-                      LDRC←#⍎⊃ref ⋄ {}LDRC.Init''
-                  :EndIf
+                  →0⍴⍨''≡LDRC←ResolveCongaRef '#.',∊ref
               :Case 0
-                  FileSep←'/\'[1+'Win'≡3↑1⊃#.⎕WG'APLVersion']
-                  dyalog←{⍵,(-FileSep=¯1↑⍵)↓FileSep}2 ⎕NQ'.' 'GetEnvironment' 'DYALOG'
+                  class←⊃⊃⎕CLASS ⎕THIS
+                  dyalog←{⍵,'/'↓⍨'/\'∊⍨¯1↑⍵}2 ⎕NQ'.' 'GetEnvironment' 'DYALOG'
+                  congaCopied←0
                   :For n :In ns
                       :Trap 0
                           n class.⎕CY dyalog,'ws/conga'
+                          →0⍴⍨''≡LDRC←ResolveCongaRef class⍎n
                           congaCopied←1
                           :Leave
                       :EndTrap
@@ -240,15 +260,10 @@
                       ⎕←'*** Neither Conga nor DRC was found'
                       →0
                   :EndIf
-                  LDRC←class⍎n
               :Else
                   ⎕←'*** Neither Conga nor DRC was found'
                   →0
               :EndSelect
-          :ElseIf 9=⎕NC'CongaRef'
-              LDRC←CongaRef
-          :Else
-              LDRC←⍎⍕CongaRef
           :EndIf
       :EndIf
      
