@@ -243,7 +243,7 @@
               ref nc←{1↑¨⍵{(×⍵)∘/¨⍺ ⍵}#.⎕NC ⍵}ns←'Conga' 'DRC'
               :Select ⊃⌊nc
               :Case 9
-                  →0⍴⍨''≡LDRC←ResolveCongaRef '#.',∊ref
+                  →0⍴⍨''≡LDRC←ResolveCongaRef'#.',∊ref
               :Case 0
                   class←⊃⊃⎕CLASS ⎕THIS
                   dyalog←{⍵,'/'↓⍨'/\'∊⍨¯1↑⍵}2 ⎕NQ'.' 'GetEnvironment' 'DYALOG'
@@ -289,6 +289,7 @@
       :If 0=⎕NC'certs' ⋄ certs←'' ⋄ :EndIf
      
       :If secure
+          LDRC.X509Cert.LDRC←LDRC
           x509 flags priority←3↑certs,(⍴,certs)↓(⎕NEW LDRC.X509Cert)32 'NORMAL:!CTYPE-OPENPGP'  ⍝ 32=Do not validate Certs
           pars←('x509'x509)('SSLValidation'flags)('Priority'priority)
       :Else ⋄ pars←''
