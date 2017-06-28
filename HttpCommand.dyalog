@@ -392,6 +392,9 @@
                       :Case 'Timeout'
                           done←⎕AI[3]>donetime
      
+                      :Case 'Error'
+                          ⎕←'*** Error processing your request: ',,⍕rc
+                          done←err←1
                       :Else  ⍝ This shouldn't happen
                           ⎕←'*** Unhandled event type - ',evt
                           ∘∘∘  ⍝ !! Intentional !!
