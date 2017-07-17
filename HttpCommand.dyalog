@@ -301,7 +301,17 @@
       :Else ⋄ auth←''
       :EndIf
      
-      (host port)←port{(⍴⍵)<ind←⍵⍳':':⍵ ⍺ ⋄ (⍵↑⍨ind-1)(1⊃2⊃⎕VFI ind↓⍵)}host ⍝ Check for override of port number
+      :Trap 0
+          (host port)←port{(⍴⍵)<ind←⍵⍳':':⍵ ⍺ ⋄ (⍵↑⍨ind-1)(1⊃2⊃⎕VFI ind↓⍵)}host ⍝ Check for override of port number
+      :Else
+          ⎕←'Invalid host/port - ',host
+          →0
+      :EndTrap
+     
+      :If port=0
+          ⎕←'Invalid port'
+          →0
+      :EndIf
      
       hdrs←makeHeaders hdrs
       hdrs←'User-Agent'(hdrs addHeader)'Dyalog/Conga'
@@ -328,7 +338,17 @@
      
       mode←'text' 'http'⊃⍨1+3≤⊃LDRC.Version ⍝ Conga 3.0 introduced native HTTP mode
      
+     Go:
       :If 0=⊃(err clt)←2↑rc←LDRC.Clt''host port mode 100000,pars ⍝ 100,000 is max receive buffer size
+     
+          :If mode≡'http'
+              :If 0≠1⊃LDRC.SetProp clt'DecodeBuffers' 15 ⍝ set advanced HTTP parsing
+                  {}LDRC.Close clt ⍝ if that's not available
+                  mode←'text'      ⍝ fall back to text mode
+                  →Go
+              :EndIf
+          :EndIf
+     
           :If 0=⊃rc←LDRC.Send clt(req,NL,parms)
               chunked chunk buffer chunklength←0 '' '' 0
               done data datalen headerlen header←0 ⍬ 0 0 ⍬
@@ -339,7 +359,8 @@
                       :Select evt
               ⍝ Conga 3.0+ handling
                       :Case 'HTTPHeader'
-                          (headerlen header)←DecodeHeader dat
+                          r.(HttpVersion HttpStatus HttpMessage)←3↑dat
+                          header←4⊃dat
                           datalen←⊃(toNum header Lookup'Content-Length'),¯1 ⍝ ¯1 if no content length not specified
                           chunked←∨/'chunked'⍷header Lookup'Transfer-Encoding'
                           done←chunked<datalen<1
@@ -347,9 +368,9 @@
                           data←dat
                           done←1
                       :Case 'HTTPChunk'
-                          data,←dat
+                          data,←1⊃dat
                       :Case 'HTTPTrailer'
-                          header⍪←2⊃DecodeHeader dat
+                          header⍪←dat
                           done←1
      
               ⍝ Pre-Conga 3.0 handling
@@ -367,6 +388,8 @@
                                   :Else
                                       datalen←⊃(toNum header Lookup'Content-Length'),¯1 ⍝ ¯1 if no content length not specified
                                   :EndIf
+                                  r.(HttpVer HttpStatus HttpStatusMsg)←{⎕ML←3 ⋄ ⍵⊂⍨{⍵∨2<+\~⍵}⍵≠' '}(⊂1 1)⊃header
+                                  header↓⍨←1
                               :EndIf
                           :EndIf
                           :If chunked
@@ -423,7 +446,7 @@
      
                       :If {(⍵[3]∊'12357')∧'30 '≡⍵[1 2 4]}4↑{⍵↓⍨⍵⍳' '}(⊂1 1)⊃header ⍝ redirected? (HTTP status codes 301, 302, 303, 305, 307)
                           url←'location'{(⍵[;1]⍳⊂⍺)⊃⍵[;2],⊂''}header ⍝ use the "location" header field for the URL
-                          :If ×≢url
+                          :If ~0∊⍴url
                               {}LDRC.Close clt
                               →GET
                           :EndIf
@@ -431,9 +454,7 @@
      
                   :EndTrap
      
-                  r.(HttpVer HttpStatus HttpStatusMsg)←{⎕ML←3 ⋄ ⍵⊂⍨{⍵∨2<+\~⍵}⍵≠' '}(⊂1 1)⊃header
                   r.HttpStatus←toNum r.HttpStatus
-                  header↓⍨←1
      
                   :If secure
                   :AndIf 0=⊃z←LDRC.GetProp clt'PeerCert'
