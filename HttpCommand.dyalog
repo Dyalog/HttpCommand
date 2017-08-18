@@ -155,7 +155,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.1' '2017-04-26'
+      r←'HttpCommand' '2.1.2' '2017-08-18'
     ∇
 
     ∇ make
@@ -220,7 +220,7 @@
       :EndIf
     ∇
 
-    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;pars;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;dyalog;donetime;congaCopied;formContentType;ind;len;mode;obj;evt;dat;ref;nc;ns;n;class;clt;z
+    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;pars;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;dyalog;donetime;congaCopied;formContentType;ind;len;mode;obj;evt;dat;ref;nc;ns;n;class;clt;z;contentType
 ⍝ issue an HTTP command
 ⍝ certs - optional [X509Cert [SSLValidation [Priority]]]
 ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/page[?query_string]]
@@ -321,8 +321,10 @@
           :If cmd≢'GET'     ⍝ and not a GET command
               ⍝↓↓↓ specify the default content type (if not already specified)
               hdrs←'Content-Type'(hdrs addHeader)formContentType←'application/x-www-form-urlencoded'
-              :If formContentType≡hdrs Lookup'Content-Type'
+              :If formContentType≡contentType←hdrs Lookup'Content-Type'
                   parms←UrlEncode parms
+              :ElseIf 'application/json'≡contentType
+                  parms←1 ⎕JSON parms
               :EndIf
               hdrs←'Content-Length'(hdrs addHeader)⍴parms
           :EndIf
