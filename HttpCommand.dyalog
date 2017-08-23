@@ -155,7 +155,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.2' '2017-08-18'
+      r←'HttpCommand' '2.1.3' '2017-08-22'
     ∇
 
     ∇ make
@@ -321,11 +321,17 @@
           :If cmd≢'GET'     ⍝ and not a GET command
               ⍝↓↓↓ specify the default content type (if not already specified)
               hdrs←'Content-Type'(hdrs addHeader)formContentType←'application/x-www-form-urlencoded'
-              :If formContentType≡contentType←hdrs Lookup'Content-Type'
+              contentType←hdrs Lookup'Content-Type'
+              :Select contentType
+              :Case formContentType
                   parms←UrlEncode parms
-              :ElseIf 'application/json'≡contentType
-                  parms←1 ⎕JSON parms
-              :EndIf
+              :Case 'application/json'
+                  :If 1=⍴⍴parms ⍝ if it's a simple charvec, it's already considered to be formated JSON
+                  :AndIf ' '=1↑0⍴parms
+                  :Else ⍝ otherwise, convert it
+                      parms←1 ⎕JSON parms
+                  :EndIf
+              :EndSelect
               hdrs←'Content-Length'(hdrs addHeader)⍴parms
           :EndIf
       :EndIf
@@ -630,4 +636,4 @@
       r←ExtractDocumentationSections 1
     ∇
     :EndSection
-:EndClass
+    :EndClass
