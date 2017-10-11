@@ -71,7 +71,7 @@
 ⍝   Data          - the response message payload
 ⍝   HttpVer       - the server HTTP version
 ⍝   HttpStatus    - the response HTTP status code (200 means OK)
-⍝   HttpStatusMsg - the response HTTP status message
+⍝   HttpMessage   - the response HTTP status message
 ⍝   Headers       - the response HTTP headers
 ⍝   PeerCert      - the server (peer) certificate if running secure
 ⍝   rc            - the Conga return code (0 means no error)
@@ -230,7 +230,7 @@
      
 ⍝ Result: (conga return code) (HTTP Status) (HTTP headers) (HTTP body) [PeerCert if secure]
       r←⎕NS''
-      r.(rc HttpVer HttpStatus HttpStatusMsg Headers Data PeerCert)←¯1 '' 400(⊂'bad request')(0 2⍴⊂'')''⍬
+      r.(rc HttpVer HttpStatus HttpMessage Headers Data PeerCert)←¯1 '' 400(⊂'bad request')(0 2⍴⊂'')''⍬
      
       args←eis args
       (url parms hdrs)←args,(⍴args)↓''(⎕NS'')''
@@ -396,7 +396,7 @@
                                   :Else
                                       datalen←⊃(toNum header Lookup'Content-Length'),¯1 ⍝ ¯1 if no content length not specified
                                   :EndIf
-                                  r.(HttpVer HttpStatus HttpStatusMsg)←{⎕ML←3 ⋄ ⍵⊂⍨{⍵∨2<+\~⍵}⍵≠' '}(⊂1 1)⊃header
+                                  r.(HttpVer HttpStatus HttpMessage)←{⎕ML←3 ⋄ ⍵⊂⍨{⍵∨2<+\~⍵}⍵≠' '}(⊂1 1)⊃header
                                   header↓⍨←1
                               :EndIf
                           :EndIf
@@ -608,17 +608,19 @@
     :Section Documentation Utilities
     ⍝ these are generic utilities used for documentation
 
-    ∇ docn←ExtractDocumentationSections describeOnly;⎕IO;box;CR;sections
+    ∇ docn←ExtractDocumentationSections what;⎕IO;box;CR;sections;eis;matches
     ⍝ internal utility function
       ⎕IO←1
+      eis←{(,∘⊂∘,⍣(1=≡,⍵))⍵}
       CR←⎕UCS 13
       box←{{⍵{⎕AV[(1,⍵,1)/223 226 222],CR,⎕AV[231],⍺,⎕AV[231],CR,⎕AV[(1,⍵,1)/224 226 221]}⍴⍵}(⍵~CR),' '}
       docn←1↓⎕SRC ⎕THIS
-      docn←1↓¨docn/⍨∧\'⍝'=⊃¨docn⍝ keep all contiguous comments
+      docn←1↓¨docn/⍨∧\'⍝'=⊃¨docn ⍝ keep all contiguous comments
       docn←docn/⍨'⍝'≠⊃¨docn     ⍝ remove any lines beginning with ⍝⍝
       sections←{∨/'::'⍷⍵}¨docn
-      :If describeOnly
-          (sections docn)←((2>+\sections)∘/¨sections docn)
+      :If ~0∊⍴what
+          matches←∨⌿∨/¨(eis(819⌶what))∘.⍷(819⌶)sections/docn
+          (sections docn)←((+\sections)∊matches/⍳≢matches)∘/¨sections docn
       :EndIf
       (sections/docn)←box¨sections/docn
       docn←∊docn,¨CR
@@ -627,13 +629,21 @@
     ∇ r←Documentation
     ⍝ return full documentation
       :Access public shared
-      r←ExtractDocumentationSections 0
+      r←ExtractDocumentationSections''
     ∇
 
     ∇ r←Describe
     ⍝ return description only
       :Access public shared
-      r←ExtractDocumentationSections 1
+      r←ExtractDocumentationSections'Description::'
     ∇
+
+    ∇ r←ShowDoc what
+    ⍝ return documentation sections that contain what in their title
+    ⍝ what can be a character scalar, vector, or vector of vectors
+      :Access public shared
+      r←ExtractDocumentationSections what
+    ∇
+
     :EndSection
-    :EndClass
+:EndClass
