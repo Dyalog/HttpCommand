@@ -74,6 +74,7 @@
 ⍝   HttpMessage   - the response HTTP status message
 ⍝   Headers       - the response HTTP headers
 ⍝   PeerCert      - the server (peer) certificate if running secure
+⍝   Redirections  - a vector (possibly empty) of redirection links
 ⍝   rc            - the Conga return code (0 means no error)
 ⍝
 ⍝ Public Instance Methods::
@@ -220,7 +221,7 @@
       :EndIf
     ∇
 
-    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;pars;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;dyalog;donetime;congaCopied;formContentType;ind;len;mode;obj;evt;dat;ref;nc;ns;n;class;clt;z;contentType
+    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;pars;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;dyalog;donetime;congaCopied;formContentType;ind;len;mode;obj;evt;dat;ref;nc;ns;n;class;clt;z;contentType;redirected;origHost;origPort;noHost;origSecure
 ⍝ issue an HTTP command
 ⍝ certs - optional [X509Cert [SSLValidation [Priority]]]
 ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/page[?query_string]]
@@ -230,7 +231,7 @@
      
 ⍝ Result: (conga return code) (HTTP Status) (HTTP headers) (HTTP body) [PeerCert if secure]
       r←⎕NS''
-      r.(rc HttpVer HttpStatus HttpMessage Headers Data PeerCert)←¯1 '' 400(⊂'bad request')(0 2⍴⊂'')''⍬
+      r.(rc HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections)←¯1 '' 400(⊂'bad request')(0 2⍴⊂'')''⍬(0⍴⊂'')
      
       args←eis args
       (url parms hdrs)←args,(⍴args)↓''(⎕NS'')''
@@ -279,12 +280,19 @@
      
       urlparms←{0∊⍴⍵:'' ⋄ ('?'=1↑⍵)↓'?',⍵}{⍵↓⍨'&'=⊃⍵}urlparms
      
+      redirected←0
+     
      GET:
       p←(∨/b)×1+(b←'//'⍷url)⍳1
       secure←{6::⍵ ⋄ ⍵∨0<⍴,certs}(lc(p-2)↑url)≡'https:'
-      port←(1+secure)⊃80 443 ⍝ Default HTTP/HTTPS port
       url←p↓url              ⍝ Remove HTTP[s]:// if present
       (host page)←'/'split url,(~'/'∊url)/'/'    ⍝ Extract host and page from url
+     
+      :If redirected∧noHost←0∊⍴host ⍝ if we're redirected and no host is specified in the location header...
+          host←origHost ⍝ ...use original host
+          secure←origSecure
+          port←origPort
+      :EndIf
      
       :If 0=⎕NC'certs' ⋄ certs←'' ⋄ :EndIf
      
@@ -301,15 +309,20 @@
       :Else ⋄ auth←''
       :EndIf
      
-      :Trap 0
-          (host port)←port{(⍴⍵)<ind←⍵⍳':':⍵ ⍺ ⋄ (⍵↑⍨ind-1)(1⊃2⊃⎕VFI ind↓⍵)}host ⍝ Check for override of port number
-      :Else
-          ⎕←'Invalid host/port - ',host
-          →0
-      :EndTrap
+      :If ~redirected∧noHost  ⍝ if not redirected and no host was specified in the location header
+          :If (≢host)<ind←host⍳':' ⍝ then if there's no port specified in the host
+              port←(1+secure)⊃80 443 ⍝ use the default HTTP/HTTPS port
+          :Else
+              :If 0=port←⊃toNum ind↓host
+                  ⎕←'*** Invalid host/port - ',host
+                  →0
+              :EndIf
+              host↑⍨←ind-1
+          :EndIf
+      :EndIf
      
-      :If port=0
-          ⎕←'Invalid port'
+      :If 0∊⍴host
+          ⎕←'*** No host specified'
           →0
       :EndIf
      
@@ -438,6 +451,9 @@
                   :EndIf
               :Until done
      
+              r.HttpStatus←toNum r.HttpStatus
+              redirected←0
+     
               :If 0=err
                   :Trap 0 ⍝ If any errors occur, abandon conversion
                       :Select header Lookup'content-encoding' ⍝ was the response compressed?
@@ -451,18 +467,17 @@
                               data←'UTF-8'⎕UCS ⎕UCS data ⍝ Convert from UTF-8
                           :EndIf
                       :EndSelect
-     
-                      :If {(⍵[3]∊'12357')∧'30 '≡⍵[1 2 4]}4↑{⍵↓⍨⍵⍳' '}(⊂1 1)⊃header ⍝ redirected? (HTTP status codes 301, 302, 303, 305, 307)
-                          url←'location'{(⍵[;1]⍳⊂⍺)⊃⍵[;2],⊂''}header ⍝ use the "location" header field for the URL
-                          :If ~0∊⍴url
-                              {}LDRC.Close clt
-                              →GET
-                          :EndIf
-                      :EndIf
-     
                   :EndTrap
      
-                  r.HttpStatus←toNum r.HttpStatus
+                  :If redirected←r.HttpStatus∊301 302 303 305 307 ⍝ redirected? (HTTP status codes 301, 302, 303, 305, 307)
+                      url←header Lookup'location' ⍝ use the "location" header field for the URL
+                      :If ~0∊⍴url
+                          r.Redirections,←⊂url
+                          (origHost origPort origSecure)←host port secure
+                          {}LDRC.Close clt
+                          →GET
+                      :EndIf
+                  :EndIf
      
                   :If secure
                   :AndIf 0=⊃z←LDRC.GetProp clt'PeerCert'
@@ -647,3 +662,16 @@
 
     :EndSection
 :EndClass
+⍝)(!Base64Decode!!0 0 0 0 0 0 0!0
+⍝)(!Base64Encode!!0 0 0 0 0 0 0!0
+⍝)(!Describe!!0 0 0 0 0 0 0!0
+⍝)(!Do!!0 0 0 0 0 0 0!0
+⍝)(!Documentation!!0 0 0 0 0 0 0!0
+⍝)(!Get!!0 0 0 0 0 0 0!0
+⍝)(!Lookup!!0 0 0 0 0 0 0!0
+⍝)(!ResolveCongaRef!!0 0 0 0 0 0 0!0
+⍝)(!ShowDoc!!0 0 0 0 0 0 0!0
+⍝)(!UrlDecode!!0 0 0 0 0 0 0!0
+⍝)(!UrlEncode!!0 0 0 0 0 0 0!0
+⍝)(!Version!!0 0 0 0 0 0 0!0
+⍝)(!eis!!0 0 0 0 0 0 0!0
