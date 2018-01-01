@@ -236,8 +236,9 @@
       args←eis args
       (url parms hdrs)←args,(⍴args)↓''(⎕NS'')''
       →0⍴⍨0∊⍴url ⍝ exit early if no URL
-     
-      :If ''≡{6::⍵ ⋄ LDRC}'' ⍝ if LDRC exists, we assume Conga has been initialized and just carry on
+                                                                                                                    
+      ⍝↓↓↓ Check is LDRC exists (VALUE ERROR (6) if not), and is LDRC initialized? (NONCE ERROR (16) if not)
+      :If {6 16::1 ⋄ 0⊣LDRC.Version}''
           :If ~0∊⍴CongaRef  ⍝ did the user supply a reference to Conga?
               →0⍴⍨''≡LDRC←ResolveCongaRef CongaRef
           :Else
@@ -662,16 +663,3 @@
 
     :EndSection
 :EndClass
-⍝)(!Base64Decode!!0 0 0 0 0 0 0!0
-⍝)(!Base64Encode!!0 0 0 0 0 0 0!0
-⍝)(!Describe!!0 0 0 0 0 0 0!0
-⍝)(!Do!!0 0 0 0 0 0 0!0
-⍝)(!Documentation!!0 0 0 0 0 0 0!0
-⍝)(!Get!!0 0 0 0 0 0 0!0
-⍝)(!Lookup!!0 0 0 0 0 0 0!0
-⍝)(!ResolveCongaRef!!0 0 0 0 0 0 0!0
-⍝)(!ShowDoc!!0 0 0 0 0 0 0!0
-⍝)(!UrlDecode!!0 0 0 0 0 0 0!0
-⍝)(!UrlEncode!!0 0 0 0 0 0 0!0
-⍝)(!Version!!0 0 0 0 0 0 0!0
-⍝)(!eis!!0 0 0 0 0 0 0!0
