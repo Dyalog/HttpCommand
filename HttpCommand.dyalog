@@ -75,7 +75,8 @@
 ⍝   Headers       - the response HTTP headers
 ⍝   PeerCert      - the server (peer) certificate if running secure
 ⍝   Redirections  - a vector (possibly empty) of redirection links
-⍝   rc            - the Conga return code (0 means no error)
+⍝   rc            - the Conga return code (0 means no error, ¯1 means failure to initialize Conga)
+⍝   msg           - status/error msg (non-HTTP)  Empty indicates no non-HTTP error
 ⍝
 ⍝ Public Instance Methods::
 ⍝
@@ -156,7 +157,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.3' '2017-08-22'
+      r←'HttpCommand' '2.1.4' '2018-06-11'
     ∇
 
     ∇ make
@@ -216,12 +217,9 @@
               LDRC←ResolveCongaRef(⍎∊⍕CongaRef)
           :EndTrap
       :EndSelect
-      :If ''≡LDRC
-          ⎕←'*** CongaRef "',(∊⍕CongaRef),'" does not refer to a valid object.'
-      :EndIf
     ∇
 
-    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;pars;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;dyalog;donetime;congaCopied;formContentType;ind;len;mode;obj;evt;dat;ref;nc;ns;n;class;clt;z;contentType;redirected;origHost;origPort;noHost;origSecure
+    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;pars;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;dyalog;donetime;congaCopied;formContentType;ind;len;mode;obj;evt;dat;ref;nc;ns;n;class;clt;z;contentType;redirected;origHost;origPort;noHost;origSecure;msg;timedOut
 ⍝ issue an HTTP command
 ⍝ certs - optional [X509Cert [SSLValidation [Priority]]]
 ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/page[?query_string]]
@@ -231,41 +229,37 @@
      
 ⍝ Result: (conga return code) (HTTP Status) (HTTP headers) (HTTP body) [PeerCert if secure]
       r←⎕NS''
-      r.(rc HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections)←¯1 '' 400(⊂'bad request')(0 2⍴⊂'')''⍬(0⍴⊂'')
+      r.(rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections)←¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')
      
       args←eis args
       (url parms hdrs)←args,(⍴args)↓''(⎕NS'')''
-      →0⍴⍨0∊⍴url ⍝ exit early if no URL
-                                                                                                                    
+      →∆END↓⍨0∊⍴r.msg←(0∊⍴url)/'No URL specified' ⍝ exit early if no URL
+     
       ⍝↓↓↓ Check is LDRC exists (VALUE ERROR (6) if not), and is LDRC initialized? (NONCE ERROR (16) if not)
-      :If {6 16::1 ⋄ 0⊣LDRC.Version}''
+      :If {6 16::1 ⋄ ''≡LDRC:1 ⋄ 0⊣LDRC.Version}''
           :If ~0∊⍴CongaRef  ⍝ did the user supply a reference to Conga?
-              →0⍴⍨''≡LDRC←ResolveCongaRef CongaRef
+              LDRC←ResolveCongaRef CongaRef
+              →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/'CongaRef (',(⍕CongaRef),') does not point to a valid instance of Conga'
           :Else
               ref nc←{1↑¨⍵{(×⍵)∘/¨⍺ ⍵}#.⎕NC ⍵}ns←'Conga' 'DRC'
-              :Select ⊃⌊nc
-              :Case 9
-                  →0⍴⍨''≡LDRC←ResolveCongaRef'#.',∊ref
-              :Case 0
+              :If 9=⊃⌊nc
+                  LDRC←ResolveCongaRef'#.',∊ref
+                  →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/'#.',(∊ref),' does not point to a valid instance of Conga'
+              :Else
                   class←⊃⊃⎕CLASS ⎕THIS
                   dyalog←{⍵,'/'↓⍨'/\'∊⍨¯1↑⍵}2 ⎕NQ'.' 'GetEnvironment' 'DYALOG'
                   congaCopied←0
                   :For n :In ns
                       :Trap 0
                           n class.⎕CY dyalog,'ws/conga'
-                          →0⍴⍨''≡LDRC←ResolveCongaRef class⍎n
+                          LDRC←ResolveCongaRef class⍎n
+                          →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/n,' was copied from [DYALOG]/ws/conga, but is not valid'
                           congaCopied←1
                           :Leave
                       :EndTrap
                   :EndFor
-                  :If ~congaCopied
-                      ⎕←'*** Neither Conga nor DRC was found'
-                      →0
-                  :EndIf
-              :Else
-                  ⎕←'*** Neither Conga nor DRC was found'
-                  →0
-              :EndSelect
+                  →∆END↓⍨0∊⍴r.msg←(~congaCopied)/'Neither Conga nor DRC  were successfully copied from [DYALOG]/ws/conga'
+              :EndIf
           :EndIf
       :EndIf
      
@@ -288,6 +282,7 @@
       secure←{6::⍵ ⋄ ⍵∨0<⍴,certs}(lc(p-2)↑url)≡'https:'
       url←p↓url              ⍝ Remove HTTP[s]:// if present
       (host page)←'/'split url,(~'/'∊url)/'/'    ⍝ Extract host and page from url
+      page←∊((⊂'%20')@(' '∘=))page               ⍝ convert spaces in page name to %20
      
       :If redirected∧noHost←0∊⍴host ⍝ if we're redirected and no host is specified in the location header...
           host←origHost ⍝ ...use original host
@@ -315,16 +310,21 @@
               port←(1+secure)⊃80 443 ⍝ use the default HTTP/HTTPS port
           :Else
               :If 0=port←⊃toNum ind↓host
-                  ⎕←'*** Invalid host/port - ',host
-                  →0
+                  r.msg←'Invalid host/port - ',host
+                  →∆END
               :EndIf
               host↑⍨←ind-1
           :EndIf
       :EndIf
      
       :If 0∊⍴host
-          ⎕←'*** No host specified'
-          →0
+          r.msg←'No host specified'
+          →∆END
+      :EndIf
+     
+      :If ~(port>0)∧(port≤65535)∧port=⌊port
+          r.msg←'Invalid port - ',⍕port
+          →∆END
       :EndIf
      
       hdrs←makeHeaders hdrs
@@ -340,7 +340,7 @@
               :Case formContentType
                   parms←UrlEncode parms
               :Case 'application/json'
-                  :If 1=⍴⍴parms ⍝ if it's a simple charvec, it's already considered to be formated JSON
+                  :If 1≥⍴⍴parms ⍝ if it's a simple charvec, it's already considered to be formated JSON
                   :AndIf ' '=1↑0⍴parms
                   :Else ⍝ otherwise, convert it
                       parms←1 ⎕JSON parms
@@ -373,7 +373,7 @@
      
           :If 0=⊃rc←LDRC.Send clt(req,NL,parms)
               chunked chunk buffer chunklength←0 '' '' 0
-              done data datalen headerlen header←0 ⍬ 0 0 ⍬
+              timedOut done data datalen headerlen header←0 0 ⍬ 0 0 ⍬
      
               :Repeat
                   :If ~done←0≠err←1⊃rc←LDRC.Wait clt 5000            ⍝ Wait up to 5 secs
@@ -435,22 +435,27 @@
                           :EndIf
      
                       :Case 'Timeout'
-                          done←⎕AI[3]>donetime
+                          timedOut←done←⎕AI[3]>donetime
      
                       :Case 'Error'
-                          ⎕←'*** Error processing your request: ',,⍕rc
+                          r.msg←'Conga error processing your request: ',,⍕rc
                           done←err←1
                       :Else  ⍝ This shouldn't happen
-                          ⎕←'*** Unhandled event type - ',evt
+                          ⎕←r.msg←'*** Unhandled Conga event type - ',evt
                           ∘∘∘  ⍝ !! Intentional !!
                       :EndSelect
      
                   :ElseIf 100=err ⍝ timeout?
-                      done←⎕AI[3]>donetime
+                      timedOut←done←⎕AI[3]>donetime
                   :Else           ⍝ some other error (very unlikely)
-                      ⎕←'*** Wait error ',,⍕rc
+                      ⎕←'*** Conga wait error ',,⍕rc
                   :EndIf
               :Until done
+     
+              :If timedOut
+                  r.(rc msg)←(⊃rc)'Request timed out before server responded'
+                  →∆END
+              :EndIf
      
               r.HttpStatus←toNum r.HttpStatus
               redirected←0
@@ -489,13 +494,18 @@
               r.(Headers Data)←header data
      
           :Else
-              ⎕←'*** Connection failed ',,⍕rc
+              r.msg←'Conga connection failed ',,⍕1↓rc
           :EndIf
           {}LDRC.Close clt
       :Else
-          ⎕←'*** Client creation failed ',,⍕rc
+          r.msg←'Conga client creation failed ',,⍕1↓rc
       :EndIf
+     
       r.rc←1⊃rc
+     
+     ∆END:
+      r.⎕DF 1⌽'][rc: ',(⍕r.rc),' | msg: "',r.msg,'"',(r.rc=0)/' | HTTP Status: ',(⍕r.HttpStatus),' "',r.HttpMessage,'" | ⍴Data: ',⍕⍴r.Data
+     
     ∇
 
     NL←⎕UCS 13 10
