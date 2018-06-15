@@ -157,7 +157,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.4' '2018-06-11'
+      r←'HttpCommand' '2.1.5' '2018-06-15'
     ∇
 
     ∇ make
@@ -601,7 +601,7 @@
           :EndIf
       :EndIf
       nul←⎕UCS 0
-      ok←nul,∊⎕UCS¨(⎕UCS'aA0')+⍳¨26 26 10
+      ok←nul,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~'
      
       z←⎕UCS'UTF-8'⎕UCS∊nul,¨,data
       :If ∨/m←~z∊ok
