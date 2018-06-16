@@ -157,7 +157,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.5' '2018-06-15'
+      r←'HttpCommand' '2.1.6' '2018-06-16'
     ∇
 
     ∇ make
@@ -672,4 +672,25 @@
     ∇
 
     :EndSection
+
+    ∇ r←Upgrade;z
+    ⍝ loads the latest version from GitHub
+      :Access public shared
+      z←Get'https://raw.githubusercontent.com/Dyalog/library-conga/master/HttpCommand.dyalog'
+      :If z.rc≠0
+          r←z.(rc msg)
+      :ElseIf z.HttpStatus≠200
+          r←¯1(⍕z)
+      :Else
+          {}LDRC.Close'.' ⍝ close Conga
+          LDRC←''         ⍝ reset local reference so that Conga gets reloaded
+          :Trap 0
+              ##.⎕FIX{⍵⊆⍨~⍵∊⎕UCS 13 10 65279}z.Data
+              r←0 ''
+          :Else
+              r←¯1('Could not ⎕FIX new HttpCommand: ',2↓∊': '∘,¨⎕DMX.(EM Message))
+          :EndTrap
+      :EndIf
+    ∇
+
 :EndClass
