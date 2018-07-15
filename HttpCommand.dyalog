@@ -198,18 +198,27 @@
       r←(⎕NEW ⎕THIS(eis args)).Run
     ∇
 
-    ∇ LDRC←ResolveCongaRef CongaRef;z
+    ∇ LDRC←ResolveCongaRef CongaRef;z;failed
     ⍝ CongaRef could be a charvec, reference to the Conga or DRC namespaces, or reference to an iConga instance
       :Access public shared  ⍝!!! testing only  - remove :Access after testing
-      LDRC←''
+      LDRC←'' ⋄ failed←0
       :Select ⎕NC⊂'CongaRef' ⍝ what is it?
       :Case 9.1 ⍝ namespace?  e.g. CongaRef←DRC or Conga
-          :If 0≡⊃z←CongaRef.Init'' ⍝ DRC?
-              LDRC←CongaRef
-              {}LDRC.Init''
-          :ElseIf 9.2=⎕NC⊂,'z'    ⍝ Conga?
-              LDRC←z
-          :EndIf
+     Try:
+          :Trap 0
+              :If 0≡⊃z←CongaRef.Init'' ⍝ DRC?
+                  LDRC←CongaRef
+                  {}LDRC.Init''
+              :ElseIf 9.2=⎕NC⊂,'z'    ⍝ Conga?
+                  LDRC←z
+              :EndIf
+          :Else ⍝ if HttpCommand is reloaded and re-executed in rapid succession, Conga initialization may fail, so we try twice
+              :If failed
+                  →0⊣LDRC←''
+              :Else
+                  →Try⊣failed←1
+              :EndIf
+          :EndTrap
       :Case 9.2 ⍝ instance?  e.g. CongaRef←Conga.Init ''
           LDRC←CongaRef ⍝ an instance is already initialized
       :Case 2.1 ⍝ variable?  e.g. CongaRef←'#.Conga'
@@ -258,7 +267,7 @@
                           :Leave
                       :EndTrap
                   :EndFor
-                  →∆END↓⍨0∊⍴r.msg←(~congaCopied)/'Neither Conga nor DRC  were successfully copied from [DYALOG]/ws/conga'
+                  →∆END↓⍨0∊⍴r.msg←(~congaCopied)/'Neither Conga nor DRC were successfully copied from [DYALOG]/ws/conga'
               :EndIf
           :EndIf
       :EndIf
@@ -282,7 +291,7 @@
       secure←{6::⍵ ⋄ ⍵∨0<⍴,certs}(lc(p-2)↑url)≡'https:'
       url←p↓url              ⍝ Remove HTTP[s]:// if present
       (host page)←'/'split url,(~'/'∊url)/'/'    ⍝ Extract host and page from url
-      page←∊((⊂'%20')@(' '∘=))page               ⍝ convert spaces in page name to %20
+      page←{w←⍵ ⋄ ((' '=w)/w)←⊂'%20' ⋄ ∊w}page   ⍝ convert spaces in page name to %20
      
       :If redirected∧noHost←0∊⍴host ⍝ if we're redirected and no host is specified in the location header...
           host←origHost ⍝ ...use original host
