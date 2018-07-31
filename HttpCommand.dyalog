@@ -130,6 +130,13 @@
 ⍝ You can set the CongaRef public field to have HttpCommand use Conga or DRC located other than in the root of the workspace
 ⍝ Otherwise HttpCommand will attempt to copy Conga or DRC from the conga workspace supplied with Dyalog APL
 ⍝
+⍝ Normally HttpCommand will specify a request header so that the server can use gzip or deflate compression in the response.
+⍝ However, if you use the HEAD HTTP method, we do not do so, so that the content-length header will
+⍝   reflect the uncompressed length of the response's body.
+⍝   You can add the header manually if you want the compressed message length, e.g.:
+⍝   r←HttpCommand.Do 'HEAD' 'someurl' '' (1 2⍴'Accept-Encoding' 'gzip, deflate')
+⍝
+⍝
 ⍝ Example Use Cases::
 ⍝
 ⍝ Retrieve the contents of a web page
@@ -157,7 +164,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.6' '2018-06-16'
+      r←'HttpCommand' '2.1.7' '2018-07-31'
     ∇
 
     ∇ make
@@ -359,7 +366,12 @@
           :EndIf
       :EndIf
      
-      hdrs←'Accept-Encoding'(hdrs addHeader)'gzip, deflate'
+⍝↓↓↓ If using HEAD method, don't indicate we accept compressed responses
+⍝    this was content-length in the response reflects the actual size of the response
+⍝    The user can always add the header manually if he wants the compressed size
+      :If 'HEAD'≢cmd
+          hdrs←'Accept-Encoding'(hdrs addHeader)'gzip, deflate'
+      :EndIf
      
       req←cmd,' ',(page,urlparms),' HTTP/1.1',NL,'Host: ',host,NL
       req,←fmtHeaders hdrs
@@ -394,7 +406,7 @@
                           header←4⊃dat
                           datalen←⊃(toNum header Lookup'Content-Length'),¯1 ⍝ ¯1 if no content length not specified
                           chunked←∨/'chunked'⍷header Lookup'Transfer-Encoding'
-                          done←chunked<datalen<1
+                          done←(cmd≡'HEAD')∨chunked<datalen<1
                       :Case 'HTTPBody'
                           data←dat
                           done←1
@@ -435,11 +447,12 @@
                                   :EndIf
                               :EndWhile
                           :Else
-                              done←done∨'BlockLast'≡3⊃rc                        ⍝ Done if socket was closed
-                              :If datalen>0
-                                  done←done∨datalen≤⍴data ⍝ ... or if declared amount of data rcvd
-                              :Else
-                                  done←done∨(∨/'</html>'⍷data)∨(∨/'</HTML>'⍷data)
+                              :If ~done←done∨(cmd≡'HEAD')∨'BlockLast'≡3⊃rc  ⍝ Done if socket was closed
+                                  :If datalen>0
+                                      done←done∨datalen≤⍴data ⍝ ... or if declared amount of data rcvd
+                                  :Else
+                                      done←done∨(∨/'</html>'⍷data)∨(∨/'</HTML>'⍷data)
+                                  :EndIf
                               :EndIf
                           :EndIf
      
