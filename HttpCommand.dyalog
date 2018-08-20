@@ -164,7 +164,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.7' '2018-07-31'
+      r←'HttpCommand' '2.1.8' '2018-08-19'
     ∇
 
     ∇ make
@@ -253,6 +253,8 @@
      
       ⍝↓↓↓ Check is LDRC exists (VALUE ERROR (6) if not), and is LDRC initialized? (NONCE ERROR (16) if not)
       :If {6 16::1 ⋄ ''≡LDRC:1 ⋄ 0⊣LDRC.Version}''
+          LDRC←''
+          :If 9=#.⎕NC'Conga' ⋄ {#.Conga.X509Cert.LDRC←''}⍬ ⋄ :EndIf ⍝ if #.Conga exists, reset LDRC reference
           :If ~0∊⍴CongaRef  ⍝ did the user supply a reference to Conga?
               LDRC←ResolveCongaRef CongaRef
               →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/'CongaRef (',(⍕CongaRef),') does not point to a valid instance of Conga'
