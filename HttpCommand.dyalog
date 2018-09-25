@@ -164,7 +164,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.9' '2018-08-24'
+      r←'HttpCommand' '2.1.11' '2018-09-24'
     ∇
 
     ∇ make
@@ -244,11 +244,12 @@
 ⍝ Makes secure connection if left arg provided or URL begins with https:
      
 ⍝ Result: (conga return code) (HTTP Status) (HTTP headers) (HTTP body) [PeerCert if secure]
-      r←⎕NS''
-      r.(rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections)←¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')
-     
       args←eis args
       (url parms hdrs)←args,(⍴args)↓''(⎕NS'')''
+     
+      r←⎕NS''
+      r.(Command URL rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections)←cmd url ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')
+     
       →∆END↓⍨0∊⍴r.msg←(0∊⍴url)/'No URL specified' ⍝ exit early if no URL
      
       ⍝↓↓↓ Check is LDRC exists (VALUE ERROR (6) if not), and is LDRC initialized? (NONCE ERROR (16) if not)
@@ -550,6 +551,12 @@
     firstCaps←{1↓{(¯1↓0,'-'=⍵) (819⌶)¨ ⍵}'-',⍵} ⍝ capitalize first letters e.g. Content-Encoding
     addHeader←{'∘???∘'≡⍺⍺ Lookup ⍺:⍺⍺⍪⍺ ⍵ ⋄ ⍺⍺} ⍝ add a header unless it's already defined
 
+    ∇ r←a breakOn w
+    ⍝ break left argument at occurences of any element in right argument
+      :Access public shared
+      r←{a⊆⍨~a∊w}
+    ∇
+
     ∇ r←table Lookup name
     ⍝ lookup a name/value-table value by name, return '∘???∘' if not found
       :Access Public Shared
@@ -607,7 +614,7 @@
       :EndIf
     ∇
 
-    ∇ r←{name}UrlEncode data;⎕IO;z;ok;nul;m;noname
+    ∇ r←{name}UrlEncode data;⎕IO;z;ok;nul;m;noname;format
       ⍝ data is one of:
       ⍝      - a character vector to be encoded
       ⍝      - two character vectors of [name] [data to be encoded]
@@ -617,9 +624,13 @@
      
       :Access Public Shared
       ⎕IO←0
+      format←{
+          1=≡⍵:⍺(,⍕⍵)
+          ↑⍺∘{⍺(,⍕⍵)}¨⍵
+      }
       noname←0
       :If 9.1=⎕NC⊂'data'
-          data←{0∊⍴t←⍵.⎕NL ¯2:'' ⋄ ↑⍵{⍵(⍕,⍺⍎⍵)}¨t}data
+          data←⊃⍪/{0∊⍴t←⍵.⎕NL ¯2:'' ⋄ ⍵{⍵ format ⍺⍎⍵}¨t}data
       :Else
           :If 1≥|≡data
               :If noname←0=⎕NC'name' ⋄ name←'' ⋄ :EndIf
