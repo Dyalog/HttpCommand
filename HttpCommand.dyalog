@@ -164,7 +164,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.11' '2018-09-24'
+      r←'HttpCommand' '2.1.12' '2018-09-26'
     ∇
 
     ∇ make
@@ -640,11 +640,10 @@
       nul←⎕UCS 0
       ok←nul,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~'
      
-      z←⎕UCS'UTF-8'⎕UCS∊nul,¨,data
-      :If ∨/m←~z∊ok
-          (m/z)←↓'%',(⎕D,⎕A)[⍉16 16⊤⎕UCS m/z]
-          data←(⍴data)⍴1↓¨{(⍵=nul)⊂⍵}∊z
-      :EndIf
+      z←⎕UCS'UTF-8'⎕UCS∊nul,¨,∘⍕¨data
+      m←~z∊ok
+      (m/z)←↓'%',(⎕D,⎕A)[⍉16 16⊤⎕UCS m/z]
+      data←(⍴data)⍴1↓¨{(⍵=nul)⊂⍵}∊z
      
       r←noname↓¯1↓∊data,¨(⍴data)⍴'=&'
     ∇
