@@ -35,11 +35,16 @@
 ⍝              format is:  [HTTP[S]://][user:pass@]url[:port][/page[?query_string]]
 ⍝
 ⍝   Params   - the parameters to pass with the command
-⍝              this can either be a URLEncoded character vector, or a namespace
-⍝              containing the named parameters
+⍝              this can be one of
+⍝              - a properly URLEncoded simple character vector
+⍝              - a namespace containing the named parameters
+⍝              - a vector of an even number of character vectors representing name/value pairs
 ⍝
-⍝   Headers  - a vector of 2-element (header-name value) vectors
-⍝              or a matrix of [;1] header-name [;2] values
+⍝   Headers  - the HTTP headers for the request
+⍝              this can be one of
+⍝              - an empty array - this means that only the HttpCommand default headers will be sent
+⍝              - a vector of 2-element vectors containing name/value pairs
+⍝              - a matrix of [;1] header-name [;2] values
 ⍝
 ⍝              these are any additional HTTP headers to send with the request
 ⍝              or headers whose default values you wish to override
@@ -63,8 +68,11 @@
 ⍝     HttpComment.Get 'www.someplace.com' ('userid' 'fred')
 ⍝
 ⍝ Additional Public Fields::
-⍝   LocalDRC - if set, this is a reference to the DRC namespace from Conga - otherwise, we look for DRC in the workspace root
-⍝   WaitTime - time (in seconds) to wait for the response (default 30)
+⍝   LDRC            - if set, this is a reference to the DRC namespace from Conga - otherwise, we look for DRC in the workspace root
+⍝   WaitTime        - time (in seconds) to wait for the response (default 30)
+⍝   CongaMode       - 'http' for Conga 3.0 and later, 'text' for Conga before 3.0 or if forcing text mode when using Conga 3.0 and later
+⍝   SuppressHeaders - Boolean which, if set to 1, will suppress all HttpCommand-generated headers
+⍝                     you may still supply your own headers in the Headers field
 ⍝
 ⍝
 ⍝ The methods that execute HTTP requests - Do, Get, and Run - return a namespace containing the variables:
@@ -77,6 +85,8 @@
 ⍝   Redirections  - a vector (possibly empty) of redirection links
 ⍝   rc            - the Conga return code (0 means no error, ¯1 means failure to initialize Conga)
 ⍝   msg           - status/error msg (non-HTTP)  Empty indicates no non-HTTP error
+⍝   Command       - the request's HTTP command
+⍝   URL           - the request's URL
 ⍝
 ⍝ Public Instance Methods::
 ⍝
@@ -126,16 +136,16 @@
 ⍝ HttpCommand uses Conga for TCP/IP communications and supports both Conga 2 and Conga 3
 ⍝ Conga 2 uses the DRC namespace
 ⍝ Conga 3 uses either the Conga namespace or DRC namespace for backwards compatibility
-⍝ HttpCommand will search for #.Conga and #.DRC and use them if they exist - or try to ⎕CY them if they do not
+⍝ HttpCommand will search for #.Conga and #.DRC and use them if they exist - or try to ⎕CY them if they're not found
 ⍝ You can set the CongaRef public field to have HttpCommand use Conga or DRC located other than in the root of the workspace
 ⍝ Otherwise HttpCommand will attempt to copy Conga or DRC from the conga workspace supplied with Dyalog APL
 ⍝
-⍝ Normally HttpCommand will specify a request header so that the server can use gzip or deflate compression in the response.
-⍝ However, if you use the HEAD HTTP method, we do not do so, so that the content-length header will
+⍝ Normally HttpCommand will specify an "Accept-Encoding" request header so that the server can use gzip or deflate compression in the response.
+⍝ However, if you use the HEAD HTTP method, this header is not set, so that the content-length header will
 ⍝   reflect the uncompressed length of the response's body.
 ⍝   You can add the header manually if you want the compressed message length, e.g.:
 ⍝   r←HttpCommand.Do 'HEAD' 'someurl' '' (1 2⍴'Accept-Encoding' 'gzip, deflate')
-⍝
+⍝                                     
 ⍝
 ⍝ Example Use Cases::
 ⍝
@@ -151,20 +161,25 @@
 
     ⎕ML←⎕IO←1
 
-    :field public Command←'GET'
-    :field public Cert←⍬
-    :field public SSLFlags←32
-    :field public shared CongaRef←''
-    :field public URL←''
-    :field public Params←''
-    :field public Headers←''
-    :field public Priority←'NORMAL:!CTYPE-OPENPGP'
-    :field public WaitTime←30
-    :field public shared LDRC
+    :field public Command←'GET'                    ⍝ default HTTP command
+    :field public URL←''                           ⍝ requested resource
+    :field public Params←''                        ⍝ request parameters
+    :field public Headers←0 2⍴⊂''                  ⍝ request headers
+    :field public Cert←⍬                           ⍝ X509 instance if using HTTPS
+    :field public SSLFlags←32                      ⍝ SSL/TLS flags - 32 = accept peer certificate without checking it
+    :field public Priority←'NORMAL:!CTYPE-OPENPGP' ⍝ default GnuTLS priority string
+
+    :field public WaitTime←30                      ⍝ seconds to wait for a response before timing out
+    :field public SuppressHeaders←0                ⍝ set to 1 to suppress HttpCommand default request headers
+
+    :field public CongaMode←''                     ⍝ valid values are 'text' or 'http' ('http' valid with Conga 3.0 or later only)
+
+    :field public shared CongaRef←''               ⍝ user-supplied reference to Conga library
+    :field public shared LDRC                      ⍝ HttpCommand-set reference to Conga after CongaRef has been resolved
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.12' '2018-09-26'
+      r←'HttpCommand' '2.1.14' '2018-10-02'
     ∇
 
     ∇ make
@@ -290,7 +305,7 @@
       (url urlparms)←{⍵{((¯1+⍵)↑⍺)(⍵↓⍺)}⍵⍳'?'}url
      
       :If 'GET'≡cmd   ⍝ if HTTP command is GET, all parameters are passed via the URL
-          urlparms,←{0∊⍴⍵:⍵ ⋄ '&',⍵}UrlEncode parms
+          urlparms,←{0∊⍴⍵:⍵ ⋄ '&',⍵}{(⎕DR ⍵)∊80 82:⍵ ⋄ UrlEncode ⍵}parms
           parms←''
       :EndIf
      
@@ -301,7 +316,7 @@
      GET:
       p←(∨/b)×1+(b←'//'⍷url)⍳1
       secure←{6::⍵ ⋄ ⍵∨0<⍴,certs}(lc(p-2)↑url)≡'https:'
-      url←p↓url              ⍝ Remove HTTP[s]:// if present
+      url←p↓url                                  ⍝ Remove HTTP[s]:// if present
       (host page)←'/'split url,(~'/'∊url)/'/'    ⍝ Extract host and page from url
       page←{w←⍵ ⋄ ((' '=w)/w)←⊂'%20' ⋄ ∊w}page   ⍝ convert spaces in page name to %20
      
@@ -349,17 +364,21 @@
       :EndIf
      
       hdrs←makeHeaders hdrs
-      hdrs←'User-Agent'(hdrs addHeader)'Dyalog/Conga'
-      hdrs←'Accept'(hdrs addHeader)'*/*'
+      :If ~SuppressHeaders
+          hdrs←'User-Agent'(hdrs addHeader)'Dyalog/Conga'
+          hdrs←'Accept'(hdrs addHeader)'*/*'
+      :EndIf
      
       :If ~0∊⍴parms         ⍝ if we have any parameters
           :If cmd≢'GET'     ⍝ and not a GET command
               ⍝↓↓↓ specify the default content type (if not already specified)
-              hdrs←'Content-Type'(hdrs addHeader)formContentType←'application/x-www-form-urlencoded'
+              :If ~SuppressHeaders
+                  hdrs←'Content-Type'(hdrs addHeader)formContentType←'application/x-www-form-urlencoded'
+              :EndIf
               contentType←hdrs Lookup'Content-Type'
               :Select contentType
               :Case formContentType
-                  parms←UrlEncode parms
+                  parms←{(⎕DR ⍵)∊80 82:⍵ ⋄ UrlEncode ⍵}parms
               :Case 'application/json'
                   :If 1≥⍴⍴parms ⍝ if it's a simple charvec, it's already considered to be formated JSON
                   :AndIf ' '=1↑0⍴parms
@@ -367,24 +386,29 @@
                       parms←1 ⎕JSON parms
                   :EndIf
               :EndSelect
-              hdrs←'Content-Length'(hdrs addHeader)⍴parms
+              :If ~SuppressHeaders
+                  hdrs←'Content-Length'(hdrs addHeader)⍴parms
+              :EndIf
           :EndIf
       :EndIf
      
 ⍝↓↓↓ If using HEAD method, don't indicate we accept compressed responses
-⍝    this was content-length in the response reflects the actual size of the response
+⍝    this way content-length in the response reflects the actual size of the response
 ⍝    The user can always add the header manually if he wants the compressed size
-      :If 'HEAD'≢cmd
+      :If SuppressHeaders<'HEAD'≢cmd
           hdrs←'Accept-Encoding'(hdrs addHeader)'gzip, deflate'
       :EndIf
      
       req←cmd,' ',(page,urlparms),' HTTP/1.1',NL,'Host: ',host,NL
       req,←fmtHeaders hdrs
-      req,←auth
+      req,←(~SuppressHeaders)/auth
      
       donetime←⌊⎕AI[3]+1000×WaitTime ⍝ time after which we'll time out
      
-      mode←'text' 'http'⊃⍨1+3≤⊃LDRC.Version ⍝ Conga 3.0 introduced native HTTP mode
+      mode←'text'
+      :If 3≤⊃LDRC.Version ⍝ Conga 3 or later?
+          mode←'http' 'text'⊃⍨(,⊂'http')⍳⊆lc CongaMode ⍝ use CongaMode (default to text)
+      :EndIf
      
      Go:
       :If 0=⊃(err clt)←2↑rc←LDRC.Clt''host port mode 100000,pars ⍝ 100,000 is max receive buffer size
@@ -616,8 +640,9 @@
 
     ∇ r←{name}UrlEncode data;⎕IO;z;ok;nul;m;noname;format
       ⍝ data is one of:
-      ⍝      - a character vector to be encoded
-      ⍝      - two character vectors of [name] [data to be encoded]
+      ⍝      - a simple character vector
+      ⍝      - an even number of name/data character vectors
+      ⍝       'name' 'fred' 'type' 'student' > 'name=fred&type=student'
       ⍝      - a namespace containing variable(s) to be encoded
       ⍝ name is the optional name
       ⍝ r    is a character vector of the URLEncoded data
