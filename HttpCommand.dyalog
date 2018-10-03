@@ -399,7 +399,7 @@
           hdrs←'Accept-Encoding'(hdrs addHeader)'gzip, deflate'
       :EndIf
      
-      req←cmd,' ',(page,urlparms),' HTTP/1.1',NL,'Host: ',host,NL
+      req←cmd,' ',(page,urlparms),' HTTP/1.1',NL,(~SuppressHeaders)/'Host: ',host,NL
       req,←fmtHeaders hdrs
       req,←(~SuppressHeaders)/auth
      
