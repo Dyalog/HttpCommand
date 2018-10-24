@@ -92,14 +92,25 @@
 ⍝
 ⍝   result←Run            - executes the HTTP request
 ⍝   name AddHeader value  - add a header value to the request headers if it doesn't already exist
+⍝   name SetHeader value  - set a request header, adding it if it doesn't exist,
+⍝                           overwriting the value if it does exist
 ⍝
 ⍝ Public Shared Methods::
 ⍝
 ⍝   result←Get URL [Params [Headers [Cert [SSLFlags [Priority]]]]]
+⍝   - Perform an GET operation on URL
 ⍝
 ⍝   result←Do  Command URL [Params [Headers [Cert [SSLFlags [Priority]]]]]
-⍝     Where the arguments are as described in the constructor parameters section.
+⍝   - Perform the HTTP operation specified by Command on URL
+⍝
+⍝   result←GetJSON Command URL [Params [Headers [Cert [SSLFlags [Priority]]]]]
+⍝   - Perform the HTTP operation specified by Command on URL
+⍝   - Params is converted to JSON and the response data is expected to be in
+⍝     JSON format and then converted to APL data
+⍝
+⍝    Where the arguments are as described in the constructor parameters section.
 ⍝     Get and Do are shortcut methods to make it easy to execute an HTTP request on the fly.
+⍝     GetJSON is a shortcut method to access JSON-based services
 ⍝
 ⍝   r←Base64Decode vec     - decode a Base64 encoded string
 ⍝
@@ -145,7 +156,7 @@
 ⍝   reflect the uncompressed length of the response's body.
 ⍝   You can add the header manually if you want the compressed message length, e.g.:
 ⍝   r←HttpCommand.Do 'HEAD' 'someurl' '' (1 2⍴'Accept-Encoding' 'gzip, deflate')
-⍝                                     
+⍝
 ⍝
 ⍝ Example Use Cases::
 ⍝
@@ -165,6 +176,7 @@
     :field public URL←''                           ⍝ requested resource
     :field public Params←''                        ⍝ request parameters
     :field public Headers←0 2⍴⊂''                  ⍝ request headers
+    :field public Result                           ⍝ command result namespace
     :field public Cert←⍬                           ⍝ X509 instance if using HTTPS
     :field public SSLFlags←32                      ⍝ SSL/TLS flags - 32 = accept peer certificate without checking it
     :field public Priority←'NORMAL:!CTYPE-OPENPGP' ⍝ default GnuTLS priority string
@@ -179,12 +191,13 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.14' '2018-10-02'
+      r←'HttpCommand' '2.1.15' '2018-10-23'
     ∇
 
     ∇ make
       :Access public
       :Implements constructor
+      makeCommon
     ∇
 
     ∇ make1 args
@@ -193,6 +206,12 @@
       ⍝ args - [Command URL Params Headers Cert SSLFlags Priority]
       args←eis args
       Command URL Params Headers Cert SSLFlags Priority←7↑args,(⍴args)↓Command URL Params Headers Cert SSLFlags Priority
+      makeCommon
+    ∇
+
+    ∇ makeCommon
+      Result←⎕NS''
+      Result.(Command URL rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections)←Command URL ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')
     ∇
 
     ∇ r←Run
@@ -212,13 +231,53 @@
       r←(⎕NEW ⎕THIS((⊂'GET'),eis args)).Run
     ∇
 
-    ∇ r←Do args;cmd
+    ∇ r←Do args
     ⍝ Description::
     ⍝ Shortcut method to perform an HTTP request
     ⍝ args - [Command URL Params Headers Cert SSLFlags Priority]
       :Access public shared
       r←(⎕NEW ⎕THIS(eis args)).Run
     ∇
+
+    ∇ r←GetJSON args;cmd
+    ⍝ Description::
+    ⍝ Shortcut method to perform an HTTP request with JSON data as the request and response payloads
+    ⍝ args - [Command URL Params Headers Cert SSLFlags Priority]
+      :Access public shared
+      cmd←⎕NEW ⎕THIS(eis args)
+      cmd.('content-type'SetHeader'application/json')
+      :If 0∊⍴cmd.Command ⋄ cmd.Command←'POST' ⋄ :EndIf
+      :Trap 0
+          cmd.Params←1 ⎕JSON cmd.Params
+      :Else
+          r←cmd.Result
+          r.(rc msg)←¯1 'Could not convert parameters to JSON format'
+          →Done
+      :EndTrap
+      r←cmd.Run
+      :If r.rc=0
+          :If r.HttpStatus=200
+              :If ∨/'application/json'⍷lc r.Headers Lookup'content-type'
+                  :Trap 0
+                      r.Data←⎕JSON r.Data
+                  :Else
+                      r.(rc msg)←1 'Could not convert response payload to JSON format'
+                      →Done
+                  :EndTrap
+              :Else
+                  r.(rc msg)←2 'Response content-type is not application/json'
+                  →Done
+              :EndIf
+          :Else
+              r.(rc msg)←3 'HTTP failure'
+              →Done
+          :EndIf
+      :EndIf
+      →0
+     Done: ⍝ reset ⎕DF if messages have changed
+      r.⎕DF 1⌽'][rc: ',(⍕r.rc),' | msg: "',r.msg,'"',(r.rc≥0)/' | HTTP Status: ',(⍕r.HttpStatus),' "',r.HttpMessage,'" | ⍴Data: ',⍕⍴r.Data
+    ∇
+
 
     ∇ LDRC←ResolveCongaRef CongaRef;z;failed
     ⍝ CongaRef could be a charvec, reference to the Conga or DRC namespaces, or reference to an iConga instance
@@ -262,7 +321,7 @@
       args←eis args
       (url parms hdrs)←args,(⍴args)↓''(⎕NS'')''
      
-      r←⎕NS''
+      r←Result
       r.(Command URL rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections)←cmd url ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')
      
       →∆END↓⍨0∊⍴r.msg←(0∊⍴url)/'No URL specified' ⍝ exit early if no URL
@@ -346,21 +405,18 @@
               port←(1+secure)⊃80 443 ⍝ use the default HTTP/HTTPS port
           :Else
               :If 0=port←⊃toNum ind↓host
-                  r.msg←'Invalid host/port - ',host
-                  →∆END
+                  →∆END⊣r.msg←'Invalid host/port - ',host
               :EndIf
               host↑⍨←ind-1
           :EndIf
       :EndIf
      
       :If 0∊⍴host
-          r.msg←'No host specified'
-          →∆END
+          →∆END⊣r.msg←'No host specified'
       :EndIf
      
       :If ~(port>0)∧(port≤65535)∧port=⌊port
-          r.msg←'Invalid port - ',⍕port
-          →∆END
+          →∆END⊣r.msg←'Invalid port - ',⍕port
       :EndIf
      
       hdrs←makeHeaders hdrs
@@ -499,19 +555,19 @@
                   :ElseIf 100=err ⍝ timeout?
                       timedOut←done←⎕AI[3]>donetime
                   :Else           ⍝ some other error (very unlikely)
-                      ⎕←'*** Conga wait error ',,⍕rc
+                      r.msg←'Conga wait error ',,⍕rc
                   :EndIf
               :Until done
      
               :If timedOut
-                  r.(rc msg)←(⊃rc)'Request timed out before server responded'
-                  →∆END
+                  →∆END⊣r.(rc msg)←(⊃rc)'Request timed out before server responded'
               :EndIf
      
-              r.HttpStatus←toNum r.HttpStatus
-              redirected←0
-     
               :If 0=err
+     
+                  r.HttpStatus←toNum r.HttpStatus
+                  redirected←0
+     
                   :Trap 0 ⍝ If any errors occur, abandon conversion
                       :Select header Lookup'content-encoding' ⍝ was the response compressed?
                       :Case 'deflate'
@@ -547,7 +603,6 @@
           :Else
               r.msg←'Conga connection failed ',,⍕1↓rc
           :EndIf
-          {}LDRC.Close clt
       :Else
           r.msg←'Conga client creation failed ',,⍕1↓rc
       :EndIf
@@ -555,6 +610,7 @@
       r.rc←1⊃rc
      
      ∆END:
+      {}{0::⍬ ⋄ LDRC.Close clt}⍬
       r.⎕DF 1⌽'][rc: ',(⍕r.rc),' | msg: "',r.msg,'"',(r.rc=0)/' | HTTP Status: ',(⍕r.HttpStatus),' "',r.HttpMessage,'" | ⍴Data: ',⍕⍴r.Data
      
     ∇
@@ -575,6 +631,7 @@
     firstCaps←{1↓{(¯1↓0,'-'=⍵) (819⌶)¨ ⍵}'-',⍵} ⍝ capitalize first letters e.g. Content-Encoding
     addHeader←{'∘???∘'≡⍺⍺ Lookup ⍺:⍺⍺⍪⍺ ⍵ ⋄ ⍺⍺} ⍝ add a header unless it's already defined
 
+
     ∇ r←a breakOn w
     ⍝ break left argument at occurences of any element in right argument
       :Access public shared
@@ -592,6 +649,14 @@
       :Access public
       Headers←makeHeaders Headers
       Headers←name(Headers addHeader)value
+    ∇
+
+    ∇ name SetHeader value;ind
+      :Access public
+    ⍝ set a header value, overwriting any existing one
+      ind←(lc¨Headers[;1])⍳eis lc name
+      Headers↑⍨←ind⌈≢Headers
+      Headers[ind;]←name value
     ∇
 
     ∇ r←{a}eis w;f
