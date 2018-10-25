@@ -55,7 +55,9 @@
 ⍝               Content-Length : length of the request body
 ⍝               Accept-Encoding: gzip, deflate
 ⍝
-⍝   Cert     - if using SSL, this is an instance of the X509Cert class (see Conga SSL documentation)
+⍝   Cert     - if using SSL, this is either:
+⍝              - an instance of the X509Cert class (see Conga SSL documentation)
+⍝              - or a 2 element vector of character vectors of the [1] client public certificate filename [2] client private key filename
 ⍝
 ⍝   SSLFlags - if using SSL, these are the SSL flags as described in the Conga documentation
 ⍝
@@ -169,29 +171,26 @@
 ⍝   (cmd.Params←⎕NS '').(id name)←123 'Fred'    ⍝ set the parameters for the "PUT" command
 ⍝   result←cmd.Run                              ⍝ and run it
 ⍝
-
     ⎕ML←⎕IO←1
-
     :field public Command←'GET'                    ⍝ default HTTP command
     :field public URL←''                           ⍝ requested resource
     :field public Params←''                        ⍝ request parameters
     :field public Headers←0 2⍴⊂''                  ⍝ request headers
     :field public Result                           ⍝ command result namespace
-    :field public Cert←⍬                           ⍝ X509 instance if using HTTPS
-    :field public SSLFlags←0                       ⍝ SSL/TLS flags - 0 = no certificate validation
-    :field public Priority←'NORMAL:!CTYPE-OPENPGP' ⍝ default GnuTLS priority string
-
     :field public WaitTime←30                      ⍝ seconds to wait for a response before timing out
     :field public SuppressHeaders←0                ⍝ set to 1 to suppress HttpCommand default request headers
-
     :field public CongaMode←''                     ⍝ valid values are 'text' or 'http' ('http' valid with Conga 3.0 or later only)
-
     :field public shared CongaRef←''               ⍝ user-supplied reference to Conga library
     :field public shared LDRC                      ⍝ HttpCommand-set reference to Conga after CongaRef has been resolved
+    :field public Cert←⍬                           ⍝ X509 instance if using HTTPS
+    :field public SSLFlags←32                      ⍝ SSL/TLS flags - 32 = accept cert without checking it
+    :field public Priority←'NORMAL:!CTYPE-OPENPGP' ⍝ default GnuTLS priority string
+    :field public PublicCertFile←''                ⍝ if not using an X509 instance, this is the client public certificate file
+    :field public PrivateKEyFile←''                ⍝ if not using an X509 instance, this is the client private key file
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.16' '2018-10-25'
+      r←'HttpCommand' '2.1.17' '2018-10-25'
     ∇
 
     ∇ make
@@ -212,6 +211,7 @@
     ∇ makeCommon
       Result←⎕NS''
       Result.(Command URL rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections)←Command URL ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')
+      :If 0∊⍴Headers ⋄ Headers←0 2⍴⊂'' ⋄ :EndIf
     ∇
 
     ∇ r←Run
@@ -278,7 +278,6 @@
       r.⎕DF 1⌽'][rc: ',(⍕r.rc),' | msg: "',r.msg,'"',(r.rc≥0)/' | HTTP Status: ',(⍕r.HttpStatus),' "',r.HttpMessage,'" | ⍴Data: ',⍕⍴r.Data
     ∇
 
-
     ∇ LDRC←ResolveCongaRef CongaRef;z;failed
     ⍝ CongaRef could be a charvec, reference to the Conga or DRC namespaces, or reference to an iConga instance
       :Access public shared  ⍝!!! testing only  - remove :Access after testing
@@ -309,7 +308,7 @@
       :EndSelect
     ∇
 
-    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;pars;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;dyalog;donetime;congaCopied;formContentType;ind;len;mode;obj;evt;dat;ref;nc;ns;n;class;clt;z;contentType;redirected;origHost;origPort;noHost;origSecure;msg;timedOut
+    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;dyalog;donetime;congaCopied;formContentType;ind;len;mode;obj;evt;dat;ref;nc;ns;n;class;clt;z;contentType;redirected;origHost;origPort;noHost;origSecure;msg;timedOut;certfile;keyfile;cert;secureParams
 ⍝ issue an HTTP command
 ⍝ certs - optional [X509Cert [SSLValidation [Priority]]]
 ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/page[?query_string]]
@@ -387,11 +386,28 @@
      
       :If 0=⎕NC'certs' ⋄ certs←'' ⋄ :EndIf
      
+      secureParams←''
       :If secure
           LDRC.X509Cert.LDRC←LDRC
-          x509 flags priority←3↑certs,(⍴,certs)↓(⎕NEW LDRC.X509Cert)32 'NORMAL:!CTYPE-OPENPGP'  ⍝ 32=Do not validate Certs
-          pars←('x509'x509)('SSLValidation'flags)('Priority'priority)
-      :Else ⋄ pars←''
+          :If 0∊⍴certs
+              :If ~0∊⍴PublicCertFile
+                  certs←⊃LDRC.X509Cert.ReadCertFromFile PublicCertFile
+                  certs.KeyOrigin←'DER'PrivateKeyFile
+              :EndIf
+          :Else
+              :If (⎕DR' ')=⎕DR⊃⊃certs ⍝ file name?
+                  :If 2=≡certs
+                      (certfile keyfile)←certs
+                  :Else
+                      (certfile keyfile)←⊃certs
+                  :EndIf
+                  cert←⊃LDRC.X509Cert.ReadCertFromFile certfile
+                  cert.KeyOrigin←'DER'keyfile
+              :EndIf
+              certs[1]←cert
+          :EndIf
+          x509 flags priority←3↑certs,(⍴,certs)↓(⎕NEW LDRC.X509Cert)SSLFlags Priority
+          secureParams←('x509'x509)('SSLValidation'flags)('Priority'priority)
       :EndIf
      
       :If '@'∊host ⍝ Handle user:password@host...
@@ -467,7 +483,7 @@
       :EndIf
      
      Go:
-      :If 0=⊃(err clt)←2↑rc←LDRC.Clt''host port mode 100000,pars ⍝ 100,000 is max receive buffer size
+      :If 0=⊃(err clt)←2↑rc←LDRC.Clt''host port mode 100000,secureParams ⍝ 100,000 is max receive buffer size
      
           :If mode≡'http'
               :If 0≠1⊃LDRC.SetProp clt'DecodeBuffers' 15 ⍝ set advanced HTTP parsing
@@ -614,7 +630,6 @@
       r.⎕DF 1⌽'][rc: ',(⍕r.rc),' | msg: "',r.msg,'"',(r.rc=0)/' | HTTP Status: ',(⍕r.HttpStatus),' "',r.HttpMessage,'" | ⍴Data: ',⍕⍴r.Data
      
     ∇
-
     NL←⎕UCS 13 10
     fromutf8←{0::(⎕AV,'?')[⎕AVU⍳⍵] ⋄ 'UTF-8'⎕UCS ⍵} ⍝ Turn raw UTF-8 input into text
     utf8←{3=10|⎕DR ⍵: 256|⍵ ⋄ 'UTF-8' ⎕UCS ⍵}
@@ -630,27 +645,22 @@
     fmtHeaders←{0∊⍴⍵:'' ⋄ ∊{0∊⍴2⊃⍵:'' ⋄ NL,⍨(firstCaps 1⊃⍵),': ',⍕2⊃⍵}¨↓⍵} ⍝ formatted HTTP headers
     firstCaps←{1↓{(¯1↓0,'-'=⍵) (819⌶)¨ ⍵}'-',⍵} ⍝ capitalize first letters e.g. Content-Encoding
     addHeader←{'∘???∘'≡⍺⍺ Lookup ⍺:⍺⍺⍪⍺ ⍵ ⋄ ⍺⍺} ⍝ add a header unless it's already defined
-
-
     ∇ r←a breakOn w
     ⍝ break left argument at occurences of any element in right argument
       :Access public shared
       r←{a⊆⍨~a∊w}
     ∇
-
     ∇ r←table Lookup name
     ⍝ lookup a name/value-table value by name, return '∘???∘' if not found
       :Access Public Shared
       r←table{(⍺[;2],⊂'∘???∘')⊃⍨(lc¨⍺[;1])⍳eis lc ⍵}name
     ∇
-
     ∇ name AddHeader value
     ⍝ add a header unless it's already defined
       :Access public
       Headers←makeHeaders Headers
       Headers←name(Headers addHeader)value
     ∇
-
     ∇ name SetHeader value;ind
       :Access public
     ⍝ set a header value, overwriting any existing one
@@ -658,7 +668,6 @@
       Headers↑⍨←ind⌈≢Headers
       Headers[ind;]←name value
     ∇
-
     ∇ r←{a}eis w;f
     ⍝ enclose if simple
       :Access public shared
@@ -667,7 +676,6 @@
       :Else ⋄ r←a f w
       :EndIf
     ∇
-
     ∇ r←Base64Encode w
     ⍝ Base64 Encode
       :Access public shared
@@ -678,7 +686,6 @@
           mat←rows cols⍴(rows×cols)↑raw
           'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'[⎕IO+2⊥⍉mat],(4|-rows)⍴'='}w
     ∇
-
     ∇ r←Base64Decode w
     ⍝ Base64 Decode
       :Access public shared
@@ -690,7 +697,6 @@
           }2⊥{⍉((⌊(⍴⍵)÷8),8)⍴⍵}(-6×'='+.=⍵)↓,⍉(6⍴2)⊤'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='{⍺⍳⍵∩⍺}⍵
       }w
     ∇
-
     ∇ r←DecodeHeader buf;len;d
       ⍝ Decode HTTP Header
       r←0(0 2⍴⊂'')
@@ -702,7 +708,6 @@
           r←(len+4)d
       :EndIf
     ∇
-
     ∇ r←{name}UrlEncode data;⎕IO;z;ok;nul;m;noname;format
       ⍝ data is one of:
       ⍝      - a simple character vector
@@ -737,7 +742,6 @@
      
       r←noname↓¯1↓∊data,¨(⍴data)⍴'=&'
     ∇
-
     ∇ r←UrlDecode r;rgx;rgxu;i;j;z;t;m;⎕IO;lens;fill
       :Access public shared
       ⎕IO←0
@@ -756,10 +760,8 @@
           r←m/r
       :EndIf
     ∇
-
     :Section Documentation Utilities
     ⍝ these are generic utilities used for documentation
-
     ∇ docn←ExtractDocumentationSections what;⎕IO;box;CR;sections;eis;matches
     ⍝ internal utility function
       ⎕IO←1
@@ -777,28 +779,23 @@
       (sections/docn)←box¨sections/docn
       docn←∊docn,¨CR
     ∇
-
     ∇ r←Documentation
     ⍝ return full documentation
       :Access public shared
       r←ExtractDocumentationSections''
     ∇
-
     ∇ r←Describe
     ⍝ return description only
       :Access public shared
       r←ExtractDocumentationSections'Description::'
     ∇
-
     ∇ r←ShowDoc what
     ⍝ return documentation sections that contain what in their title
     ⍝ what can be a character scalar, vector, or vector of vectors
       :Access public shared
       r←ExtractDocumentationSections what
     ∇
-
     :EndSection
-
     ∇ r←Upgrade;z
     ⍝ loads the latest version from GitHub
       :Access public shared
@@ -818,5 +815,4 @@
           :EndTrap
       :EndIf
     ∇
-
 :EndClass
