@@ -178,7 +178,7 @@
     :field public Headers←0 2⍴⊂''                  ⍝ request headers
     :field public Result                           ⍝ command result namespace
     :field public Cert←⍬                           ⍝ X509 instance if using HTTPS
-    :field public SSLFlags←32                      ⍝ SSL/TLS flags - 32 = accept peer certificate without checking it
+    :field public SSLFlags←0                       ⍝ SSL/TLS flags - 0 = no certificate validation
     :field public Priority←'NORMAL:!CTYPE-OPENPGP' ⍝ default GnuTLS priority string
 
     :field public WaitTime←30                      ⍝ seconds to wait for a response before timing out
@@ -191,7 +191,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.15' '2018-10-23'
+      r←'HttpCommand' '2.1.16' '2018-10-25'
     ∇
 
     ∇ make
