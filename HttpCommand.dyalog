@@ -190,7 +190,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.17' '2018-10-25'
+      r←'HttpCommand' '2.1.18' '2018-10-30'
     ∇
 
     ∇ make
@@ -403,8 +403,8 @@
                   :EndIf
                   cert←⊃LDRC.X509Cert.ReadCertFromFile certfile
                   cert.KeyOrigin←'DER'keyfile
+                  certs[1]←cert
               :EndIf
-              certs[1]←cert
           :EndIf
           x509 flags priority←3↑certs,(⍴,certs)↓(⎕NEW LDRC.X509Cert)SSLFlags Priority
           secureParams←('x509'x509)('SSLValidation'flags)('Priority'priority)
