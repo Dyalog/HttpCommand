@@ -190,7 +190,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.18' '2018-10-30'
+      r←'HttpCommand' '2.1.19' '2018-12-04'
     ∇
 
     ∇ make
@@ -286,12 +286,13 @@
       :Case 9.1 ⍝ namespace?  e.g. CongaRef←DRC or Conga
      Try:
           :Trap 0
-              :If 0≡⊃z←CongaRef.Init'' ⍝ DRC?
+              :If ∨/'.Conga'⍷⍕CongaRef ⍝ is it Conga?
+                  LDRC←CongaRef.Init'HttpCommand'
+              :ElseIf 0≡⊃CongaRef.Init'' ⍝ DRC?
                   LDRC←CongaRef
-                  {}LDRC.Init''
-              :ElseIf 9.2=⎕NC⊂,'z'    ⍝ Conga?
-                  LDRC←z
-              :EndIf
+              :Else
+                  →0⊣LDRC←''
+              :End
           :Else ⍝ if HttpCommand is reloaded and re-executed in rapid succession, Conga initialization may fail, so we try twice
               :If failed
                   →0⊣LDRC←''
