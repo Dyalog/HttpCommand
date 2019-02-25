@@ -190,7 +190,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.20' '2019-02-25'
+      r←'HttpCommand' '2.1.21' '2019-02-25'
     ∇
 
     ∇ make
@@ -339,8 +339,8 @@
                   :If 9=⊃⌊nc ⋄ :Leave ⋄ :EndIf
               :EndFor
               :If 9=⊃⌊nc
-                  LDRC←ResolveCongaRef(⍕root),'.',∊ref
-                  →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/'#.',(∊ref),' does not point to a valid instance of Conga'
+                  LDRC←ResolveCongaRef root⍎∊ref
+                  →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/(⍕root),'.',(∊ref),' does not point to a valid instance of Conga'
                   →∆COPY↓⍨{999::0 ⋄ 1⊣LDRC.Describe'.'}'' ⍝ it's possible that Conga was saved in a semi-initialized state
               :Else
      ∆COPY:
