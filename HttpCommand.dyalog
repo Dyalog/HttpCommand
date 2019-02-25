@@ -190,7 +190,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.19' '2018-12-04'
+      r←'HttpCommand' '2.1.20' '2019-02-25'
     ∇
 
     ∇ make
@@ -309,7 +309,7 @@
       :EndSelect
     ∇
 
-    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;dyalog;donetime;congaCopied;formContentType;ind;len;mode;obj;evt;dat;ref;nc;ns;n;class;clt;z;contentType;redirected;origHost;origPort;noHost;origSecure;msg;timedOut;certfile;keyfile;cert;secureParams
+    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;dyalog;donetime;congaCopied;formContentType;ind;len;mode;obj;evt;dat;ref;nc;ns;n;class;clt;z;contentType;redirected;origHost;origPort;noHost;origSecure;msg;timedOut;certfile;keyfile;cert;secureParams;root
 ⍝ issue an HTTP command
 ⍝ certs - optional [X509Cert [SSLValidation [Priority]]]
 ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/page[?query_string]]
@@ -334,9 +334,12 @@
               LDRC←ResolveCongaRef CongaRef
               →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/'CongaRef (',(⍕CongaRef),') does not point to a valid instance of Conga'
           :Else
-              ref nc←{1↑¨⍵{(×⍵)∘/¨⍺ ⍵}#.⎕NC ⍵}ns←'Conga' 'DRC'
+              :For root :In ##.## #
+                  ref nc←root{1↑¨⍵{(×⍵)∘/¨⍺ ⍵}⍺.⎕NC ⍵}ns←'Conga' 'DRC'
+                  :If 9=⊃⌊nc ⋄ :Leave ⋄ :EndIf
+              :EndFor
               :If 9=⊃⌊nc
-                  LDRC←ResolveCongaRef'#.',∊ref
+                  LDRC←ResolveCongaRef(⍕root),'.',∊ref
                   →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/'#.',(∊ref),' does not point to a valid instance of Conga'
                   →∆COPY↓⍨{999::0 ⋄ 1⊣LDRC.Describe'.'}'' ⍝ it's possible that Conga was saved in a semi-initialized state
               :Else
