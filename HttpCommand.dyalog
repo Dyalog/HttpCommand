@@ -190,7 +190,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.21' '2019-02-25'
+      r←'HttpCommand' '2.1.22' '2019-03-12'
     ∇
 
     ∇ make
