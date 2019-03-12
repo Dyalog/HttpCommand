@@ -318,6 +318,9 @@
 ⍝ Makes secure connection if left arg provided or URL begins with https:
      
 ⍝ Result: (conga return code) (HTTP Status) (HTTP headers) (HTTP body) [PeerCert if secure]
+
+      :If 900⌶⍬ ⋄ certs←'' ⋄ :EndIf ⍝ default when monadic
+     
       args←eis args
       (url parms hdrs)←args,(⍴args)↓''(⎕NS'')''
      
@@ -377,7 +380,7 @@
      
      GET:
       p←(∨/b)×1+(b←'//'⍷url)⍳1
-      secure←{6::⍵ ⋄ ⍵∨0<⍴,certs}(lc(p-2)↑url)≡'https:'
+      secure←(0<⍴,certs)∨(lc(p-2)↑url)≡'https:'
       url←p↓url                                  ⍝ Remove HTTP[s]:// if present
       (host page)←'/'split url,(~'/'∊url)/'/'    ⍝ Extract host and page from url
       page←{w←⍵ ⋄ ((' '=w)/w)←⊂'%20' ⋄ ∊w}page   ⍝ convert spaces in page name to %20
@@ -388,8 +391,6 @@
           port←origPort
       :EndIf
      
-      :If 0=⎕NC'certs' ⋄ certs←'' ⋄ :EndIf
-     
       secureParams←''
       :If secure
           LDRC.X509Cert.LDRC←LDRC
@@ -399,7 +400,7 @@
                   certs.KeyOrigin←'DER'PrivateKeyFile
               :EndIf
           :Else
-              :If (⎕DR' ')=⎕DR⊃⊃certs ⍝ file name?
+              :If 0 2∊⍨10|⎕DR⊃⊃certs ⍝ file name?
                   :If 2=≡certs
                       (certfile keyfile)←certs
                   :Else
