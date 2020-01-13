@@ -188,9 +188,11 @@
     :field public PublicCertFile←''                ⍝ if not using an X509 instance, this is the client public certificate file
     :field public PrivateKEyFile←''                ⍝ if not using an X509 instance, this is the client private key file
 
+    :field public readonly shared ValidUriChars←'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&''()*+,;='
+
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.23' '2019-03-12'
+      r←'HttpCommand' '2.1.24' '2020-01-10'
     ∇
 
     ∇ make
@@ -350,7 +352,7 @@
       :EndSelect
     ∇
 
-    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;donetimeformContentType;ind;len;mode;obj;evt;dat;clt;z;contentType;redirected;origHost;origPort;noHost;origSecure;msg;timedOut;certfile;keyfile;cert;secureParams
+    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;donetime;formContentType;ind;len;mode;obj;evt;dat;clt;z;contentType;redirected;origHost;origPort;noHost;origSecure;msg;timedOut;certfile;keyfile;cert;secureParams;simpleChar
 ⍝ issue an HTTP command
 ⍝ certs - optional [X509Cert [SSLValidation [Priority]]]
 ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/page[?query_string]]
@@ -375,14 +377,12 @@
       url←,url
       cmd←uc,cmd
      
-      (url urlparms)←{⍵{((¯1+⍵)↑⍺)(⍵↓⍺)}⍵⍳'?'}url
+      (url urlparms)←'?'split url
      
-      :If 'GET'≡cmd   ⍝ if HTTP command is GET, all parameters are passed via the URL
-          urlparms,←{0∊⍴⍵:⍵ ⋄ '&',⍵}{(⎕DR ⍵)∊80 82:⍵ ⋄ UrlEncode ⍵}parms
+      :If 'GET'≡cmd   ⍝ if HTTP command is GET, all parameters are passed via the URL, so combine any passed via Params
+          urlparms,←urlparms{0∊⍴⍵:⍵ ⋄ '&?'[1+0∊⍴⍺],⍵}UrlEncode parms
           parms←''
       :EndIf
-     
-      urlparms←{0∊⍴⍵:'' ⋄ ('?'=1↑⍵)↓'?',⍵}{⍵↓⍨'&'=⊃⍵}urlparms
      
       redirected←0
      
@@ -461,13 +461,18 @@
                   hdrs←'Content-Type'(hdrs addHeader)formContentType←'application/x-www-form-urlencoded'
               :EndIf
               contentType←hdrs Lookup'Content-Type'
+              simpleChar←{1<≢⍴⍵:0 ⋄ (⎕DR ⍵)∊80 82}parms
               :Select contentType
               :Case formContentType
-                  parms←{(⎕DR ⍵)∊80 82:⍵ ⋄ UrlEncode ⍵}parms
+                  :If simpleChar ⍝ if simple character, parms is assumed to already be
+                      :If ~∧/parms∊ValidUriChars
+                          →∆END⊣r.msg←'Params is not a valid URLEncoded string'
+                      :EndIf
+                  :Else
+                      parms←UrlEncode parms
+                  :EndIf
               :Case 'application/json'
-                  :If 1≥⍴⍴parms ⍝ if it's a simple charvec, it's already considered to be formated JSON
-                  :AndIf ' '=1↑0⍴parms
-                  :Else ⍝ otherwise, convert it
+                  :If ~simpleChar ⍝ if it's a simple charvec, assume it's already JSON format
                       parms←1 ⎕JSON parms
                   :EndIf
               :EndSelect
@@ -665,6 +670,7 @@
       r.⎕DF 1⌽'][rc: ',(⍕r.rc),' | msg: "',r.msg,'"',(r.rc=0)/' | HTTP Status: ',(⍕r.HttpStatus),' "',r.HttpMessage,'" | ⍴Data: ',⍕⍴r.Data
      
     ∇
+
     NL←⎕UCS 13 10
     fromutf8←{0::(⎕AV,'?')[⎕AVU⍳⍵] ⋄ 'UTF-8'⎕UCS ⍵} ⍝ Turn raw UTF-8 input into text
     utf8←{3=10|⎕DR ⍵: 256|⍵ ⋄ 'UTF-8' ⎕UCS ⍵}
@@ -674,28 +680,33 @@
     dlb←{(+/∧\' '=⍵)↓⍵} ⍝ delete leading blanks
     split←{(p↑⍵)((p←¯1+⍵⍳⍺)↓⍵)} ⍝ split ⍵ on first occurrence of ⍺
     h2d←{⎕IO←0 ⋄ 16⊥'0123456789abcdef'⍳lc ⍵} ⍝ hex to decimal
+    d2h←{⎕IO←0 ⋄ '0123456789ABCDEF'[16(⊥⍣¯1)⍵]}
     getchunklen←{¯1=len←¯1+⊃(NL⍷⍵)/⍳⍴⍵:¯1 ¯1 ⋄ chunklen←h2d len↑⍵ ⋄ (⍴⍵)<len+chunklen+4:¯1 ¯1 ⋄ len chunklen}
     toNum←{0∊⍴⍵:⍬ ⋄ 1⊃2⊃⎕VFI ⍕⍵} ⍝ simple char to num
     makeHeaders←{0∊⍴⍵:0 2⍴⊂'' ⋄ 2=⍴⍴⍵:⍵ ⋄ ↑2 eis ⍵} ⍝ create header structure [;1] name [;2] value
     fmtHeaders←{0∊⍴⍵:'' ⋄ ∊{0∊⍴2⊃⍵:'' ⋄ NL,⍨(firstCaps 1⊃⍵),': ',⍕2⊃⍵}¨↓⍵} ⍝ formatted HTTP headers
     firstCaps←{1↓{(¯1↓0,'-'=⍵) (819⌶)¨ ⍵}'-',⍵} ⍝ capitalize first letters e.g. Content-Encoding
     addHeader←{'∘???∘'≡⍺⍺ Lookup ⍺:⍺⍺⍪⍺ ⍵ ⋄ ⍺⍺} ⍝ add a header unless it's already defined
+
     ∇ r←a breakOn w
     ⍝ break left argument at occurences of any element in right argument
       :Access public shared
       r←{a⊆⍨~a∊w}
     ∇
+
     ∇ r←table Lookup name
     ⍝ lookup a name/value-table value by name, return '∘???∘' if not found
       :Access Public Shared
       r←table{(⍺[;2],⊂'∘???∘')⊃⍨(lc¨⍺[;1])⍳eis lc ⍵}name
     ∇
+
     ∇ name AddHeader value
     ⍝ add a header unless it's already defined
       :Access public
       Headers←makeHeaders Headers
       Headers←name(Headers addHeader)value
     ∇
+
     ∇ name SetHeader value;ind
       :Access public
     ⍝ set a header value, overwriting any existing one
@@ -703,6 +714,7 @@
       Headers↑⍨←ind⌈≢Headers
       Headers[ind;]←name value
     ∇
+
     ∇ r←{a}eis w;f
     ⍝ enclose if simple
       :Access public shared
@@ -711,27 +723,33 @@
       :Else ⋄ r←a f w
       :EndIf
     ∇
+
+      base64←{⎕IO ⎕ML←0 1              ⍝ from dfns workspace - Base64 encoding and decoding as used in MIME.
+          chars←'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+          bits←{,⍉(⍺⍴2)⊤⍵}             ⍝ encode each element of ⍵ in ⍺ bits, and catenate them all together
+          part←{((⍴⍵)⍴⍺↑1)⊂⍵}          ⍝ partition ⍵ into chunks of length ⍺
+          0=2|⎕DR ⍵:2∘⊥∘(8∘↑)¨8 part{(-8|⍴⍵)↓⍵}6 bits{(⍵≠64)/⍵}chars⍳⍵  ⍝ decode a string into octets
+          four←{                       ⍝ use 4 characters to encode either
+              8=⍴⍵:'=='∇ ⍵,0 0 0 0     ⍝   1,
+              16=⍴⍵:'='∇ ⍵,0 0         ⍝   2
+              chars[2∘⊥¨6 part ⍵],⍺    ⍝   or 3 octets of input
+          }
+          cats←⊃∘(,/)∘((⊂'')∘,)        ⍝ catenate zero or more strings
+          cats''∘four¨24 part 8 bits ⍵
+      }
+
     ∇ r←Base64Encode w
     ⍝ Base64 Encode
       :Access public shared
-      r←{⎕IO←0
-          raw←⊃,/11∘⎕DR¨⍵
-          cols←6
-          rows←⌈(⊃⍴raw)÷cols
-          mat←rows cols⍴(rows×cols)↑raw
-          'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'[⎕IO+2⊥⍉mat],(4|-rows)⍴'='}w
+      r←base64'UTF-8'⎕UCS w
     ∇
+
     ∇ r←Base64Decode w
     ⍝ Base64 Decode
       :Access public shared
-      r←{
-          ⎕IO←0
-          {
-              80=⎕DR' ':⎕UCS ⍵  ⍝ Unicode
-              82 ⎕DR ⍵          ⍝ Classic
-          }2⊥{⍉((⌊(⍴⍵)÷8),8)⍴⍵}(-6×'='+.=⍵)↓,⍉(6⍴2)⊤'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='{⍺⍳⍵∩⍺}⍵
-      }w
+      r←'UTF-8'⎕UCS base64 w
     ∇
+
     ∇ r←DecodeHeader buf;len;d
       ⍝ Decode HTTP Header
       r←0(0 2⍴⊂'')
@@ -743,6 +761,7 @@
           r←(len+4)d
       :EndIf
     ∇
+
     ∇ r←{name}UrlEncode data;⎕IO;z;ok;nul;m;noname;format
       ⍝ data is one of:
       ⍝      - a simple character vector
@@ -777,6 +796,7 @@
      
       r←noname↓¯1↓∊data,¨(⍴data)⍴'=&'
     ∇
+
     ∇ r←UrlDecode r;rgx;rgxu;i;j;z;t;m;⎕IO;lens;fill
       :Access public shared
       ⎕IO←0
@@ -795,6 +815,7 @@
           r←m/r
       :EndIf
     ∇
+
     :Section Documentation Utilities
     ⍝ these are generic utilities used for documentation
     ∇ docn←ExtractDocumentationSections what;⎕IO;box;CR;sections;eis;matches
