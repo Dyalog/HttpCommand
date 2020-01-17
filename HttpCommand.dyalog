@@ -7,6 +7,11 @@
 ⍝
 ⍝ N.B. requires Conga - the TCP/IP utility library (see Notes below)
 ⍝
+⍝ Syntax Cheat Sheet::
+⍝   result← Get URL [Params [Headers [Cert [SSLFlags [Priority]]]]]
+⍝   result← Do Command URL [Params [Headers [Cert [SSLFlags [Priority]]]]]
+⍝   result← GetJSON Command URL [Params [Headers [Cert [SSLFlags [Priority]]]]]
+⍝
 ⍝ Overview::
 ⍝ HttpCommand can be used in two ways:
 ⍝   1) Create an instance of HttpCommand using ⎕NEW
@@ -74,7 +79,10 @@
 ⍝   WaitTime        - time (in seconds) to wait for the response (default 30)
 ⍝   CongaMode       - 'http' for Conga 3.0 and later, 'text' for Conga before 3.0 or if forcing text mode when using Conga 3.0 and later
 ⍝   SuppressHeaders - Boolean which, if set to 1, will suppress all HttpCommand-generated headers
-⍝                     you may still supply your own headers in the Headers field
+⍝                     you may still supply your own headers in the Headers field                 
+⍝   RequestOnly     - Boolean which, if set to 1, will cause HttpCommand to return the formatted request
+⍝                     without actually sending it to the server.  This is used in case you need to 
+⍝                     verify that your request is properly formatted. 
 ⍝
 ⍝
 ⍝ The methods that execute HTTP requests - Do, Get, and Run - return a namespace containing the variables:
@@ -99,13 +107,13 @@
 ⍝
 ⍝ Public Shared Methods::
 ⍝
-⍝   result←Get URL [Params [Headers [Cert [SSLFlags [Priority]]]]]
+⍝   result←{RequestOnly} Get URL [Params [Headers [Cert [SSLFlags [Priority]]]]]
 ⍝   - Perform an GET operation on URL
 ⍝
-⍝   result←Do  Command URL [Params [Headers [Cert [SSLFlags [Priority]]]]]
+⍝   result←{RequestOnly} Do  Command URL [Params [Headers [Cert [SSLFlags [Priority]]]]]
 ⍝   - Perform the HTTP operation specified by Command on URL
 ⍝
-⍝   result←GetJSON Command URL [Params [Headers [Cert [SSLFlags [Priority]]]]]
+⍝   result←{RequestOnly} GetJSON Command URL [Params [Headers [Cert [SSLFlags [Priority]]]]]
 ⍝   - Perform the HTTP operation specified by Command on URL
 ⍝   - Params is converted to JSON and the response data is expected to be in
 ⍝     JSON format and then converted to APL data
@@ -113,6 +121,9 @@
 ⍝    Where the arguments are as described in the constructor parameters section.
 ⍝     Get and Do are shortcut methods to make it easy to execute an HTTP request on the fly.
 ⍝     GetJSON is a shortcut method to access JSON-based services
+⍝
+⍝    The optional left argument, RequestOnly, is used to indicate that HttpCommand should
+⍝    return the formatted HTTP request string without actually sending the request to the host. 
 ⍝
 ⍝   r←Base64Decode vec     - decode a Base64 encoded string
 ⍝
@@ -187,12 +198,13 @@
     :field public Priority←'NORMAL:!CTYPE-OPENPGP' ⍝ default GnuTLS priority string
     :field public PublicCertFile←''                ⍝ if not using an X509 instance, this is the client public certificate file
     :field public PrivateKEyFile←''                ⍝ if not using an X509 instance, this is the client private key file
+    :field public RequestOnly←0                    ⍝ set to 1 if you only want to return the generated HTTP request, but not actually send it
 
-    :field public readonly shared ValidUriChars←'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&''()*+,;='
+    :field public readonly shared ValidQueryStringChars←'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~*+~%'
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.1.24' '2020-01-10'
+      r←'HttpCommand' '2.2.01' '2020-01-17'
     ∇
 
     ∇ make
@@ -225,28 +237,36 @@
       :EndIf
     ∇
 
-    ∇ r←Get args
+    ∇ r←{requestOnly}Get args;hc
     ⍝ Description::
     ⍝ Shortcut method to perform an HTTP GET request
     ⍝ args - [URL Params Headers Cert SSLFlags Priority]
       :Access public shared
-      r←(⎕NEW ⎕THIS((⊂'GET'),eis args)).Run
+      :If 0=⎕NC'requestOnly' ⋄ requestOnly←0 ⋄ :EndIf
+      hc←⎕NEW ⎕THIS((⊂'GET'),eis args)
+      hc.RequestOnly←requestOnly
+      r←hc.Run
     ∇
 
-    ∇ r←Do args
+    ∇ r←{requestOnly}Do args;hc
     ⍝ Description::
     ⍝ Shortcut method to perform an HTTP request
     ⍝ args - [Command URL Params Headers Cert SSLFlags Priority]
       :Access public shared
-      r←(⎕NEW ⎕THIS(eis args)).Run
+      :If 0=⎕NC'requestOnly' ⋄ requestOnly←0 ⋄ :EndIf
+      hc←⎕NEW ⎕THIS(eis args)
+      hc.RequestOnly←requestOnly
+      r←hc.Run
     ∇
 
-    ∇ r←GetJSON args;cmd
+    ∇ r←{requestOnly}GetJSON args;cmd
     ⍝ Description::
     ⍝ Shortcut method to perform an HTTP request with JSON data as the request and response payloads
     ⍝ args - [Command URL Params Headers Cert SSLFlags Priority]
       :Access public shared
+      :If 0=⎕NC'requestOnly' ⋄ requestOnly←0 ⋄ :EndIf
       cmd←⎕NEW ⎕THIS(eis args)
+      cmd.RequestOnly←requestOnly
       cmd.('content-type'SetHeader'application/json')
       :If 0∊⍴cmd.Command ⋄ cmd.Command←'POST' ⋄ :EndIf
       :Trap 0
@@ -257,6 +277,8 @@
           →Done
       :EndTrap
       r←cmd.Run
+      →requestOnly⍴0
+     
       :If r.rc=0
           :If r.HttpStatus=200
               :If ∨/'application/json'⍷lc r.Headers Lookup'content-type'
@@ -372,7 +394,9 @@
      
       →∆END↓⍨0∊⍴r.msg←(0∊⍴url)/'No URL specified' ⍝ exit early if no URL
      
-      →∆END↓⍨0∊⍴(Init r).msg
+      :If ~RequestOnly
+          →∆END↓⍨0∊⍴(Init r).msg
+      :EndIf
      
       url←,url
       cmd←uc,cmd
@@ -380,8 +404,16 @@
       (url urlparms)←'?'split url
      
       :If 'GET'≡cmd   ⍝ if HTTP command is GET, all parameters are passed via the URL, so combine any passed via Params
-          urlparms,←urlparms{0∊⍴⍵:⍵ ⋄ '&?'[1+0∊⍴⍺],⍵}UrlEncode parms
-          parms←''
+          :If ~0∊⍴parms   ⍝ if the user supplied parameters via Params...
+              :If {2≠⎕NC'⍵':0 ⋄ 1≥|≡⍵}parms ⍝ simple vector or scalar and not a reference
+                  parms←⍕parms ⍝ deal with possible numeric
+              :AndIf ~∧/parms∊ValidQueryStringChars ⍝ if the query is all valid characters, assume it's already URLEncoded
+              :Else
+                  parms←UrlEncode parms
+              :EndIf
+              urlparms,←urlparms{'&?'[1+0∊⍴⍺],⍵}parms
+              parms←''
+          :EndIf
       :EndIf
      
       redirected←0
@@ -400,7 +432,7 @@
       :EndIf
      
       secureParams←''
-      :If secure
+      :If secure>RequestOnly
           LDRC.X509Cert.LDRC←LDRC
           :If 0∊⍴certs
               :If ~0∊⍴PublicCertFile
@@ -494,6 +526,10 @@
       req,←(~SuppressHeaders)/auth
      
       donetime←⌊⎕AI[3]+1000×WaitTime ⍝ time after which we'll time out
+     
+      :If RequestOnly
+          →0⊣r←req,NL,parms
+      :EndIf
      
       mode←'text'
       :If 3≤⊃LDRC.Version ⍝ Conga 3 or later?
@@ -781,13 +817,18 @@
       :If 9.1=⎕NC⊂'data'
           data←⊃⍪/{0∊⍴t←⍵.⎕NL ¯2:'' ⋄ ⍵{⍵ format ⍺⍎⍵}¨t}data
       :Else
-          :If 1≥|≡data
-              :If noname←0=⎕NC'name' ⋄ name←'' ⋄ :EndIf
-              data←name data
-          :EndIf
+          :Select |≡data
+          :CaseList 0 1
+              :If 1≥|≡data
+                  :If noname←0=⎕NC'name' ⋄ name←'' ⋄ :EndIf
+                  data←name data
+              :EndIf
+          :Case 3 ⍝ nested name/value pairs (('abc' '123')('def' '789'))
+              data←⊃,/data
+          :EndSelect
       :EndIf
       nul←⎕UCS 0
-      ok←nul,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~'
+      ok←nul,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~*'
      
       z←⎕UCS'UTF-8'⎕UCS∊nul,¨,∘⍕¨data
       m←~z∊ok
@@ -843,7 +884,7 @@
     ∇ r←Describe
     ⍝ return description only
       :Access public shared
-      r←ExtractDocumentationSections'Description::'
+      r←ExtractDocumentationSections'Description::' 'Syntax Cheat Sheet::'
     ∇
     ∇ r←ShowDoc what
     ⍝ return documentation sections that contain what in their title
