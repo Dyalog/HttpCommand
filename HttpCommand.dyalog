@@ -79,10 +79,10 @@
 ⍝   WaitTime        - time (in seconds) to wait for the response (default 30)
 ⍝   CongaMode       - 'http' for Conga 3.0 and later, 'text' for Conga before 3.0 or if forcing text mode when using Conga 3.0 and later
 ⍝   SuppressHeaders - Boolean which, if set to 1, will suppress all HttpCommand-generated headers
-⍝                     you may still supply your own headers in the Headers field                 
+⍝                     you may still supply your own headers in the Headers field
 ⍝   RequestOnly     - Boolean which, if set to 1, will cause HttpCommand to return the formatted request
-⍝                     without actually sending it to the server.  This is used in case you need to 
-⍝                     verify that your request is properly formatted. 
+⍝                     without actually sending it to the server.  This is used in case you need to
+⍝                     verify that your request is properly formatted.
 ⍝
 ⍝
 ⍝ The methods that execute HTTP requests - Do, Get, and Run - return a namespace containing the variables:
@@ -123,27 +123,45 @@
 ⍝     GetJSON is a shortcut method to access JSON-based services
 ⍝
 ⍝    The optional left argument, RequestOnly, is used to indicate that HttpCommand should
-⍝    return the formatted HTTP request string without actually sending the request to the host. 
+⍝    return the formatted HTTP request string without actually sending the request to the host.
+⍝   
+⍝   (rc msg)←Fix URL [target]
+⍝   - Retrieve and fix (in target) an APL script file
+⍝   rc is 0 if successful
+⍝   Example:
+⍝       Fix 'https://raw.githubusercontent.com/Dyalog/MiServer/master/Utils/HtmlUtils.dyalog' #.Utils
 ⍝
-⍝   r←Base64Decode vec     - decode a Base64 encoded string
+⍝   r←{cpo} Base64Decode vec     - decode a Base64 encoded string
+⍝   r←{cpo} Base64Encode vec     - Base64 encode a character vector, or an integer (⎕DR=83) vector
+⍝     cpo - optional left argument (for code points only), is useful for encoding raw data like images.
 ⍝
-⍝   r←Base64Encode vec     - Base64 encode a character vector
+⍝     Both Base64Decode and Base64Encode assume that the data is UTF-8. (setting cpo defeats this)
+⍝     This is useful for exchanging APL code and foreign characters.
 ⍝
-⍝   r←UrlDecode vec        - decodes a URL-encoded character vector
+⍝     Examples:
 ⍝
-⍝   r←{name} UrlEncode arg - URL-encodes string(s)
-⍝     name is an optional name
+⍝       Base64Encode '⍺⍴⌊'             ⍝ use default UTF-8
+⍝       1 Base64Encode ⎕NREAD ¯1 83 ¯1 ⍝ where a .png file is tied to ¯1
+⍝
+⍝   r←{cpo} UrlDecode vec        - decodes a URL-encoded character vector
+⍝
+⍝   r←{cpo} UrlEncode arg - URL-encodes string(s)
 ⍝     arg can be one of
-⍝       - a character vector
+⍝       - a simple character vector (no name is supplied)
 ⍝       - a vector of character vectors of name/value pairs
 ⍝       - a 2-column matrix of name/value pairs
 ⍝       - a namespace containing named variables
+⍝     cpo - optional left argument (for code points only), is useful for encoding raw data like images.
+⍝
+⍝     Both UrlDecode and UrlEncode assume that the data is UTF-8 (setting cpo defeats this)
+⍝     This is useful for exchanging APL code and foreign characters.
+⍝
 ⍝     Examples:
 ⍝
 ⍝       UrlEncode 'Hello World!'
 ⍝ Hello%20World%21
 ⍝
-⍝      'phrase' UrlEncode 'Hello World!'
+⍝       UrlEncode 'phrase' 'Hello World!'
 ⍝ phrase=Hello%20World%21
 ⍝
 ⍝       UrlEncode 'company' 'dyalog' 'language' 'APL'
@@ -204,7 +222,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.2.01' '2020-01-17'
+      r←'HttpCommand' '2.3.01' '2020-01-21'
     ∇
 
     ∇ make
@@ -300,6 +318,25 @@
       →0
      Done: ⍝ reset ⎕DF if messages have changed
       r.⎕DF 1⌽'][rc: ',(⍕r.rc),' | msg: "',r.msg,'"',(r.rc≥0)/' | HTTP Status: ',(⍕r.HttpStatus),' "',r.HttpMessage,'" | ⍴Data: ',⍕⍴r.Data
+    ∇
+
+    ∇ r←Fix args;z;url;target
+    ⍝ retrieve and fix APL code loads the latest version from GitHub
+      :Access public shared
+      (url target)←2↑(,⊆args),##
+      z←Get url
+      :If z.rc≠0
+          r←z.(rc msg)
+      :ElseIf z.HttpStatus≠200
+          r←¯1(⍕z)
+      :Else
+          :Trap 0
+              target.⎕FIX{⍵⊆⍨~⍵∊⎕UCS 13 10 65279}z.Data
+              r←0 ''
+          :Else
+              r←¯1('Could not ⎕FIX file: ',2↓∊': '∘,¨⎕DMX.(EM Message))
+          :EndTrap
+      :EndIf
     ∇
 
     ∇ r←Init r;ref;root;nc;class;dyalog;n;ns;congaCopied
@@ -774,16 +811,24 @@
           cats''∘four¨24 part 8 bits ⍵
       }
 
-    ∇ r←Base64Encode w
+    ∇ r←{cpo}Base64Encode w
     ⍝ Base64 Encode
+    ⍝ Optional cpo (code points only) suppresses UTF-8 translation
+    ⍝ if w is numeric (single byte integer), skip any conversion
       :Access public shared
-      r←base64'UTF-8'⎕UCS w
+      :If 83=⎕DR w ⋄ r←base64 w
+      :ElseIf 0=⎕NC'cpo' ⋄ r←base64'UTF-8'⎕UCS w
+      :Else ⋄ r←base64 ⎕UCS w
+      :EndIf
     ∇
 
-    ∇ r←Base64Decode w
+    ∇ r←{cpo}Base64Decode w
     ⍝ Base64 Decode
+    ⍝ Optional cpo (code points only) suppresses UTF-8 translation
       :Access public shared
-      r←'UTF-8'⎕UCS base64 w
+      :If 0=⎕NC'cpo' ⋄ r←'UTF-8'⎕UCS base64 w
+      :Else ⋄ r←⎕UCS base64 w
+      :EndIf
     ∇
 
     ∇ r←DecodeHeader buf;len;d
@@ -798,9 +843,9 @@
       :EndIf
     ∇
 
-    ∇ r←{name}UrlEncode data;⎕IO;z;ok;nul;m;noname;format
+    ∇ r←{cpo}UrlEncode data;⎕IO;z;ok;m;noname;format;name;hex
       ⍝ data is one of:
-      ⍝      - a simple character vector
+      ⍝      - a simple character vector (no name supplied)
       ⍝      - an even number of name/data character vectors
       ⍝       'name' 'fred' 'type' 'student' > 'name=fred&type=student'
       ⍝      - a namespace containing variable(s) to be encoded
@@ -820,21 +865,20 @@
           :Select |≡data
           :CaseList 0 1
               :If 1≥|≡data
-                  :If noname←0=⎕NC'name' ⋄ name←'' ⋄ :EndIf
-                  data←name data
+                  noname←1
+                  data←''(,data)
               :EndIf
           :Case 3 ⍝ nested name/value pairs (('abc' '123')('def' '789'))
               data←⊃,/data
           :EndSelect
       :EndIf
-      nul←⎕UCS 0
-      ok←nul,'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~*'
-     
-      z←⎕UCS'UTF-8'⎕UCS∊nul,¨,∘⍕¨data
-      m←~z∊ok
-      (m/z)←↓'%',(⎕D,⎕A)[⍉16 16⊤⎕UCS m/z]
-      data←(⍴data)⍴1↓¨{(⍵=nul)⊂⍵}∊z
-     
+      ok←'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~*'
+      z←,∘⍕¨data
+      :If 0=⎕NC'cpo'
+          z←{⎕UCS'UTF-8'⎕UCS ⍵}¨z
+      :EndIf
+      hex←'%',¨,∘.,⍨⎕D,6↑⎕A
+      data←{r←⍵ ⋄ m←~⍵∊ok ⋄ (m/r)←hex[⎕UCS m/⍵] ⋄ r}¨data
       r←noname↓¯1↓∊data,¨(⍴data)⍴'=&'
     ∇
 
