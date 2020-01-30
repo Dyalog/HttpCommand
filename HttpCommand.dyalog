@@ -411,7 +411,7 @@
       :EndSelect
     ∇
 
-    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;donetime;formContentType;ind;len;mode;obj;evt;dat;clt;z;contentType;redirected;origHost;origPort;noHost;origSecure;msg;timedOut;certfile;keyfile;cert;secureParams;simpleChar
+    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;donetime;formContentType;ind;len;mode;obj;evt;dat;clt;z;contentType;redirected;origHost;origPort;noHost;origSecure;msg;timedOut;certfile;keyfile;cert;secureParams;simpleChar;defaultPort
 ⍝ issue an HTTP command
 ⍝ certs - optional [X509Cert [SSLValidation [Priority]]]
 ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/page[?query_string]]
@@ -499,7 +499,7 @@
       :EndIf
      
       :If ~redirected∧noHost  ⍝ if not redirected and no host was specified in the location header
-          :If (≢host)<ind←host⍳':' ⍝ then if there's no port specified in the host
+          :If defaultPort←(≢host)<ind←host⍳':' ⍝ then if there's no port specified in the host
               port←(1+secure)⊃80 443 ⍝ use the default HTTP/HTTPS port
           :Else
               :If 0=port←⊃toNum ind↓host
@@ -558,7 +558,7 @@
           hdrs←'Accept-Encoding'(hdrs addHeader)'gzip, deflate'
       :EndIf
      
-      req←cmd,' ',(page,urlparms),' HTTP/1.1',NL,(~SuppressHeaders)/'Host: ',host,NL
+      req←cmd,' ',(page,urlparms),' HTTP/1.1',NL,(~SuppressHeaders)/'Host: ',host,((~defaultPort)/':',⍕port),NL
       req,←fmtHeaders hdrs
       req,←(~SuppressHeaders)/auth
      
