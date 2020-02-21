@@ -124,7 +124,7 @@
 ⍝
 ⍝    The optional left argument, RequestOnly, is used to indicate that HttpCommand should
 ⍝    return the formatted HTTP request string without actually sending the request to the host.
-⍝   
+⍝
 ⍝   (rc msg)←Fix URL [target]
 ⍝   - Retrieve and fix (in target) an APL script file
 ⍝   rc is 0 if successful
@@ -674,11 +674,9 @@
                           timedOut←done←⎕AI[3]>donetime
      
                       :Case 'Error'
-                          r.msg←'Conga error processing your request: ',,⍕rc
-                          done←err←1
+                          →∆END⊣r.msg←'Conga error processing your request: ',,⍕rc
                       :Else  ⍝ This shouldn't happen
-                          ⎕←r.msg←'*** Unhandled Conga event type - ',evt
-                          ∘∘∘  ⍝ !! Intentional !!
+                          →∆END⊣r.msg←'*** Unhandled Conga event type - ',evt
                       :EndSelect
      
                   :ElseIf 100=err ⍝ timeout?
