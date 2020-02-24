@@ -215,14 +215,14 @@
     :field public SSLFlags←32                      ⍝ SSL/TLS flags - 32 = accept cert without checking it
     :field public Priority←'NORMAL:!CTYPE-OPENPGP' ⍝ default GnuTLS priority string
     :field public PublicCertFile←''                ⍝ if not using an X509 instance, this is the client public certificate file
-    :field public PrivateKEyFile←''                ⍝ if not using an X509 instance, this is the client private key file
+    :field public PrivateKeyFile←''                ⍝ if not using an X509 instance, this is the client private key file
     :field public RequestOnly←0                    ⍝ set to 1 if you only want to return the generated HTTP request, but not actually send it
 
     :field public readonly shared ValidQueryStringChars←'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~*+~%'
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.3.01' '2020-01-21'
+      r←'HttpCommand' '2.3.02' '2020-02-21'
     ∇
 
     ∇ make
@@ -244,6 +244,12 @@
       Result←⎕NS''
       Result.(Command URL rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections)←Command URL ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')
       :If 0∊⍴Headers ⋄ Headers←0 2⍴⊂'' ⋄ :EndIf
+    ∇
+
+    ∇ r←Config
+    ⍝ returns current configuration
+      :Access public
+      r←↑{⍵(⍎⍵)}¨⎕THIS⍎'⎕NL ¯2.2'
     ∇
 
     ∇ r←Run
