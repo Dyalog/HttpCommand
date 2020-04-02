@@ -143,18 +143,17 @@
 ⍝       Base64Encode '⍺⍴⌊'             ⍝ use default UTF-8
 ⍝       1 Base64Encode ⎕NREAD ¯1 83 ¯1 ⍝ where a .png file is tied to ¯1
 ⍝
-⍝   r←{cpo} UrlDecode vec        - decodes a URL-encoded character vector
+⍝   r←UrlDecode vec        - decodes a URL-encoded character vector
 ⍝
-⍝   r←{cpo} UrlEncode arg - URL-encodes string(s)
+⍝   r←{name} UrlEncode arg - URL-encodes string(s)
 ⍝     arg can be one of
-⍝       - a simple character vector (no name is supplied)
+⍝       - a simple character vector (name may be supplied as left argument)
 ⍝       - a vector of character vectors of name/value pairs
 ⍝       - a 2-column matrix of name/value pairs
 ⍝       - a namespace containing named variables
-⍝     cpo - optional left argument (for code points only), is useful for encoding raw data like images.
+⍝     name - optional left argument name
 ⍝
-⍝     Both UrlDecode and UrlEncode assume that the data is UTF-8 (setting cpo defeats this)
-⍝     This is useful for exchanging APL code and foreign characters.
+⍝     Both UrlDecode and UrlEncode assume that the data is UTF-8
 ⍝
 ⍝     Examples:
 ⍝
@@ -847,13 +846,13 @@
       :EndIf
     ∇
 
-    ∇ r←{cpo}UrlEncode data;⎕IO;z;ok;m;noname;format;name;hex
+    ∇ r←{name}UrlEncode data;⎕IO;format;noname;xlate;hex
       ⍝ data is one of:
       ⍝      - a simple character vector (no name supplied)
       ⍝      - an even number of name/data character vectors
       ⍝       'name' 'fred' 'type' 'student' > 'name=fred&type=student'
       ⍝      - a namespace containing variable(s) to be encoded
-      ⍝ name is the optional name
+      ⍝ cpo is an option switch to send Unicode code points
       ⍝ r    is a character vector of the URLEncoded data
      
       :Access Public Shared
@@ -862,6 +861,7 @@
           1=≡⍵:⍺(,⍕⍵)
           ↑⍺∘{⍺(,⍕⍵)}¨⍵
       }
+      :If 0=⎕NC'name' ⋄ name←'' ⋄ :EndIf
       noname←0
       :If 9.1=⎕NC⊂'data'
           data←⊃⍪/{0∊⍴t←⍵.⎕NL ¯2:'' ⋄ ⍵{⍵ format ⍺⍎⍵}¨t}data
@@ -869,20 +869,20 @@
           :Select |≡data
           :CaseList 0 1
               :If 1≥|≡data
-                  noname←1
-                  data←''(,data)
+                  noname←0∊⍴name
+                  data←name(,data)
               :EndIf
           :Case 3 ⍝ nested name/value pairs (('abc' '123')('def' '789'))
               data←⊃,/data
           :EndSelect
       :EndIf
-      ok←'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~*'
-      z←,∘⍕¨data
-      :If 0=⎕NC'cpo'
-          z←{⎕UCS'UTF-8'⎕UCS ⍵}¨z
-      :EndIf
       hex←'%',¨,∘.,⍨⎕D,6↑⎕A
-      data←{r←⍵ ⋄ m←~⍵∊ok ⋄ (m/r)←hex[⎕UCS m/⍵] ⋄ r}¨data
+      xlate←{
+          i←⍸~⍵∊'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~*'
+          0∊⍴i:⍵
+          ∊({⊂∊hex['UTF-8'⎕UCS ⍵]}¨⍵[i])@i⊢⍵
+      }    
+      data←xlate¨data
       r←noname↓¯1↓∊data,¨(⍴data)⍴'=&'
     ∇
 
