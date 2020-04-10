@@ -221,7 +221,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.3.03' '2020-04-10'
+      r←'HttpCommand' '2.3.04' '2020-04-10'
     ∇
 
     ∇ make
@@ -242,7 +242,6 @@
     ∇ makeCommon
       Result←⎕NS''
       Result.(Command URL rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections)←Command URL ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')
-      :If 0∊⍴Headers ⋄ Headers←0 2⍴⊂'' ⋄ :EndIf
     ∇
 
     ∇ r←Config
@@ -282,7 +281,7 @@
       r←hc.Run
     ∇
 
-    ∇ r←{requestOnly}GetJSON args;cmd
+    ∇ r←{requestOnly}GetJSON args;cmd;t
     ⍝ Description::
     ⍝ Shortcut method to perform an HTTP request with JSON data as the request and response payloads
     ⍝ args - [Command URL Params Headers Cert SSLFlags Priority]
@@ -291,8 +290,8 @@
       cmd←⎕NEW ⎕THIS(eis args)
       cmd.RequestOnly←requestOnly
       cmd.('content-type'SetHeader'application/json')
-      :If 0∊⍴cmd.Command ⋄ cmd.Command←'POST' ⋄ :EndIf
-      :If ~0∊⍴cmd.Params
+      :If 0∊⍴cmd.Command ⋄ cmd.Command←(1+t←0∊⍴cmd.Params)⊃'POST' 'GET' ⋄ :EndIf
+      :If ~t
           :Trap 0
               cmd.Params←1 ⎕JSON cmd.Params
           :Else
@@ -432,6 +431,7 @@
      
       args←eis args
       (url parms hdrs)←args,(⍴args)↓''(⎕NS'')''
+      hdrs←{0∊t←⍴⍵:0 2⍴⊂'' ⋄ 2=≢t:⍵ ⋄ ((0.5×t),2)⍴⍵}hdrs
      
       r←Result
       r.(Command URL rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections)←cmd url ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')
