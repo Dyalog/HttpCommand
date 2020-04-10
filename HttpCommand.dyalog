@@ -221,7 +221,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.3.02' '2020-02-21'
+      r←'HttpCommand' '2.3.03' '2020-04-10'
     ∇
 
     ∇ make
@@ -292,13 +292,15 @@
       cmd.RequestOnly←requestOnly
       cmd.('content-type'SetHeader'application/json')
       :If 0∊⍴cmd.Command ⋄ cmd.Command←'POST' ⋄ :EndIf
-      :Trap 0
-          cmd.Params←1 ⎕JSON cmd.Params
-      :Else
-          r←cmd.Result
-          r.(rc msg)←¯1 'Could not convert parameters to JSON format'
-          →Done
-      :EndTrap
+      :If ~0∊⍴cmd.Params
+          :Trap 0
+              cmd.Params←1 ⎕JSON cmd.Params
+          :Else
+              r←cmd.Result
+              r.(rc msg)←¯1 'Could not convert parameters to JSON format'
+              →Done
+          :EndTrap
+      :EndIf
       r←cmd.Run
       →requestOnly⍴0
      
@@ -881,7 +883,7 @@
           i←⍸~⍵∊'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~*'
           0∊⍴i:⍵
           ∊({⊂∊hex['UTF-8'⎕UCS ⍵]}¨⍵[i])@i⊢⍵
-      }    
+      }
       data←xlate¨data
       r←noname↓¯1↓∊data,¨(⍴data)⍴'=&'
     ∇
