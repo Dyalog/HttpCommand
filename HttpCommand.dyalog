@@ -221,7 +221,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.3.04' '2020-04-10'
+      r←'HttpCommand' '2.3.05' '2020-04-10'
     ∇
 
     ∇ make
@@ -326,19 +326,26 @@
       r.⎕DF 1⌽'][rc: ',(⍕r.rc),' | msg: "',r.msg,'"',(r.rc≥0)/' | HTTP Status: ',(⍕r.HttpStatus),' "',r.HttpMessage,'" | ⍴Data: ',⍕⍴r.Data
     ∇
 
-    ∇ r←Fix args;z;url;target
+    ∇ r←{ro}Fix args;z;url;target
     ⍝ retrieve and fix APL code loads the latest version from GitHub
       :Access public shared
       (url target)←2↑(,⊆args),##
-      z←Get url
+      :If 0=⎕NC'ro' ⋄ ro←0 ⋄ :EndIf
+      r←z←ro Get{ ⍝ convert url if necessary
+          ~∨/'github'⍷⍵:⍵ ⍝ if not github just
+          ∨/'raw.githubusercontent.com'⍷⍵:⍵ ⍝ already refers to
+          t←'/'(≠⊆⊢)⍵
+          i←⍸<\∨/¨'github'∘⍷¨t
+          'https://raw.githubusercontent.com',∊'/',¨(2↑i↓t),(⊂'master'),(2+i)↓t
+      }url
+      →ro⍴0
       :If z.rc≠0
           r←z.(rc msg)
       :ElseIf z.HttpStatus≠200
           r←¯1(⍕z)
       :Else
           :Trap 0
-              target.⎕FIX{⍵⊆⍨~⍵∊⎕UCS 13 10 65279}z.Data
-              r←0 ''
+              r←0(⍕target{0::⍺.⎕FX ⍵ ⋄ ⍺.⎕FIX ⍵}{⍵⊆⍨~⍵∊⎕UCS 13 10 65279}z.Data)
           :Else
               r←¯1('Could not ⎕FIX file: ',2↓∊': '∘,¨⎕DMX.(EM Message))
           :EndTrap
