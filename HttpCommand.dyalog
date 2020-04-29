@@ -281,7 +281,7 @@
       r←hc.Run
     ∇
 
-    ∇ r←{requestOnly}GetJSON args;cmd;t
+    ∇ r←{requestOnly}GetJSON args;cmd
     ⍝ Description::
     ⍝ Shortcut method to perform an HTTP request with JSON data as the request and response payloads
     ⍝ args - [Command URL Params Headers Cert SSLFlags Priority]
@@ -290,8 +290,8 @@
       cmd←⎕NEW ⎕THIS(eis args)
       cmd.RequestOnly←requestOnly
       cmd.('content-type'SetHeader'application/json')
-      :If 0∊⍴cmd.Command ⋄ cmd.Command←(1+t←0∊⍴cmd.Params)⊃'POST' 'GET' ⋄ :EndIf
-      :If ~t
+      :If 0∊⍴cmd.Command ⋄ cmd.Command←(1+0∊⍴cmd.Params)⊃'POST' 'GET' ⋄ :EndIf
+      :If ~0∊⍴cmd.Params
           :Trap 0
               cmd.Params←1 ⎕JSON cmd.Params
           :Else
