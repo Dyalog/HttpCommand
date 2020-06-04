@@ -221,7 +221,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.3.05' '2020-04-10'
+      r←'HttpCommand' '2.3.06' '2020-06-04'
     ∇
 
     ∇ make
@@ -438,7 +438,7 @@
      
       args←eis args
       (url parms hdrs)←args,(⍴args)↓''(⎕NS'')''
-      hdrs←{0∊t←⍴⍵:0 2⍴⊂'' ⋄ 2=≢t:⍵ ⋄ ((0.5×t),2)⍴⍵}hdrs
+      hdrs←{0∊t←⍴⍵:0 2⍴⊂'' ⋄ 3=|≡⍵:↑eis∘,¨⍵ ⋄ 2=≢t:⍵ ⋄ ((0.5×t),2)⍴⍵}hdrs
      
       r←Result
       r.(Command URL rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections)←cmd url ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')
