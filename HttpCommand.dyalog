@@ -217,11 +217,11 @@
     :field public PrivateKeyFile←''                ⍝ if not using an X509 instance, this is the client private key file
     :field public RequestOnly←0                    ⍝ set to 1 if you only want to return the generated HTTP request, but not actually send it
 
-    :field public readonly shared ValidQueryStringChars←'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~*+~%'
+    :field public readonly shared ValidFormUrlEncodedChars←'&=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~*+~%'
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.3.06' '2020-06-04'
+      r←'HttpCommand' '2.4' '2020-07-20'
     ∇
 
     ∇ make
@@ -454,19 +454,6 @@
      
       (url urlparms)←'?'split url
      
-      :If 'GET'≡cmd   ⍝ if HTTP command is GET, all parameters are passed via the URL, so combine any passed via Params
-          :If ~0∊⍴parms   ⍝ if the user supplied parameters via Params...
-              :If {2≠⎕NC'⍵':0 ⋄ 1≥|≡⍵}parms ⍝ simple vector or scalar and not a reference
-                  parms←⍕parms ⍝ deal with possible numeric
-              :AndIf ~∧/parms∊ValidQueryStringChars ⍝ if the query is all valid characters, assume it's already URLEncoded
-              :Else
-                  parms←UrlEncode parms
-              :EndIf
-              urlparms,←urlparms{'&?'[1+0∊⍴⍺],⍵}parms
-              parms←''
-          :EndIf
-      :EndIf
-     
       redirected←0
      
      GET:
@@ -537,8 +524,16 @@
           hdrs←'Accept'(hdrs addHeader)'*/*'
       :EndIf
      
-      :If ~0∊⍴parms         ⍝ if we have any parameters
-          :If cmd≢'GET'     ⍝ and not a GET command
+      :If ~0∊⍴parms                  ⍝ if we have any parameters
+          :If (⊆cmd)∊'GET' 'HEAD'    ⍝ if the command is GET or HEAD
+              :If {2≠⎕NC'⍵':0 ⋄ 1≥|≡⍵}parms ⍝ simple vector or scalar and not a reference
+                  parms←⍕parms       ⍝ deal with possible numeric
+              :Else
+                  parms←UrlEncode parms
+              :EndIf
+              urlparms,←urlparms{'&?'[1+0∊⍴⍺],⍵}parms
+              parms←''
+          :Else    ⍝ not a GET or HEAD command
               ⍝↓↓↓ specify the default content type (if not already specified)
               :If ~SuppressHeaders
                   hdrs←'Content-Type'(hdrs addHeader)formContentType←'application/x-www-form-urlencoded'
@@ -548,7 +543,7 @@
               :Select contentType
               :Case formContentType
                   :If simpleChar ⍝ if simple character, parms is assumed to already be
-                      :If ~∧/parms∊ValidUriChars
+                      :If ~∧/parms∊ValidFormUrlEncodedChars
                           →∆END⊣r.msg←'Params is not a valid URLEncoded string'
                       :EndIf
                   :Else
@@ -564,6 +559,7 @@
               :EndIf
           :EndIf
       :EndIf
+     
      
 ⍝↓↓↓ If using HEAD method, don't indicate we accept compressed responses
 ⍝    this way content-length in the response reflects the actual size of the response
@@ -723,7 +719,7 @@
                       :EndSelect
                   :EndTrap
      
-                  :If redirected←r.HttpStatus∊301 302 303 305 307 ⍝ redirected? (HTTP status codes 301, 302, 303, 305, 307)
+                  :If redirected←r.HttpStatus∊301 302 303 307 308 ⍝ redirected? (HTTP status codes 301, 302, 303, 307, 308)
                       url←header Lookup'location' ⍝ use the "location" header field for the URL
                       :If ~0∊⍴url
                           r.Redirections,←⊂url
