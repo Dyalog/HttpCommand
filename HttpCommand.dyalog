@@ -221,7 +221,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.4' '2020-07-20'
+      r←'HttpCommand' '2.5' '2020-09-04'
     ∇
 
     ∇ make
@@ -452,11 +452,10 @@
       url←,url
       cmd←uc,cmd
      
-      (url urlparms)←'?'split url
-     
       redirected←0
      
      GET:
+      (url urlparms)←'?'split url
       p←(∨/b)×1+(b←'//'⍷url)⍳1
       secure←(0<⍴,certs)∨(lc(p-2)↑url)≡'https:'
       url←p↓url                                  ⍝ Remove HTTP[s]:// if present
