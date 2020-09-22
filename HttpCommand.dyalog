@@ -221,7 +221,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.5' '2020-09-04'
+      r←'HttpCommand' '2.5.1' '2020-09-21'
     ∇
 
     ∇ make
@@ -539,7 +539,7 @@
               :EndIf
               contentType←hdrs Lookup'Content-Type'
               simpleChar←{1<≢⍴⍵:0 ⋄ (⎕DR ⍵)∊80 82}parms
-              :Select contentType
+              :Select ⊃';'(≠⊆⊢)contentType
               :Case formContentType
                   :If simpleChar ⍝ if simple character, parms is assumed to already be
                       :If ~∧/parms∊ValidFormUrlEncodedChars
@@ -705,17 +705,20 @@
                   redirected←0
      
                   :Trap 0 ⍝ If any errors occur, abandon conversion
-                      :Select header Lookup'content-encoding' ⍝ was the response compressed?
+                      :Select z←header Lookup'content-encoding' ⍝ was the response compressed?
                       :Case 'deflate'
                           data←120 ¯100{(2×⍺≡2↑⍵)↓⍺,⍵}83 ⎕DR data ⍝ append 120 156 signature because web servers strip it out due to IE
                           data←fromutf8 256|¯2(219⌶)data
                       :Case 'gzip'
                           data←fromutf8 256|¯3(219⌶)83 ⎕DR data
                       :Else
-                          :If ∨/'charset=utf-8'⍷header Lookup'content-type'
-                              data←'UTF-8'⎕UCS ⎕UCS data ⍝ Convert from UTF-8
-                          :EndIf
+                          r.msg←'Unhandled content-encoding: ',z
                       :EndSelect
+     
+                      :If 0<≢'charset\s*=\s*utf-8'⎕S'&'⍠1⊢header Lookup'content-type'
+                          data←'UTF-8'⎕UCS ⎕UCS data ⍝ Convert from UTF-8
+                          data←(65279=⎕UCS⊃data)↓data ⍝ drop off BOM, if any
+                      :EndIf
                   :EndTrap
      
                   :If redirected←r.HttpStatus∊301 302 303 307 308 ⍝ redirected? (HTTP status codes 301, 302, 303, 307, 308)
