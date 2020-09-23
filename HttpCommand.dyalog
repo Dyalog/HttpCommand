@@ -77,7 +77,6 @@
 ⍝ Additional Public Fields::
 ⍝   LDRC            - if set, this is a reference to the DRC namespace from Conga - otherwise, we look for DRC in the workspace root
 ⍝   WaitTime        - time (in seconds) to wait for the response (default 30)
-⍝   CongaMode       - 'http' for Conga 3.0 and later, 'text' for Conga before 3.0 or if forcing text mode when using Conga 3.0 and later
 ⍝   SuppressHeaders - Boolean which, if set to 1, will suppress all HttpCommand-generated headers
 ⍝                     you may still supply your own headers in the Headers field
 ⍝   RequestOnly     - Boolean which, if set to 1, will cause HttpCommand to return the formatted request
@@ -207,7 +206,6 @@
     :field public Result                           ⍝ command result namespace
     :field public WaitTime←30                      ⍝ seconds to wait for a response before timing out
     :field public SuppressHeaders←0                ⍝ set to 1 to suppress HttpCommand default request headers
-    :field public CongaMode←''                     ⍝ valid values are 'text' or 'http' ('http' valid with Conga 3.0 or later only)
     :field public shared CongaRef←''               ⍝ user-supplied reference to Conga library
     :field public shared LDRC                      ⍝ HttpCommand-set reference to Conga after CongaRef has been resolved
     :field public Cert←⍬                           ⍝ X509 instance if using HTTPS
@@ -221,7 +219,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '2.5.1' '2020-09-21'
+      r←'HttpCommand' '3.0.0' '2020-09-23'
     ∇
 
     ∇ make
@@ -424,7 +422,7 @@
       :EndSelect
     ∇
 
-    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;donetime;formContentType;ind;len;mode;obj;evt;dat;clt;z;contentType;redirected;origHost;origPort;noHost;origSecure;msg;timedOut;certfile;keyfile;cert;secureParams;simpleChar;defaultPort
+    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;page;x509;flags;priority;auth;req;err;chunked;chunk;buffer;chunklength;done;data;datalen;header;headerlen;rc;donetime;formContentType;ind;len;obj;evt;dat;clt;z;contentType;redirected;origHost;origPort;noHost;origSecure;msg;timedOut;certfile;keyfile;cert;secureParams;simpleChar;defaultPort
 ⍝ issue an HTTP command
 ⍝ certs - optional [X509Cert [SSLValidation [Priority]]]
 ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/page[?query_string]]
@@ -577,21 +575,10 @@
           →0⊣r←req,NL,parms
       :EndIf
      
-      mode←'text'
-      :If 3≤⊃LDRC.Version ⍝ Conga 3 or later?
-          mode←'text' 'http'⊃⍨(,⊂'text')⍳⊆lc CongaMode ⍝ use CongaMode (default to http)
-      :EndIf
-     
      Go:
-      :If 0=⊃(err clt)←2↑rc←LDRC.Clt''host port mode 100000,secureParams ⍝ 100,000 is max receive buffer size
+      :If 0=⊃(err clt)←2↑rc←LDRC.Clt''host port'http' 100000,secureParams ⍝ 100,000 is max receive buffer size
      
-          :If mode≡'http'
-              :If 0≠1⊃LDRC.SetProp clt'DecodeBuffers' 15 ⍝ set advanced HTTP parsing
-                  {}LDRC.Close clt ⍝ if that's not available
-                  mode←'text'      ⍝ fall back to text mode
-                  →Go
-              :EndIf
-          :EndIf
+          {}LDRC.SetProp clt'DecodeBuffers' 15 ⍝ set advanced HTTP parsing
      
           :If 0=⊃rc←LDRC.Send clt(req,NL,parms)
               chunked chunk buffer chunklength←0 '' '' 0
@@ -638,46 +625,6 @@
                           r.Data←dat
                           r.msg←'Conga failed to parse the HTTP reponse'
                           →∆END
-     
-              ⍝ Pre-Conga 3.0 handling
-                      :CaseList 'Block' 'BlockLast'             ⍝ If we got some data
-                          :If chunked
-                              chunk←4⊃rc
-                          :ElseIf 0<⍴data,←4⊃rc
-                          :AndIf 0=headerlen
-                              (headerlen header)←DecodeHeader data
-                              :If 0<headerlen
-                                  data←headerlen↓data
-                                  :If chunked←∨/'chunked'⍷header Lookup'Transfer-Encoding'
-                                      chunk←data
-                                      data←''
-                                  :Else
-                                      datalen←⊃(toNum header Lookup'Content-Length'),¯1 ⍝ ¯1 if no content length not specified
-                                  :EndIf
-                                  r.(HttpVer HttpStatus HttpMessage)←{⎕ML←3 ⋄ ⍵⊂⍨{⍵∨2<+\~⍵}⍵≠' '}(⊂1 1)⊃header
-                                  header↓⍨←1
-                              :EndIf
-                          :EndIf
-                          :If chunked
-                              buffer,←chunk
-                              :While done<¯1≠⊃(len chunklength)←getchunklen buffer
-                                  :If (⍴buffer)≥4+len+chunklength
-                                      data,←chunklength↑(len+2)↓buffer
-                                      buffer←(chunklength+len+4)↓buffer
-                                      :If done←0=chunklength ⍝ chunked transfer can add headers at the end of the transmission
-                                          header←header⍪2⊃DecodeHeader buffer
-                                      :EndIf
-                                  :EndIf
-                              :EndWhile
-                          :Else
-                              :If ~done←done∨(cmd≡'HEAD')∨'BlockLast'≡3⊃rc  ⍝ Done if socket was closed
-                                  :If datalen>0
-                                      done←done∨datalen≤⍴data ⍝ ... or if declared amount of data rcvd
-                                  :Else
-                                      done←done∨(∨/'</html>'⍷data)∨(∨/'</HTML>'⍷data)
-                                  :EndIf
-                              :EndIf
-                          :EndIf
      
                       :Case 'Timeout'
                           timedOut←done←⎕AI[3]>donetime
