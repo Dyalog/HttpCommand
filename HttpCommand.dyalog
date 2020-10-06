@@ -219,7 +219,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '3.0.0' '2020-09-23'
+      r←'HttpCommand' '3.0.1' '2020-10-06'
     ∇
 
     ∇ make
@@ -653,6 +653,7 @@
      
                   :Trap 0 ⍝ If any errors occur, abandon conversion
                       :Select z←header Lookup'content-encoding' ⍝ was the response compressed?
+                      :Case '∘???∘' ⍝ no content-encoding header, do nothing
                       :Case 'deflate'
                           data←120 ¯100{(2×⍺≡2↑⍵)↓⍺,⍵}83 ⎕DR data ⍝ append 120 156 signature because web servers strip it out due to IE
                           data←fromutf8 256|¯2(219⌶)data
