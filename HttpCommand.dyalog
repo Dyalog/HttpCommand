@@ -219,7 +219,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '3.0.1' '2020-10-06'
+      r←'HttpCommand' '3.1.0' '2021-02-03'
     ∇
 
     ∇ make
@@ -600,6 +600,15 @@
                               datalen←⊃(toNum header Lookup'Content-Length'),¯1 ⍝ ¯1 if no content length not specified
                               chunked←∨/'chunked'⍷header Lookup'Transfer-Encoding'
                               done←(cmd≡'HEAD')∨chunked<datalen<1
+                           ⍝↓↓↓ hack to deal with HTTP/1.0 behavior of no content-length and no transfer-encoding
+                           ⍝    see item 7 under https://tools.ietf.org/html/rfc7230#section-3.3.3
+                              :If chunked<datalen=¯1
+                              :AndIf ∨/'close'⍷header Lookup'Connection' ⍝←←← not sure this is necessary
+                                  :If 0=⊃rc←LDRC.Wait clt 50
+                                  :AndIf 'BlkLast'≡3⊃rc
+                                      data←4⊃rc
+                                  :EndIf
+                              :EndIf
                           :EndIf
                       :Case 'HTTPBody'
                           data←dat
