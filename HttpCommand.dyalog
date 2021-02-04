@@ -604,7 +604,7 @@
                            ⍝    see item 7 under https://tools.ietf.org/html/rfc7230#section-3.3.3
                               :If chunked<datalen=¯1
                               :AndIf ∨/'close'⍷header Lookup'Connection' ⍝←←← not sure this is necessary
-                                  :If 0=⊃rc←LDRC.Wait clt 50
+                                  :If 0=⊃rc←LDRC.Wait clt 100
                                   :AndIf 'BlkLast'≡3⊃rc
                                       data←4⊃rc
                                   :EndIf
