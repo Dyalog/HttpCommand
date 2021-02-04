@@ -219,7 +219,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '3.1.0' '2021-02-03'
+      r←'HttpCommand' '3.1.1' '2021-02-04'
     ∇
 
     ∇ make
@@ -597,7 +597,7 @@
                           :Else
                               r.(HttpVersion HttpStatus HttpMessage)←3↑dat
                               header←4⊃dat
-                              datalen←⊃(toNum header Lookup'Content-Length'),¯1 ⍝ ¯1 if no content length not specified
+                              datalen←⊃(toNum{'∘???∘'≡⍵:'' ⋄ ⍵}header Lookup'Content-Length'),¯1 ⍝ ¯1 if no content length not specified
                               chunked←∨/'chunked'⍷header Lookup'Transfer-Encoding'
                               done←(cmd≡'HEAD')∨chunked<datalen<1
                            ⍝↓↓↓ hack to deal with HTTP/1.0 behavior of no content-length and no transfer-encoding
