@@ -82,6 +82,7 @@
 ⍝   RequestOnly     - Boolean which, if set to 1, will cause HttpCommand to return the formatted request
 ⍝                     without actually sending it to the server.  This is used in case you need to
 ⍝                     verify that your request is properly formatted.
+⍝   MaxRedirections - the maximum number of redirections to attempt (default 10), ¯1 disables this check
 ⍝
 ⍝
 ⍝ The methods that execute HTTP requests - Do, Get, and Run - return a namespace containing the variables:
@@ -214,12 +215,13 @@
     :field public PublicCertFile←''                ⍝ if not using an X509 instance, this is the client public certificate file
     :field public PrivateKeyFile←''                ⍝ if not using an X509 instance, this is the client private key file
     :field public RequestOnly←0                    ⍝ set to 1 if you only want to return the generated HTTP request, but not actually send it
+    :field public shared MaxRedirections←10        ⍝ set to 0 if you don't want to follow any redirected references, ¯1 for unlimited
 
     :field public readonly shared ValidFormUrlEncodedChars←'&=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~*+~%'
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '3.1.1' '2021-02-04'
+      r←'HttpCommand' '3.2' '2021-02-15'
     ∇
 
     ∇ make
@@ -679,12 +681,18 @@
                   :EndTrap
      
                   :If redirected←r.HttpStatus∊301 302 303 307 308 ⍝ redirected? (HTTP status codes 301, 302, 303, 307, 308)
-                      url←header Lookup'location' ⍝ use the "location" header field for the URL
-                      :If ~0∊⍴url
-                          r.Redirections,←⊂url
-                          (origHost origPort origSecure)←host port secure
-                          {}LDRC.Close clt
-                          →GET
+                      :If MaxRedirections<.=¯1,≢r.Redirections
+                          r.msg←'Too many redirections (',(⍕MaxRedirections),')'
+                          r.rc←¯1
+                          →∆END 
+                      :Else
+                          url←header Lookup'location' ⍝ use the "location" header field for the URL
+                          :If ~0∊⍴url
+                              r.Redirections,←⊂url
+                              (origHost origPort origSecure)←host port secure
+                              {}LDRC.Close clt
+                              →GET
+                          :EndIf
                       :EndIf
                   :EndIf
      
