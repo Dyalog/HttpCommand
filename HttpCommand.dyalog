@@ -221,7 +221,7 @@
 
     ∇ r←Version
       :Access public shared
-      r←'HttpCommand' '3.2' '2021-02-15'
+      r←'HttpCommand' '3.3' '2021-02-25'
     ∇
 
     ∇ make
@@ -607,7 +607,7 @@
                               :If chunked<datalen=¯1
                               :AndIf ∨/'close'⍷header Lookup'Connection' ⍝←←← not sure this is necessary
                                   :If 0=⊃rc←LDRC.Wait clt 100
-                                  :AndIf 'BlkLast'≡3⊃rc
+                                  :AndIf rc[3]∊'BlkLast' 'HTTPBody'
                                       data←4⊃rc
                                   :EndIf
                               :EndIf
