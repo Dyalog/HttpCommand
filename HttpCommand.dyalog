@@ -19,6 +19,7 @@
     :field public PrivateKeyFile←''                ⍝ if not using an X509 instance, this is the client private key file
 
     :field public RequestOnly←0                    ⍝ set to 1 if you only want to return the generated HTTP request, but not actually send it
+    :field public Outfile←''                       ⍝ name of file to send payload to (or to buffer to when streaming) and optional '/append'/'replace'
     :field public MaxRedirections←10               ⍝ set to 0 if you don't want to follow any redirected references, ¯1 for unlimited
     :field public KeepAlive←1                      ⍝ default to not close client connection
     :field public onWSReceive←''                   ⍝ function name to call on WebSocket receive
@@ -233,18 +234,13 @@
       :Case 9.1 ⍝ namespace?  e.g. CongaRef←DRC or Conga
      ∆TRY:
           :Trap Debug↓0
-              :If ∨/'.Conga'⍷⍕CongaRef ⍝ is it Conga?
-                  LDRC←CongaRef.Init'HttpCommand'
-              :ElseIf 0≡⊃CongaRef.Init'' ⍝ DRC?
-                  LDRC←CongaRef
-              :Else
-                  →0⊣LDRC←''
+              :If ∨/'.Conga'⍷⍕CongaRef ⋄ LDRC←CongaRef.Init'HttpCommand' ⍝ is it Conga?
+              :ElseIf 0≡⊃CongaRef.Init'' ⋄ LDRC←CongaRef ⍝ DRC?
+              :Else ⋄ →∆EXIT⊣LDRC←''
               :End
           :Else ⍝ if HttpCommand is reloaded and re-executed in rapid succession, Conga initialization may fail, so we try twice
-              :If failed
-                  →0⊣LDRC←''
-              :Else
-                  →∆TRY⊣failed←1
+              :If failed ⋄ →∆EXIT⊣LDRC←''
+              :Else ⋄ →∆TRY⊣failed←1
               :EndIf
           :EndTrap
       :Case 9.2 ⍝ instance?  e.g. CongaRef←Conga.Init ''
@@ -254,11 +250,46 @@
               LDRC←ResolveCongaRef(⍎∊⍕CongaRef)
           :EndTrap
       :EndSelect
+     ∆EXIT:
     ∇
 
-    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;x509;flags;priority;auth;req;err;chunked;done;data;datalen;header;headerlen;rc;donetime;formContentType;ind;len;obj;evt;dat;z;contentType;redirected;msg;timedOut;certfile;keyfile;cert;secureParams;simpleChar;defaultPort;cookies;domain;t
+    ∇ secureParams←certs CreateSecureParams r;mt;cert;x509;flags;priority
+      LDRC.X509Cert.LDRC←LDRC ⍝ make sure the X509 instance points to the right LDRC
+      :If 0∊⍴certs ⍝ if certs not supplied, check the public certificate and private key files
+          :If ∨/mt←(~0∊⍴)¨PublicCertFile PrivateKeyFile  ⍝ if file names were supplied
+              :If ∧/mt ⍝ both need to be supplied
+                  :Trap Debug↓0
+                      certs←⊃LDRC.X509Cert.ReadCertFromFile PublicCertFile
+                  :Else ⋄ →∆END⊣r.msg←'Unable to decode PublicCertFile as certificate'
+                  :EndTrap
+                  certs.KeyOrigin←'DER'PrivateKeyFile
+              :Else ⋄ →∆END⊣r.msg←(⊃mt/'PublicCertFile' 'PrivateKeyFile'),' is empty' ⍝ both must be specified
+              :EndIf
+          :EndIf
+      :Else
+          :If 0 2∊⍨10|⎕DR⊃⊃certs ⍝ file name?
+          :AndIf (≡certs)∊2 3 ⍝ either
+              :Select ≡certs
+              :Case
+                  :If 2=≡certs ⋄ (certfile keyfile)←certs
+                  :Else ⋄ (certfile keyfile)←⊃certs
+                  :EndIf
+              :EndSelect
+              cert←⊃LDRC.X509Cert.ReadCertFromFile certfile
+              cert.KeyOrigin←'DER'keyfile
+              certs[1]←cert
+          :Else ⋄ →∆END⊣r.msg←'Invalid public certifact and private key file name parameters'
+          :EndIf
+      :EndIf
+      x509 flags priority←3↑certs,(⍴,certs)↓(⎕NEW LDRC.X509Cert)SSLFlags Priority
+      secureParams←('x509'x509)('SSLValidation'flags)('Priority'priority)
+      →0
+     ∆END:secureParams←¯1 ⍝ failure
+    ∇
+
+    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;chunked;done;data;datalen;header;headerlen;rc;donetime;formContentType;ind;len;obj;evt;dat;z;contentType;msg;timedOut;certfile;keyfile;secureParams;simpleChar;defaultPort;cookies;domain;t
     ⍝ issue an HTTP command
-    ⍝ certs - optional [X509Cert [SSLValidation [Priority]]]
+    ⍝ certs - optional [X509Cert|(PublicCertFile PrivateKeyFile) [SSLValidation [Priority]]]
     ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/path[?query_string]]
     ⍝         {2} parameters is using POST - either a namespace or URL-encoded string
     ⍝         {3} HTTP headers in form {↑}(('hdr1' 'val1')('hdr2' 'val2'))
@@ -279,40 +310,18 @@
      
       →∆END↓⍨0∊⍴r.msg←(0∊⍴url)/'No URL specified' ⍝ exit early if no URL
      
-      :If ~RequestOnly
-          →∆END↓⍨0∊⍴(Init r).msg
-      :EndIf
+      :If ~RequestOnly ⋄ →∆END↓⍨0∊⍴(Init r).msg ⋄ :EndIf  ⍝ don't bother initializing if only returning request
      
       url←,url
       cmd←uc,cmd
      
-      redirected←0
-     
      ∆GET:
       (secure host path urlparms)←parseURL url
-      secure∨←⍲/{0∊⍴⍵}¨certs PublicCertFile ⍝ we're secure if URL begins with https/wss, or we have a cert or a PublicCertFile
+      secure∨←⍲/{0∊⍴⍵}¨certs PublicCertFile ⍝ we're secure if URL begins with https/wss (checked by parseURL), or we have a cert or a PublicCertFile
      
       secureParams←''
-      :If secure>RequestOnly
-          LDRC.X509Cert.LDRC←LDRC
-          :If 0∊⍴certs
-              :If ⍱/t←(~0∊⍴)¨PublicCertFile PrivateKeyFile
-                  certs←⊃LDRC.X509Cert.ReadCertFromFile PublicCertFile
-                  certs.KeyOrigin←'DER'PrivateKeyFile
-              :Else ⋄ →∆END⊣r.msg←'PublicCertFile and PrivateKeyFile cannot be empty'
-              :EndIf
-          :Else
-              :If 0 2∊⍨10|⎕DR⊃⊃certs ⍝ file name?
-                  :If 2=≡certs ⋄ (certfile keyfile)←certs
-                  :Else ⋄ (certfile keyfile)←⊃certs
-                  :EndIf
-                  cert←⊃LDRC.X509Cert.ReadCertFromFile certfile
-                  cert.KeyOrigin←'DER'keyfile
-                  certs[1]←cert
-              :EndIf
-          :EndIf
-          x509 flags priority←3↑certs,(⍴,certs)↓(⎕NEW LDRC.X509Cert)SSLFlags Priority
-          secureParams←('x509'x509)('SSLValidation'flags)('Priority'priority)
+      :If secure>RequestOnly ⍝ don't bother generating certificate if only returning request
+          →∆END⍴⍨¯1≡secureParams←certs CreateSecureParams r
       :EndIf
      
       :If '@'∊host ⍝ Handle user:password@host...
@@ -324,9 +333,7 @@
       :If defaultPort←(≢host)<ind←host⍳':' ⍝ then if there's no port specified in the host
           port←(1+secure)⊃80 443 ⍝ use the default HTTP/HTTPS port
       :Else
-          :If 0=port←⊃toInt ind↓host
-              →∆END⊣r.msg←'Invalid host/port - ',host
-          :EndIf
+          :If 0=port←⊃toInt ind↓host ⋄ →∆END⊣r.msg←'Invalid host/port - ',host ⋄ :EndIf
           host↑⍨←ind-1
       :EndIf
      
@@ -470,7 +477,6 @@
               :EndIf
               :If 0=err
                   r.HttpStatus←toInt r.HttpStatus
-                  redirected←0
                   :Trap Debug↓0 ⍝ If any errors occur, abandon conversion
                       :Select z←header Lookup'content-encoding' ⍝ was the response compressed?
                       :Case '∘???∘' ⍝ no content-encoding header, do nothing
@@ -489,8 +495,7 @@
                       :EndIf
                   :EndTrap
                   (domain path)←r.(Host Path)
-                  redirected←r.HttpStatus∊301 302 303 307 308 ⍝ redirected? (HTTP status codes 301, 302, 303, 307, 308)
-                  :If redirected>0=MaxRedirections ⍝ if redirected and allowing redirections
+                  :If (r.HttpStatus∊301 302 303 307 308)>0=MaxRedirections ⍝ if redirected and allowing redirections
                       :If MaxRedirections<.=¯1,≢r.Redirections
                           →∆END⊣r.(rc msg)←¯1('Too many redirections (',(⍕MaxRedirections),')')
                       :Else
