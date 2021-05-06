@@ -253,17 +253,20 @@
      ∆EXIT:
     ∇
 
-    ∇ secureParams←certs CreateSecureParams r;mt;cert;x509;flags;priority
+    ∇ secureParams←certs CreateSecureParams r;mt;cert;x509;flags;priority;ex
       LDRC.X509Cert.LDRC←LDRC ⍝ make sure the X509 instance points to the right LDRC
       :If 0∊⍴certs ⍝ if certs not supplied, check the public certificate and private key files
           :If ∨/mt←(~0∊⍴)¨PublicCertFile PrivateKeyFile  ⍝ if file names were supplied
               :If ∧/mt ⍝ both need to be supplied
+                  :If ⍲/ex←{0::0 ⋄ ⎕NEXISTS ⍵}¨PublicCertFile PrivateKeyFile 
+                  →∆FAIL⊣r.msg←
+                  :EndIf
                   :Trap Debug↓0
                       certs←⊃LDRC.X509Cert.ReadCertFromFile PublicCertFile
-                  :Else ⋄ →∆END⊣r.msg←'Unable to decode PublicCertFile as certificate'
+                  :Else ⋄ →∆FAIL⊣r.msg←'Unable to decode PublicCertFile "',(∊⍕PublicCertFile),'" as certificate'
                   :EndTrap
                   certs.KeyOrigin←'DER'PrivateKeyFile
-              :Else ⋄ →∆END⊣r.msg←(⊃mt/'PublicCertFile' 'PrivateKeyFile'),' is empty' ⍝ both must be specified
+              :Else ⋄ →∆FAIL⊣r.msg←(⊃mt/'PublicCertFile' 'PrivateKeyFile'),' is empty' ⍝ both must be specified
               :EndIf
           :EndIf
       :Else
@@ -278,13 +281,13 @@
               cert←⊃LDRC.X509Cert.ReadCertFromFile certfile
               cert.KeyOrigin←'DER'keyfile
               certs[1]←cert
-          :Else ⋄ →∆END⊣r.msg←'Invalid public certifact and private key file name parameters'
+          :Else ⋄ →∆FAIL⊣r.msg←'Invalid public certificate and private key file name parameters'
           :EndIf
       :EndIf
       x509 flags priority←3↑certs,(⍴,certs)↓(⎕NEW LDRC.X509Cert)SSLFlags Priority
       secureParams←('x509'x509)('SSLValidation'flags)('Priority'priority)
       →0
-     ∆END:secureParams←¯1 ⍝ failure
+     ∆FAIL:secureParams←¯1 ⍝ failure
     ∇
 
     ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;chunked;done;data;datalen;header;headerlen;rc;donetime;formContentType;ind;len;obj;evt;dat;z;contentType;msg;timedOut;certfile;keyfile;secureParams;simpleChar;defaultPort;cookies;domain;t
@@ -423,8 +426,7 @@
                       (err obj evt dat)←4↑rc
                       :Select evt
                       :Case 'HTTPHeader'
-                          :If 1=≡dat ⍝ HTTP header parsing failed?
-                              →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP header'
+                          :If 1=≡dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP header' ⍝ HTTP header parsing failed?
                           :Else
                               r.(HttpVersion HttpStatus HttpMessage)←3↑dat
                               header←4⊃dat
@@ -436,44 +438,30 @@
                               :If chunked<datalen=¯1
                               :AndIf ∨/'close'⍷header Lookup'Connection' ⍝←←← not sure this is necessary
                                   :If 0=⊃rc←LDRC.Wait Client 50
-                                  :AndIf rc[3]∊'BlkLast' 'HTTPBody'
-                                      data←4⊃rc
+                                  :AndIf rc[3]∊'BlkLast' 'HTTPBody' ⋄ data←4⊃rc
                                   :EndIf
                               :EndIf
                           :EndIf
-                      :Case 'HTTPBody'
-                          data←dat ⋄ done←1
+                      :Case 'HTTPBody' ⋄ data←dat ⋄ done←1
                       :Case 'HTTPChunk'
-                          :If 1=≡dat ⍝ HTTP chunk parsing failed?
-                              →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP chunk'
-                          :Else
-                              data,←1⊃dat
+                          :If 1=≡dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP chunk' ⍝ HTTP chunk parsing failed?
+                          :Else ⋄ data,←1⊃dat
                           :EndIf
                       :Case 'HTTPTrailer'
-                          :If 2≠≢⍴dat ⍝ HTTP trailer parsing failed?
-                              →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP trailer'
-                          :Else
-                              header⍪←dat ⋄ done←1
+                          :If 2≠≢⍴dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP trailer' ⍝ HTTP trailer parsing failed?
+                          :Else ⋄ header⍪←dat ⋄ done←1
                           :EndIf
-                      :Case 'HTTPFail'
-                          →∆END⊣r.(Data msg)←dat'Conga failed to parse the HTTP reponse'
-                      :Case 'Timeout'
-                          timedOut←done←⎕AI[3]>donetime
-                      :Case 'Error'
-                          →∆END⊣r.msg←'Conga error processing your request: ',,⍕rc
-                      :Else  ⍝ This shouldn't happen
-                          →∆END⊣r.msg←'*** Unhandled Conga event type - ',evt
+                      :Case 'HTTPFail' ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the HTTP reponse'
+                      :Case 'Timeout' ⋄ timedOut←done←⎕AI[3]>donetime
+                      :Case 'Error' ⋄ →∆END⊣r.msg←'Conga error processing your request: ',,⍕rc
+                      :Else ⋄ →∆END⊣r.msg←'*** Unhandled Conga event type - ',evt ⍝ This shouldn't happen
                       :EndSelect
-     
-                  :ElseIf 100=err ⍝ timeout?
-                      timedOut←done←⎕AI[3]>donetime
-                  :Else           ⍝ some other error (very unlikely)
-                      r.msg←'Conga wait error ',,⍕rc
+                  :ElseIf 100=err ⋄ timedOut←done←⎕AI[3]>donetime ⍝ timeout?
+                  :Else ⋄ r.msg←'Conga wait error ',,⍕rc ⍝ some other error (very unlikely)
                   :EndIf
               :Until done
      
-              :If timedOut
-                  →∆END⊣r.(rc msg)←(⊃rc)'Request timed out before server responded'
+              :If timedOut ⋄ →∆END⊣r.(rc msg)←(⊃rc)'Request timed out before server responded'
               :EndIf
               :If 0=err
                   r.HttpStatus←toInt r.HttpStatus
@@ -483,10 +471,8 @@
                       :Case 'deflate'
                           data←120 ¯100{(2×⍺≡2↑⍵)↓⍺,⍵}83 ⎕DR data ⍝ append 120 156 signature because web servers strip it out due to IE
                           data←fromutf8 256|¯2(219⌶)data
-                      :Case 'gzip'
-                          data←fromutf8 256|¯3(219⌶)83 ⎕DR data
-                      :Else
-                          r.msg←'Unhandled content-encoding: ',z
+                      :Case 'gzip' ⋄ data←fromutf8 256|¯3(219⌶)83 ⎕DR data
+                      :Else ⋄ r.msg←'Unhandled content-encoding: ',z
                       :EndSelect
      
                       :If 0<≢'charset\s*=\s*utf-8'⎕S'&'⍠1⊢header Lookup'content-type'
@@ -496,8 +482,7 @@
                   :EndTrap
                   (domain path)←r.(Host Path)
                   :If (r.HttpStatus∊301 302 303 307 308)>0=MaxRedirections ⍝ if redirected and allowing redirections
-                      :If MaxRedirections<.=¯1,≢r.Redirections
-                          →∆END⊣r.(rc msg)←¯1('Too many redirections (',(⍕MaxRedirections),')')
+                      :If MaxRedirections<.=¯1,≢r.Redirections ⋄ →∆END⊣r.(rc msg)←¯1('Too many redirections (',(⍕MaxRedirections),')')
                       :Else
                           :If '∘???∘'≢url←header Lookup'location' ⍝ if we were redirected use the "location" header field for the URL
                               r.Redirections,←t←#.⎕NS''
@@ -508,26 +493,22 @@
                               {}LDRC.Close Client
                               cmd←(1+303=r.HttpStatus)cmd'GET' ⍝ 303 (See Other) is always followed by a 'GET'. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/303
                               →∆GET
-                          :Else
-                              r.msg←'Redirection detected, but no "location" header supplied.' ⍝ should never happen from a properly functioning server
+                          :Else ⋄ r.msg←'Redirection detected, but no "location" header supplied.' ⍝ should never happen from a properly functioning server
                           :EndIf
                       :EndIf
                   :EndIf
                   :If secure
-                  :AndIf 0=⊃z←LDRC.GetProp Client'PeerCert'
-                      r.PeerCert←2⊃z
+                  :AndIf 0=⊃z←LDRC.GetProp Client'PeerCert' ⋄ r.PeerCert←2⊃z
                   :EndIf
               :EndIf
               r.(Headers Data)←header data
-          :Else
-              r.msg←'Conga connection failed ',,⍕1↓rc
+          :Else ⋄ r.msg←'Conga connection failed ',,⍕1↓rc
           :EndIf
-      :Else
-          r.msg←'Conga client creation failed ',,⍕1↓rc
+      :Else ⋄ r.msg←'Conga client creation failed ',,⍕1↓rc
       :EndIf
       r.rc←1⊃rc ⍝ set the return code to the Conga return code
      ∆END:
-      LDRC.Close⍣(~KeepAlive)⊢Client
+      {}LDRC.Close⍣(~KeepAlive)⊢Client
       setDisplayFormat r
      ∆EXIT:
     ∇
@@ -545,7 +526,7 @@
       ImAWebSocket←1
     ∇
 
-    ∇ (rc msg)←Connect url;certs;secure;host;path;urlparms
+    ∇ (rc msg)←Connect url;certs;secure;host;path;urlparms;wsid
       :Access public
       certs←
       (rc msg)←¯1 ''
@@ -558,7 +539,9 @@
       url←
       ⍝ Attempt to connect
      
-      {}Listen&'' ⍝ start listener
+      wsid←
+     
+      {}Listen&wsid ⍝ start listener
      ∆EXIT:
     ∇
 
@@ -570,6 +553,7 @@
     ∇ r←Listen dummy;spit
       :Access public ⍝!!! temporary
       :If spit←0∊⍴onWSReceive ⋄ ⎕←'onWSReceive is not defined.  Received WebSocket messages will be output to the session.' ⋄ :EndIf
+     
      
     ∇
 

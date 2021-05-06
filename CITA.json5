@@ -2,6 +2,6 @@
 {
     Tests: [{
         "DyalogVersions": "18.0",
-        "Test": "./tests/unit.dyalogtest",
+        "Test": "./tests/test_get.dyalog",
     }, ]
 }
