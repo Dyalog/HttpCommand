@@ -1,1 +1,21 @@
-site_name: My Docs
+site_name: HttpCommand
+nav:
+    - Home: 'index.md'
+    - Learn: 'learn.md'
+    - Reference:
+      - Overview: 'overview.md'
+      - 'Quick Reference': 'quick.md'
+      - 'Detailed Reference': 'reference.md'
+    - About: 
+      - License: 'LICENSE.md'
+      - 'Release Notes': 'release-notes.md'
+
+theme:
+  name: readthedocs
+  custom_dir: theme/
+  highlights: false
+  prev_next_buttons_location: top
+
+extra_css:
+  - css/mycss.css
+  

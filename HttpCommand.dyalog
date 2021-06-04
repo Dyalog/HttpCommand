@@ -7,6 +7,7 @@
     :field public URL←''                           ⍝ requested resource
     :field public Params←''                        ⍝ request parameters
     :field public Headers←0 2⍴⊂''                  ⍝ request headers - name, value
+    :field public ContentType←''                   ⍝ request content-type
     :field public Cookies←⍬                        ⍝ request cookies - vector of namespaces
     :field public Result                           ⍝ command result namespace
     :field public WaitTime←30                      ⍝ seconds to wait for a response before timing out
@@ -91,15 +92,10 @@
     ∇ r←Run
     ⍝ Attempt to run the HTTP command
       :Access public
-      :If (0∊⍴Cert)∧0∊⍴PublicCertFile
-          r←(Command HttpCmd)URL Params Headers
-      :Else
-          :If 0∊⍴Cert ⋄ !!! ⋄ :EndIf
-          r←(Cert SSLFlags Priority)(Command HttpCmd)URL Params Headers
-      :EndIf
+      r←(Cert SSLFlags Priority PublicCertFile PrivateKeyFile)(Command HttpCmd)URL Params Headers
     ∇
 
-    ∇ setDisplayFormat r
+    ∇ {r}←setDisplayFormat r
     ⍝ set the display format for the namespace result for most HttpCommand commands
       r.⎕DF 1⌽'][rc: ',(⍕r.rc),' | msg: "',r.msg,'"',(r.rc≥0)/' | HTTP Status: ',(⍕r.HttpStatus),' "',r.HttpMessage,'" | ⍴Data: ',⍕⍴r.Data
     ∇
@@ -116,10 +112,7 @@
           :Else ⋄ 'Invalid right argument'{⍺ ⎕SIGNAL ⍵}11
           :EndSelect
       :Else
-          r←initResult #.⎕NS''
-          r.(rc msg)←¯1 ⎕DMX.EM
-          setDisplayFormat r
-          →∆EXIT
+          →∆EXIT⊣r←¯1 bail ⎕DMX.EM
       :EndTrap
       hc.RequestOnly←requestOnly
       r←hc.Run
@@ -134,10 +127,7 @@
       :Trap Debug↓0
           hc←⎕NEW ⎕THIS(eis⍣({9.1≠⎕NC⊂,'⍵'}⊃args)⊢args)
       :Else
-          r←initResult #.⎕NS''
-          r.(rc msg)←¯1 ⎕DMX.EM
-          setDisplayFormat r
-          →∆EXIT
+          →∆EXIT⊣r←¯1 bail ⎕DMX.EM
       :EndTrap
       hc.RequestOnly←requestOnly
       r←hc.Run
@@ -152,11 +142,11 @@
       :Trap Debug↓0
           cmd←⎕NEW ⎕THIS(eis⍣({9.1≠⎕NC⊂,'⍵'}⊃args)⊢args)
       :Else
-          r←initResult #.⎕NS''
-          →∆DONE⊣r.(rc msg)←¯1 ⎕DMX.EM
+          →∆EXIT⊣r←¯1 bail ⎕DMX.EM
       :EndTrap
       cmd.RequestOnly←requestOnly
-      cmd.('content-type'SetHeader'application/json')
+      cmd.ContentType←'application/json'
+     
       :If 0∊⍴cmd.Command ⋄ cmd.Command←(1+0∊⍴cmd.Params)⊃'POST' 'GET' ⋄ :EndIf
       :If ~0∊⍴cmd.Params
           :Trap Debug↓0
@@ -182,10 +172,17 @@
           :Else ⋄ →∆DONE⊣r.(rc msg)←3 'HTTP failure'
           :EndIf
       :EndIf
-      →0
+      →∆EXIT
      ∆DONE: ⍝ reset ⎕DF if messages have changed
       setDisplayFormat r
      ∆EXIT:
+    ∇
+
+    ∇ ns←rc bail msg
+    ⍝ Called if ⎕NEW fails
+      ns←initResult #.⎕NS''
+      ns.(rc msg)←rc msg
+      setDisplayFormat ns
     ∇
 
     ∇ r←Init r;ref;root;nc;class;n;ns;congaCopied
@@ -253,46 +250,49 @@
      ∆EXIT:
     ∇
 
-    ∇ secureParams←certs CreateSecureParams r;mt;cert;x509;flags;priority;ex
+    ∇ (rc secureParams)←CreateSecureParams(cert flags priority public private);nmt;msg;t
+    ⍝ called by HttpCommand or (WebSocket) Connect
+    ⍝ certs is:
+    ⍝    [1] X509Cert instance or (PublicCertFile PrivateKeyFile)
+    ⍝    [2] SSL flags
+    ⍝    [3] GnuTLS priority
+    ⍝    [4] PublicCertFile
+    ⍝    [5] PrivateKeyFile
+    ⍝ if certs is empty, check PublicCertFile and PrivateKeyFile
+     
       LDRC.X509Cert.LDRC←LDRC ⍝ make sure the X509 instance points to the right LDRC
-      :If 0∊⍴certs ⍝ if certs not supplied, check the public certificate and private key files
-          :If ∨/mt←(~0∊⍴)¨PublicCertFile PrivateKeyFile  ⍝ if file names were supplied
-              :If ∧/mt ⍝ both need to be supplied
-                  :If ⍲/ex←{0::0 ⋄ ⎕NEXISTS ⍵}¨PublicCertFile PrivateKeyFile 
-                  →∆FAIL⊣r.msg←
+     
+      :If 0∊⍴cert ⍝ if X509 (or public private) not supplied
+     ∆CHECK:
+          :If ∨/nmt←(~0∊⍴)¨public private ⍝ either file name not empty?
+              :If ∧/nmt ⍝ if so, both need to be non-empty
+                  :If ∨/t←{0::1 ⋄ ~⎕NEXISTS ⍵}¨public private ⍝ either file not exist?
+                      →∆FAIL⊣msg←'Not found',4↓∊{' and ',(∊⍕⍵),' "',(∊⍕⍎⍵),'"'}¨t/'PublicCertFile' 'PrivateKeyFile'
                   :EndIf
                   :Trap Debug↓0
-                      certs←⊃LDRC.X509Cert.ReadCertFromFile PublicCertFile
-                  :Else ⋄ →∆FAIL⊣r.msg←'Unable to decode PublicCertFile "',(∊⍕PublicCertFile),'" as certificate'
+                      cert←⊃LDRC.X509Cert.ReadCertFromFile public
+                  :Else ⋄ →∆FAIL⊣msg←'Unable to decode PublicCertFile "',(∊⍕public),'" as certificate'
                   :EndTrap
-                  certs.KeyOrigin←'DER'PrivateKeyFile
-              :Else ⋄ →∆FAIL⊣r.msg←(⊃mt/'PublicCertFile' 'PrivateKeyFile'),' is empty' ⍝ both must be specified
+                  cert.KeyOrigin←'DER'private
+              :Else ⋄ →∆FAIL⊣msg←(⊃nmt/'PublicCertFile' 'PrivateKeyFile'),' is empty' ⍝ both must be specified
               :EndIf
+          :Else
+              cert←⎕NEW LDRC.X509Cert
           :EndIf
-      :Else
-          :If 0 2∊⍨10|⎕DR⊃⊃certs ⍝ file name?
-          :AndIf (≡certs)∊2 3 ⍝ either
-              :Select ≡certs
-              :Case
-                  :If 2=≡certs ⋄ (certfile keyfile)←certs
-                  :Else ⋄ (certfile keyfile)←⊃certs
-                  :EndIf
-              :EndSelect
-              cert←⊃LDRC.X509Cert.ReadCertFromFile certfile
-              cert.KeyOrigin←'DER'keyfile
-              certs[1]←cert
-          :Else ⋄ →∆FAIL⊣r.msg←'Invalid public certificate and private key file name parameters'
-          :EndIf
+      :ElseIf 2=⍴cert ⍝ 2-element vector of public/private file names?
+          public private←cert
+          →∆CHECK
+      :ElseIf {0::1 ⋄ 'X509Cert'≢{⊃⊢/'.'(≠⊆⊢)⍵}⍕⎕CLASS ⍵}cert
+          →∆FAIL⊣msg←'Invalid certificate parameter'
       :EndIf
-      x509 flags priority←3↑certs,(⍴,certs)↓(⎕NEW LDRC.X509Cert)SSLFlags Priority
-      secureParams←('x509'x509)('SSLValidation'flags)('Priority'priority)
-      →0
-     ∆FAIL:secureParams←¯1 ⍝ failure
+      secureParams←('x509'cert)('SSLValidation'flags)('Priority'priority)
+      →rc←0
+     ∆FAIL:(rc secureParams)←¯1 msg ⍝ failure
     ∇
 
-    ∇ r←{certs}(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;chunked;done;data;datalen;header;headerlen;rc;donetime;formContentType;ind;len;obj;evt;dat;z;contentType;msg;timedOut;certfile;keyfile;secureParams;simpleChar;defaultPort;cookies;domain;t
+    ∇ r←certs(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;chunked;done;data;datalen;header;headerlen;rc;donetime;formContentType;ind;len;obj;evt;dat;z;contentType;msg;timedOut;certfile;keyfile;secureParams;simpleChar;defaultPort;cookies;domain;t
     ⍝ issue an HTTP command
-    ⍝ certs - optional [X509Cert|(PublicCertFile PrivateKeyFile) [SSLValidation [Priority]]]
+    ⍝ certs - X509Cert|(PublicCertFile PrivateKeyFile) SSLValidation Priority PublicCertFile PrivateKeyFile
     ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/path[?query_string]]
     ⍝         {2} parameters is using POST - either a namespace or URL-encoded string
     ⍝         {3} HTTP headers in form {↑}(('hdr1' 'val1')('hdr2' 'val2'))
@@ -301,30 +301,35 @@
      
     ⍝ Result: namespace containing (conga return code) (HTTP Status) (HTTP headers) (HTTP body) [PeerCert if secure]
      
-      :If 900⌶⍬ ⋄ certs←'' ⋄ :EndIf ⍝ default when monadic
       :If 0∊⍴cmd ⋄ cmd←'GET' ⋄ :EndIf
      
       args←eis args
       (url parms hdrs cookies)←args,(⍴args)↓''(#.⎕NS'')'' ''
-      hdrs←{0∊t←⍴⍵:0 2⍴⊂'' ⋄ 3=|≡⍵:↑eis∘,¨⍵ ⋄ 2=≢t:⍵ ⋄ ((0.5×t),2)⍴⍵}hdrs
      
       r←Result
-      r.(Command URL rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections Cookies Host)←cmd url ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')⍬''
      
-      →∆END↓⍨0∊⍴r.msg←(0∊⍴url)/'No URL specified' ⍝ exit early if no URL
+    ⍝ Do some cursory parameter checking
+      →∆END↓⍨0∊⍴r.msg←'No URL specified'/⍨0∊⍴url ⍝ exit early if no URL
+      →∆END↓⍨0∊⍴r.msg←'URL is not a simple character vector'/⍨~isSimpleChar url
+      →∆END↓⍨0∊⍴r.msg←'Headers are not character'/⍨~isChar hdrs
+      →∆END↓⍨0∊⍴r.msg←'Cookies are not character'/⍨~isChar cookies
+      hdrs←{0::¯1 ⋄ 0∊t←⍴⍵:0 2⍴⊂'' ⋄ 3=|≡⍵:↑eis∘,¨⍵ ⋄ 2=≢t:⍵ ⋄ ((0.5×t),2)⍴⍵}hdrs
+      →∆END↓⍨0∊⍴msg←'Improper header format'/⍨¯1≡hdrs
      
-      :If ~RequestOnly ⋄ →∆END↓⍨0∊⍴(Init r).msg ⋄ :EndIf  ⍝ don't bother initializing if only returning request
+      :If ~RequestOnly ⋄ →∆END↓⍨0∊⍴(Init r).msg ⋄ :EndIf  ⍝ don't bother initializing Conga if only returning request
      
       url←,url
       cmd←uc,cmd
      
      ∆GET:
-      (secure host path urlparms)←parseURL url
-      secure∨←⍲/{0∊⍴⍵}¨certs PublicCertFile ⍝ we're secure if URL begins with https/wss (checked by parseURL), or we have a cert or a PublicCertFile
      
+      (secure host path urlparms)←parseURL url
+      secure∨←⍲/{0∊⍴⍵}¨certs[1 4] ⍝ we're secure if URL begins with https/wss (checked by parseURL), or we have a cert or a PublicCertFile
       secureParams←''
       :If secure>RequestOnly ⍝ don't bother generating certificate if only returning request
-          →∆END⍴⍨¯1≡secureParams←certs CreateSecureParams r
+          :If 0≠⊃(rc secureParams)←CreateSecureParams certs
+              →∆END⊣r.msg←secureParams
+          :EndIf
       :EndIf
      
       :If '@'∊host ⍝ Handle user:password@host...
@@ -491,7 +496,7 @@
                               (secure domain path urlparms)←parseURL url
                               Cookies←Cookies updateCookies r.Cookies←parseCookies header domain(extractPath path) ⍝!!!!
                               {}LDRC.Close Client
-                              cmd←(1+303=r.HttpStatus)cmd'GET' ⍝ 303 (See Other) is always followed by a 'GET'. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/303
+                              cmd←(1+303=r.HttpStatus)⊃cmd'GET' ⍝ 303 (See Other) is always followed by a 'GET'. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/303
                               →∆GET
                           :Else ⋄ r.msg←'Redirection detected, but no "location" header supplied.' ⍝ should never happen from a properly functioning server
                           :EndIf
@@ -508,7 +513,7 @@
       :EndIf
       r.rc←1⊃rc ⍝ set the return code to the Conga return code
      ∆END:
-      {}LDRC.Close⍣(~KeepAlive)⊢Client
+      {}{0::⍬ ⋄ LDRC.Close⍣(~KeepAlive)⊢Client}⍬
       setDisplayFormat r
      ∆EXIT:
     ∇
@@ -518,23 +523,35 @@
     ∇ r←{cert}NewWebSocket args
       :Access public shared
     ⍝ args - URL onWSReceive WSProtocol WSHeaders onWSValidate
-    ⍝ cert - [X509Cert [SSLValidation [Priority]]]
+    ⍝ cert - [X509Cert|(PublicCertFile PrivateKeyFile) [SSLValidation [Priority]]]
       args←eis args
       :If 0≠⎕NC'cert' ⋄ cert←,⊆cert ⋄ (Cert SSLValidation Priority)←3↑(⍴cert)↓Cert SSLValidation Priority ⋄ :EndIf
       r←⎕NEW ⎕THIS
-      (URL onWSReceive Secure WSProtocol WSHeaders onWSValidate)←7↑args,(⍴args)↓URL onWSReceive Secure WSProtocol WSHeaders onWSValidate
+      (URL onWSReceive WSProtocol WSHeaders onWSValidate)←6↑args,(⍴args)↓URL onWSReceive WSProtocol WSHeaders onWSValidate
       ImAWebSocket←1
     ∇
 
-    ∇ (rc msg)←Connect url;certs;secure;host;path;urlparms;wsid
+    ∇ (rc msg)←Connect url;certs;secure;host;path;urlparms;wsid;secureParams
       :Access public
       certs←
       (rc msg)←¯1 ''
       →∆EXIT↓⍨0∊⍴msg←'Not a WebSocket'/⍨~ImAWebSocket
       →∆EXIT↓⍨0∊⍴msg←'No URL specified'/⍨0∊⍴URL
+      →∆END↓⍨0∊⍴msg←'URL is not a simple character vector'/⍨~isSimpleChar URL
+      →∆END↓⍨0∊⍴msg←'WebSocket headers are not character'/⍨~isChar WSHeaders
+      hdrs←{0::¯1 ⋄ 0∊t←⍴⍵:0 2⍴⊂'' ⋄ 3=|≡⍵:↑eis∘,¨⍵ ⋄ 2=≢t:⍵ ⋄ ((0.5×t),2)⍴⍵}WSHeaders
+      →∆END↓⍨0∊⍴msg←'Improper header format'/⍨¯1≡hdrs
+
+
       ⍝ Parse URL
       (secure host path urlparms)←parseURL url
-     
+      secure∨←⍲/{0∊⍴⍵}¨certs[1 4] ⍝ we're secure if URL begins with https/wss (checked by parseURL), or we have a cert or a PublicCertFile
+      secureParams←''
+      :If secure>RequestOnly ⍝ don't bother generating certificate if only returning request
+          :If 0≠⊃(rc secureParams)←CreateSecureParams certs
+              →∆EXIT⊣(rc msg)←secureParams
+          :EndIf
+      :EndIf
      
       url←
       ⍝ Attempt to connect
@@ -582,10 +599,13 @@
     fmtHeaders←{0∊⍴⍵:'' ⋄ ∊{0∊⍴2⊃⍵:'' ⋄ NL,⍨(firstCaps 1⊃⍵),': ',⍕2⊃⍵}¨↓⍵} ⍝ formatted HTTP headers
     firstCaps←{1↓{(¯1↓0,'-'=⍵) (819⌶)¨ ⍵}'-',⍵} ⍝ capitalize first letters e.g. Content-Encoding
     addHeader←{'∘???∘'≡⍺⍺ Lookup ⍺:⍺⍺⍪⍺ ⍵ ⋄ ⍺⍺} ⍝ add a header unless it's already defined
+    setHeader←{(≢⍺⍺)<i←⍺⍺(⍳ci)eis ⍺:⍺⍺⍪⍺ ⍵ ⋄ ⍺⍺⊣⍺⍺[i;2]←⊆,⍵}
     tableGet←{⍺[;2]/⍨⍺[;1](≡ ci)¨⊂⍵}
     endsWith←{∧/⍺=⍵↑⍨-≢⍺}
     beginsWith←{∧/⍺=⍵↑⍨≢⍺}
     extractPath←{⍵↑⍨1⌈¯1+⊢/⍸'/'=⍵}∘,
+    isChar←{1≥|≡⍵:0 2∊⍨10|⎕DR ⍵ ⋄ ∧/∇¨⍵}
+    isSimpleChar←{1≥|≡⍵: isChar ⍵ ⋄ 0}
 
     ∇ r←dyalogRoot
       :Access Public Shared
@@ -747,11 +767,19 @@
     ∇
 
     ∇ name SetHeader value;ind
-      :Access public
     ⍝ set a header value, overwriting any existing one
+      :Access public
+      Headers←makeHeaders Headers
       ind←Headers[;1](⍳ci)eis name
       Headers↑⍨←ind⌈≢Headers
       Headers[ind;]←name value
+    ∇
+
+    ∇ RemoveHeader name
+    ⍝ remove a header
+      :Access public
+      Headers←makeHeaders Headers
+      Headers⌿⍨←Headers[;1](≢¨ci)eis name
     ∇
 
     ∇ r←{a}eis w;f
