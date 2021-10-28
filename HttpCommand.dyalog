@@ -311,8 +311,8 @@
     ⍝ Do some cursory parameter checking
       →∆END↓⍨0∊⍴r.msg←'No URL specified'/⍨0∊⍴url ⍝ exit early if no URL
       →∆END↓⍨0∊⍴r.msg←'URL is not a simple character vector'/⍨~isSimpleChar url
-      →∆END↓⍨0∊⍴r.msg←'Headers are not character'/⍨~isChar hdrs
-      →∆END↓⍨0∊⍴r.msg←'Cookies are not character'/⍨~isChar cookies
+      →∆END↓⍨0∊⍴r.msg←'Headers are not character'/⍨~(0∊⍴hdrs)∨⍥(1∘↑)isChar hdrs
+      →∆END↓⍨0∊⍴r.msg←'Cookies are not character'/⍨~(0∊⍴hdrs)∨⍥(1∘↑)isChar cookies
       hdrs←{0::¯1 ⋄ 0∊t←⍴⍵:0 2⍴⊂'' ⋄ 3=|≡⍵:↑eis∘,¨⍵ ⋄ 2=≢t:⍵ ⋄ ((0.5×t),2)⍴⍵}hdrs
       →∆END↓⍨0∊⍴msg←'Improper header format'/⍨¯1≡hdrs
      
@@ -541,8 +541,8 @@
       →∆END↓⍨0∊⍴msg←'WebSocket headers are not character'/⍨~isChar WSHeaders
       hdrs←{0::¯1 ⋄ 0∊t←⍴⍵:0 2⍴⊂'' ⋄ 3=|≡⍵:↑eis∘,¨⍵ ⋄ 2=≢t:⍵ ⋄ ((0.5×t),2)⍴⍵}WSHeaders
       →∆END↓⍨0∊⍴msg←'Improper header format'/⍨¯1≡hdrs
-
-
+     
+     
       ⍝ Parse URL
       (secure host path urlparms)←parseURL url
       secure∨←⍲/{0∊⍴⍵}¨certs[1 4] ⍝ we're secure if URL begins with https/wss (checked by parseURL), or we have a cert or a PublicCertFile
@@ -604,7 +604,7 @@
     endsWith←{∧/⍺=⍵↑⍨-≢⍺}
     beginsWith←{∧/⍺=⍵↑⍨≢⍺}
     extractPath←{⍵↑⍨1⌈¯1+⊢/⍸'/'=⍵}∘,
-    isChar←{1≥|≡⍵:0 2∊⍨10|⎕DR ⍵ ⋄ ∧/∇¨⍵}
+    isChar←{1≥|≡⍵:0 2∊⍨10|⎕DR {⊃⍣(0∊⍴⍵)⊢⍵}⍵ ⋄ ∧/∇¨⍵}
     isSimpleChar←{1≥|≡⍵: isChar ⍵ ⋄ 0}
 
     ∇ r←dyalogRoot
