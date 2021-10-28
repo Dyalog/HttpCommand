@@ -1,4 +1,6 @@
 site_name: HttpCommand
+repo_url: https://github.com/dyalog/httpcommand
+repo_name: Dyalog/HttpCommand
 nav:
     - Home: 'index.md'
     - Learn: 'learn.md'
@@ -11,11 +13,21 @@ nav:
       - 'Release Notes': 'release-notes.md'
 
 theme:
-  name: readthedocs
-  custom_dir: theme/
-  highlights: false
-  prev_next_buttons_location: top
+  favicon: 'img/favicon-32.png'
+  logo: 'img/dyalog-white.svg'
+  features:
+    - navigation.sections
+    - navigation.instant
+  name: material
 
 extra_css:
-  - css/mycss.css
+  - css/main.css
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - abbr
+
   
