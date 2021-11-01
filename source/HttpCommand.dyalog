@@ -33,8 +33,6 @@
     :field public MaxRedirections←10               ⍝ set to 0 if you don't want to follow any redirected references, ¯1 for unlimited
     :field public KeepAlive←1                      ⍝ default to not close client connection
     :field public shared Debug←0                   ⍝ set to 1 to disable trapping
-    :field public Result                           ⍝ command result namespace
-
 
     :field public readonly shared ValidFormUrlEncodedChars←'&=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~*+~%'
 
@@ -900,7 +898,7 @@
           0∊⍴i:⍵
           ∊({⊂∊hex['UTF-8'⎕UCS ⍵]}¨⍵[i])@i⊢⍵
       }
-      data←xlate¨data
+      data←xlate∘⍕¨data
       r←noname↓¯1↓∊data,¨(⍴data)⍴'=&'
     ∇
 
