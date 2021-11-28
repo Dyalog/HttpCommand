@@ -3,11 +3,11 @@ repo_url: https://github.com/dyalog/httpcommand
 repo_name: Dyalog/HttpCommand
 nav:
     - Home: 'index.md'
-    - Learn: 'learn.md'
+    - 'Quick Start': 'quickstart.md'
     - Reference:
-      - Overview: 'overview.md'
-      - 'Quick Reference': 'quick.md'
-      - 'Detailed Reference': 'reference.md'
+      - 'User Guide': 'userguide.md'
+      - Configuration: 'configuration.md'
+      - 'Functional Reference': 'reference.md'
     - About: 
       - License: 'LICENSE.md'
       - 'Release Notes': 'release-notes.md'
