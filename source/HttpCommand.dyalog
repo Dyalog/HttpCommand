@@ -11,7 +11,6 @@
     :field public Headers←0 2⍴⊂''                  ⍝ request headers - name, value
     :field public ContentType←''                   ⍝ request content-type
     :field public Cookies←⍬                        ⍝ request cookies - vector of namespaces
-    :field public SuppressHeaders←0                ⍝ set to 1 to suppress HttpCommand-supplied default request headers
 
 ⍝ Conga-related fields
     :field public BufferSize←100000                ⍝ Conga buffersize
@@ -27,19 +26,19 @@
     :field public shared CongaPath←''              ⍝ path to user-supplied conga workspace (assumes shared libraries are in the same path)
 
 ⍝ Operational fields
-    :field public WaitTime←30                      ⍝ seconds to wait for a response before timing out, negative means reset timeout if any activity
+    :field public SuppressHeaders←0                ⍝ set to 1 to suppress HttpCommand-supplied default request headers
+    :field public WaitTime←10                      ⍝ seconds to wait for a response before timing out, negative means reset timeout if any activity
     :field public RequestOnly←¯1                   ⍝ set to 1 if you only want to return the generated HTTP request, but not actually send it
     :field public OutFile←''                       ⍝ name of file to send payload to (or to buffer to when streaming) same as ⎕NPUT right argument
     :field public MaxRedirections←10               ⍝ set to 0 if you don't want to follow any redirected references, ¯1 for unlimited
     :field public KeepAlive←1                      ⍝ default to not close client connection
-    :field public shared Debug←0                   ⍝ set to 1 to disable trapping
+    :field public shared Debug←0                   ⍝ set to 1 to disable trapping, 2 to stop just before creating client
 
     :field public readonly shared ValidFormUrlEncodedChars←'&=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~*+~%'
 
     :field Client←''                               ⍝ Conga client ID
     :field CongaVersion←''                         ⍝ Conga version
     :field HostPortSecure←''                       ⍝ when a client is made, its host, port and secure settings are saved so that if either changes, we close the previous client
-    :field outTn←0                                 ⍝ output file tie number
 
     ∇ r←Version
     ⍝ Return the current version
@@ -63,7 +62,7 @@
       :Case 2.1 ⍝ array
           Command URL Params Headers Cert SSLFlags Priority←7↑args,(⍴args)↓Command URL Params Headers Cert SSLFlags Priority
       :Case 9.1 ⍝ namespace
-          :If 0∊⍴invalid←(settings←args.⎕NL ¯2.1)~(⎕NEW⊃⊃⎕CLASS ⎕THIS).⎕NL ¯2.2
+          :If 0∊⍴invalid←(settings←args.⎕NL ¯2.1 ¯9.1)~(⎕NEW⊃⊃⎕CLASS ⎕THIS).⎕NL ¯2.2
               args{⍎⍵,'←⍺⍎⍵'}¨settings
           :Else ⋄ ('Invalid HttpCommand setting(s): ',,⍕invalid)⎕SIGNAL 11
           :EndIf
@@ -75,7 +74,7 @@
     ∇ {ns}←initResult ns
     ⍝ initialize the namespace result
       :Access shared
-      ns.(Command URL rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections Cookies OutFile)←'' '' ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')⍬''
+      ns.(Command URL rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections Cookies OutFile Elapsed BytesWritten)←'' '' ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')⍬'' 0 ¯1
     ∇
 
     ∇ Goodbye
@@ -99,7 +98,6 @@
           r.(rc msg)←¯1('Unexpected ',⊃{⍺,' at ',⍵}/2↑⎕DMX.DM)
       :EndTrap
       setDisplayFormat r
-      {}⎕NUNTIE outTn
     ∇
 
     ∇ {r}←setDisplayFormat r;rc;msg;stat;data
@@ -108,7 +106,7 @@
           rc←'rc: ',⍕r.rc
           msg←' | msg: ',⍕r.msg
           stat←' | HTTP Status: ',(⍕r.HttpStatus),' "',r.HttpMessage,'"'
-          data←' | ⍴Data: ',{⍬≡⍵:'⍬' ⋄ 0≠outTn:(⍕⎕NSIZE outTn),' written to (',r.OutFile,')' ⋄ ⍕⍵}⍴r.Data
+          data←' | ',{¯1≠r.BytesWritten:(⍕r.BytesWritten),' written to ',r.OutFile ⋄ ⍬≡⍵:'⍴Data: ⍬' ⋄ '⍴Data: ',⍕⍵}⍴r.Data
           r.⎕DF 1⌽'][',rc,msg,stat,data
       :EndIf
     ∇
@@ -160,12 +158,12 @@
       :If 0=⎕NC'requestOnly' ⋄ requestOnly←0 ⋄ :EndIf
      
       →∆EXIT⍴⍨9.1=nameClass cmd←requestOnly New args
-      cmd.ContentType←'application/json'
+      cmd.ContentType←'application/json;charset=utf-8'
      
       :If 0∊⍴cmd.Command ⋄ cmd.Command←(1+0∊⍴cmd.Params)⊃'POST' 'GET' ⋄ :EndIf
       :If ~0∊⍴cmd.Params
           :Trap Debug↓0
-              cmd.Params←1 ⎕JSON cmd.Params
+              cmd.Params←SafeJSON 1 ⎕JSON cmd.Params
           :Else
               r←cmd.Result
               →∆DONE⊣r.(rc msg)←¯1 'Could not convert parameters to JSON format'
@@ -177,12 +175,14 @@
       :If r.rc=0
           →∆DONE⍴⍨204=r.HttpStatus ⍝ exit if "no content" HTTP status
           :If 200=r.HttpStatus
-              :If ∨/'application/json'⍷lc r.Headers Lookup'content-type'
-                  :Trap Debug↓0
-                      r.Data←⎕JSON r.Data
-                  :Else ⋄ →∆DONE⊣r.(rc msg)←1 'Could not convert response payload to JSON format'
-                  :EndTrap
-              :Else ⋄ →∆DONE⊣r.(rc msg)←2 'Response content-type is not application/json'
+              :If ¯1=r.BytesWritten ⍝ if not writing to file
+                  :If ∨/'application/json'⍷lc r.Headers Lookup'content-type'
+                      :Trap Debug↓0
+                          r.Data←⎕JSON r.Data
+                      :Else ⋄ →∆DONE⊣r.(rc msg)←1 'Could not convert response payload to JSON format'
+                      :EndTrap
+                  :Else ⋄ →∆DONE⊣r.(rc msg)←2 'Response content-type is not application/json'
+                  :EndIf
               :EndIf
           :Else ⋄ →∆DONE⊣r.(rc msg)←3 'HTTP failure'
           :EndIf
@@ -304,7 +304,7 @@
      ∆FAIL:(rc secureParams)←¯1 msg ⍝ failure
     ∇
 
-    ∇ r←certs(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;chunked;done;data;datalen;header;headerlen;rc;donetime;ind;len;obj;evt;dat;z;contentType;msg;timedOut;certfile;keyfile;secureParams;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress
+    ∇ r←certs(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;chunked;done;data;datalen;header;headerlen;rc;donetime;ind;len;obj;evt;dat;z;contentType;msg;timedOut;certfile;keyfile;secureParams;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn
     ⍝ issue an HTTP command
     ⍝ certs - X509Cert|(PublicCertFile PrivateKeyFile) SSLValidation Priority PublicCertFile PrivateKeyFile
     ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/path[?query_string]]
@@ -412,8 +412,8 @@
                       parms←UrlEncode parms
                   :EndIf
               :Case 'application/json'
-                  :If ~simpleChar ⍝ if it's a simple charvec, assume it's already JSON format
-                      parms←1 ⎕JSON parms
+                  :If ~isJSON parms ⍝ if it's a simple charvec, assume it's already JSON format
+                      parms←SafeJSON 1 ⎕JSON parms
                   :EndIf
               :EndSelect
               :If RequestOnly>SuppressHeaders ⍝ Conga supplies content-length, but for RequestOnly we need to insert it
@@ -441,7 +441,7 @@
                       →∆END⊣r.msg←'Output file ''',outFile,''' is not empty'
                   :Else
                       outTn←outFile ⎕NTIE 0
-                      0 ⎕NRESIZE⍣(1=replace)⊢outTn
+                      {}0 ⎕NRESIZE⍣(1=replace)⊢outTn
                   :EndIf
               :Else
                   outTn←outFile ⎕NCREATE ¯1
@@ -461,20 +461,27 @@
           Client←''
       :EndIf
      
+      :If Debug=2
+          ∆STOP ⎕STOP'HttpCmd'
+     ∆STOP:⍬ ⎕STOP'HttpCmd'⍝ Setting HttpCommand.Debug←2 will stop here
+      :EndIf
+     
       :If 0∊⍴Client
           options←''
           :If CongaVersion≥3.3
               options←⊂'Options'LDRC.Options.DecodeHttp
-          :Else
-              {}LDRC.SetProp Client'DecodeBuffers' 15 ⍝ set advanced HTTP parsing
           :EndIf
      
           :If 0≠⊃(err Client)←2↑rc←LDRC.Clt''host port'http'BufferSize,secureParams,options
               →∆END⊣r.msg←'Conga client creation failed ',,⍕1↓rc
           :EndIf
-      :EndIf
      
-      donetime←⌊⎕AI[3]+1000×|WaitTime ⍝ time after which we'll time out
+          :If CongaVersion<3.3
+              {}LDRC.SetProp Client'DecodeBuffers' 15 ⍝ set to decode HTTP messages
+          :EndIf
+      :EndIf
+      starttime←⎕AI[3]
+      donetime←⌊starttime+1000×|WaitTime ⍝ time after which we'll time out
      
       :If 0=⊃rc←LDRC.Send Client(cmd(path,(0∊⍴urlparms)↓'?',urlparms)'HTTP/1.1'hdrs parms)
      
@@ -522,7 +529,7 @@
                       :Else ⋄ header⍪←dat ⋄ done←1
                       :EndIf
                   :Case 'HTTPFail' ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the HTTP reponse'
-                  :Case 'Timeout' ⋄ timedOut←⊃(done donetime progress)←obj checkTimeOut donetime progress
+                  :Case 'Timeout' ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress
                   :Case 'Error'
                       r.msg←'Conga error processing your request: ',,⍕rc ⍝ capture entire Wait result
                       r.rc←4⊃rc ⍝ set return code to Conga error number
@@ -530,33 +537,44 @@
                   :Case 'Closed' ⍝ socket closed while
                   :Else ⋄ →∆END⊣r.msg←'*** Unhandled Conga event type - ',evt ⍝ This shouldn't happen
                   :EndSelect
-              :ElseIf 100=err ⋄ timedOut←⊃(done donetime progress)←obj checkTimeOut donetime progress ⍝ timeout?
+              :ElseIf 100=err ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress ⍝ timeout?
               :ElseIf 1119=err
               :Else ⋄ r.msg←'Conga wait error ',,⍕rc ⍝ some other error (very unlikely)
               :EndIf
           :Until done
+          :If toFile
+              r.BytesWritten←(⎕NSIZE outTn)-startSize
+          :EndIf
+     
+          {}⎕NUNTIE outTn
+          r.Elapsed←⎕AI[3]-starttime
      
           :If timedOut ⋄ →∆END⊣r.(rc msg)←(⊃rc)'Request timed out before server responded'
           :EndIf
           :If 0=err
               r.HttpStatus←toInt r.HttpStatus
-              :Trap Debug↓0 ⍝ If any errors occur, abandon conversion
-                  :Select z←header Lookup'content-encoding' ⍝ was the response compressed?
-                  :Case '∘???∘' ⍝ no content-encoding header, do nothing
-                  :Case 'deflate'
-                      data←120 ¯100{(2×⍺≡2↑⍵)↓⍺,⍵}83 ⎕DR data ⍝ append 120 156 signature because web servers strip it out due to IE
-                      data←fromutf8 256|¯2(219⌶)data
-                  :Case 'gzip' ⋄ data←fromutf8 256|¯3(219⌶)83 ⎕DR data
-                  :Else ⋄ r.msg←'Unhandled content-encoding: ',z
-                  :EndSelect
+              :If ~toFile
+                  :Trap Debug↓0 ⍝ If any errors occur, abandon conversion
+                      :Select z←header Lookup'content-encoding' ⍝ was the response compressed?
+                      :Case '∘???∘' ⍝ no content-encoding header, do nothing
+                      :Case 'deflate'
+                          data←120 ¯100{(2×⍺≡2↑⍵)↓⍺,⍵}83 ⎕DR data ⍝ append 120 156 signature because web servers strip it out due to IE
+                          data←fromutf8 256|¯2(219⌶)data
+                      :Case 'gzip' ⋄ data←fromutf8 256|¯3(219⌶)83 ⎕DR data
+                      :Else ⋄ r.msg←'Unhandled content-encoding: ',z
+                      :EndSelect
      
-                  :If 0<≢'charset\s*=\s*utf-8'⎕S'&'⍠1⊢header Lookup'content-type'
-                      data←'UTF-8'⎕UCS ⎕UCS data ⍝ Convert from UTF-8
-                      data←(65279=⎕UCS⊃data)↓data ⍝ drop off BOM, if any
-                  :EndIf
-              :EndTrap
+                      :If 0<≢'charset\s*=\s*utf-8'⎕S'&'⍠1⊢header Lookup'content-type'
+                          data←'UTF-8'⎕UCS ⎕UCS data ⍝ Convert from UTF-8
+                          data←(65279=⎕UCS⊃data)↓data ⍝ drop off BOM, if any
+                      :EndIf
+                  :EndTrap
+                  r.Data←data
+              :EndIf
+     
               (domain path)←r.(Host Path)
               Cookies←Cookies updateCookies r.Cookies←parseCookies header domain(extractPath path) ⍝!!!
+     
               :If (r.HttpStatus∊301 302 303 307 308)>0=MaxRedirections ⍝ if redirected and allowing redirections
                   :If MaxRedirections<.=¯1,≢r.Redirections ⋄ →∆END⊣r.(rc msg)←¯1('Too many redirections (',(⍕MaxRedirections),')')
                   :Else
@@ -576,7 +594,7 @@
               :AndIf 0=⊃z←LDRC.GetProp Client'PeerCert' ⋄ r.PeerCert←2⊃z
               :EndIf
           :EndIf
-          r.(Headers Data)←header data
+          r.Headers←header
       :Else ⋄ r.msg←'Conga connection failed ',,⍕1↓rc
       :EndIf
       r.rc←1⊃rc ⍝ set the return code to the Conga return code
@@ -590,7 +608,7 @@
     ⍝ if
       →∆EXIT↓⍨timedOut←⎕AI[3]>donetime
       →∆EXIT↓⍨WaitTime<0
-      →∆EXIT↓⍨0=⊃tmp←LDRC.Tree obj ⍝ progress should be in elements [4 5]
+      →∆EXIT↓⍨0=⊃tmp←LDRC.Tree  ⍝ progress should be in elements [4 5]
       snap←(⊂∘⍋⌷⊢)↑(↑2 2⊃tmp)[;1] ⍝ capture current state
       →∆EXIT⍴⍨progress≡snap
       (timedOut donetime progress)←0(donetime+Timeout)snap
@@ -626,6 +644,7 @@
     extractPath←{⍵↑⍨1⌈¯1+⊢/⍸'/'=⍵}∘,
     isChar←{1≥|≡⍵:0 2∊⍨10|⎕DR {⊃⍣(0∊⍴⍵)⊢⍵}⍵ ⋄ ∧/∇¨⍵}
     isSimpleChar←{1≥|≡⍵: isChar ⍵ ⋄ 0}
+    isJSON←{~0 2∊⍨10|⎕DR ⍵:0 ⋄ ~(⊃⍵)∊'-{["',⎕D:0 ⋄ {0::0 ⋄1⊣0 ⎕JSON ⍵}⍵} ⍝ test for JSONableness fails on APL that looks like JSON (e.g. '"abc"')
 
     ∇ r←dyalogRoot
       :Access Public Shared
@@ -919,6 +938,15 @@
           m←(⍴r)⍴1 ⋄ m[(,j),i~fill]←0
           r←m/r
       :EndIf
+    ∇
+
+    ∇ w←SafeJSON w;i;c;⎕IO
+    ⍝ Convert Unicode chars to \uXXXX
+      :Access public shared
+      ⎕IO←0
+      →0⍴⍨0∊i←⍸127<c←⎕UCS w
+      w[i]←{⊂'\u','0123456789ABCDEF'[¯4↑16⊥⍣¯1⊢⍵]}¨c[i]
+      w←∊w
     ∇
 
     ∇ r←Documentation
