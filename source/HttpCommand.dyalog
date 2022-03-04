@@ -34,6 +34,11 @@
     :field public KeepAlive←1                      ⍝ default to not close client connection
     :field public shared Debug←0                   ⍝ set to 1 to disable trapping, 2 to stop just before creating client
 
+⍝ Streaming-related fields
+    :field public Stream←0                         ⍝ set to 1 to stream in a separate thread
+    :field public StreamFn←''                      ⍝ function name to call when streaming
+    :field public StreamLimit←0                    ⍝ if negative - number of seconds to stream, if positive - number of bytes to stream, if 0 - no limit
+
     :field public readonly shared ValidFormUrlEncodedChars←'&=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~*+~%'
 
     :field Client←''                               ⍝ Conga client ID
@@ -43,7 +48,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '4.0' '2021-10-31'
+      r←'HttpCommand' '4.0.5' '2021-12-23'
     ∇
 
     ∇ make
@@ -91,6 +96,7 @@
     ∇ r←Run
     ⍝ Attempt to run the HTTP command
       :Access public
+      RequestOnly←0⌈RequestOnly
       :Trap Debug↓0
           r←(Cert SSLFlags Priority PublicCertFile PrivateKeyFile)(Command HttpCmd)URL Params Headers
       :Else ⍝ :Trap
@@ -106,7 +112,7 @@
           rc←'rc: ',⍕r.rc
           msg←' | msg: ',⍕r.msg
           stat←' | HTTP Status: ',(⍕r.HttpStatus),' "',r.HttpMessage,'"'
-          data←' | ',{¯1≠r.BytesWritten:(⍕r.BytesWritten),' written to ',r.OutFile ⋄ ⍬≡⍵:'⍴Data: ⍬' ⋄ '⍴Data: ',⍕⍵}⍴r.Data
+          data←' | ',{¯1≠r.BytesWritten:(⍕r.BytesWritten),' bytes written to ',r.OutFile ⋄ ⍬≡⍵:'⍴Data: ⍬' ⋄ '⍴Data: ',⍕⍵}⍴r.Data
           r.⎕DF 1⌽'][',rc,msg,stat,data
       :EndIf
     ∇
@@ -155,22 +161,21 @@
     ⍝ Shared method to perform an HTTP request with JSON data as the request and response payloads
     ⍝ args - [Command URL Params Headers Cert SSLFlags Priority]
       :Access public shared
-      :If 0=⎕NC'requestOnly' ⋄ requestOnly←0 ⋄ :EndIf
+      :If 0=⎕NC'requestOnly' ⋄ requestOnly←¯1 ⋄ :EndIf
      
       →∆EXIT⍴⍨9.1=nameClass cmd←requestOnly New args
-      cmd.ContentType←'application/json;charset=utf-8'
-     
+      :If 0∊⍴cmd.ContentType ⋄ cmd.ContentType←'application/json;charset=utf-8' ⋄ :EndIf
       :If 0∊⍴cmd.Command ⋄ cmd.Command←(1+0∊⍴cmd.Params)⊃'POST' 'GET' ⋄ :EndIf
       :If ~0∊⍴cmd.Params
           :Trap Debug↓0
-              cmd.Params←SafeJSON 1 ⎕JSON cmd.Params
+              cmd.Params←JSONexport cmd.Params
           :Else
               r←cmd.Result
               →∆DONE⊣r.(rc msg)←¯1 'Could not convert parameters to JSON format'
           :EndTrap
       :EndIf
       r←cmd.Run
-      →requestOnly⍴∆EXIT
+      →cmd.RequestOnly⍴∆EXIT
      
       :If r.rc=0
           →∆DONE⍴⍨204=r.HttpStatus ⍝ exit if "no content" HTTP status
@@ -178,7 +183,7 @@
               :If ¯1=r.BytesWritten ⍝ if not writing to file
                   :If ∨/'application/json'⍷lc r.Headers Lookup'content-type'
                       :Trap Debug↓0
-                          r.Data←⎕JSON r.Data
+                          r.Data←0 ⎕JSON r.Data
                       :Else ⋄ →∆DONE⊣r.(rc msg)←1 'Could not convert response payload to JSON format'
                       :EndTrap
                   :Else ⋄ →∆DONE⊣r.(rc msg)←2 'Response content-type is not application/json'
@@ -190,6 +195,37 @@
      ∆DONE: ⍝ reset ⎕DF if messages have changed
       setDisplayFormat r
      ∆EXIT:
+    ∇
+
+
+    ∇ r←{ro}Fix args;z;url;target
+    ⍝ retrieve and fix APL code loads the latest version from GitHub
+    ⍝ args is:
+    ⍝  [1] URL of code to fix - if the URL has 'github' (but not 'raw.githubusercontent.com') in it, we do some gratuitous massaging
+    ⍝  [2] (optional) reference to namespace in which to fix the code (default ##)
+    ⍝ example: HttpCommand.Fix 'github/Dyalog/Jarvis/Source/Jarvis.dyalog' #.
+      :Access public shared
+      (url target)←2↑(,⊆args),##
+      :If 0=⎕NC'ro' ⋄ ro←0 ⋄ :EndIf
+      r←z←ro Get{ ⍝ convert url if necessary
+          ~∨/'github'⍷⍵:⍵ ⍝ if not github just
+          ∨/'raw.githubusercontent.com'⍷⍵:⍵ ⍝ already refers to
+          t←'/'(≠⊆⊢)⍵
+          i←⍸<\∨/¨'github'∘⍷¨t
+          'https://raw.githubusercontent.com',∊'/',¨(2↑i↓t),(⊂'master'),(2+i)↓t
+      }url
+      →ro⍴0
+      :If z.rc≠0
+          r←z.(rc msg)
+      :ElseIf z.HttpStatus≠200
+          r←¯1(⍕z)
+      :Else
+          :Trap 0
+              r←0(⍕target{0::⍺.⎕FX ⍵ ⋄ ⍺.⎕FIX ⍵}{⍵⊆⍨~⍵∊⎕UCS 13 10 65279}z.Data)
+          :Else
+              r←¯1('Could not ⎕FIX file: ',2↓∊': '∘,¨⎕DMX.(EM Message))
+          :EndTrap
+      :EndIf
     ∇
 
     ∇ r←Init r;ref;root;nc;n;ns;congaCopied;class;path
@@ -219,7 +255,7 @@
                           :For path :In (1+0∊⍴CongaPath)⊃(⊂CongaPath)((dyalogRoot,'ws/')'') ⍝ if CongaPath specifiec, use it exclusively
                               :Trap Debug↓0
                                   n class.⎕CY path,'conga'
-                                  LDRC←ResolveCongaRef class⍎n
+                                  LDRC←ResolveCongaRef(class⍎n)
                                   →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/n,' was copied from [DYALOG]/ws/conga, but is not valid'
                                   →∆COPIED⊣congaCopied←1
                               :EndTrap
@@ -325,12 +361,19 @@
     ⍝ Do some cursory parameter checking
       →∆END↓⍨0∊⍴r.msg←'No URL specified'/⍨0∊⍴url ⍝ exit early if no URL
       →∆END↓⍨0∊⍴r.msg←'URL is not a simple character vector'/⍨~isSimpleChar url
-      →∆END↓⍨0∊⍴r.msg←'Headers are not character'/⍨~(0∊⍴hdrs)∨⍥(1∘↑)isChar hdrs
-      →∆END↓⍨0∊⍴r.msg←'Cookies are not character'/⍨~(0∊⍴hdrs)∨⍥(1∘↑)isChar cookies
+      →∆END↓⍨0∊⍴r.msg←'Headers are not character'/⍨(0∊⍴hdrs)⍱1↑isChar hdrs
+      →∆END↓⍨0∊⍴r.msg←'Cookies are not character'/⍨(0∊⍴cookies)⍱1↑isChar cookies
       hdrs←{0::¯1 ⋄ 0∊t←⍴⍵:0 2⍴⊂'' ⋄ 3=|≡⍵:↑eis∘,¨⍵ ⋄ 2=≢t:⍵ ⋄ ((0.5×t),2)⍴⍵}hdrs
-      →∆END↓⍨0∊⍴msg←'Improper header format'/⍨¯1≡hdrs
+      →∆END↓⍨0∊⍴r.msg←'Improper header format'/⍨¯1≡hdrs
      
-     
+      :If Stream
+          :If ''≡StreamFn
+              _streamFn←{⎕←⍵}
+          :Else
+              →∆END↓⍨0∊⍴r.msg←'StreamFn is not a function'/⍨3≠⎕NC StreamFn
+              _streamFn←⍎StreamFn
+          :EndIf
+      :EndIf
      
       :If ~RequestOnly  ⍝ don't bother initializing Conga if only returning request
           :If ~0∊⍴CongaPath
@@ -346,7 +389,7 @@
      
      ∆GET:
      
-      (secure host path urlparms)←parseURL url
+      (secure host path urlparms)←parseURL r.URL←url
       secure∨←⍲/{0∊⍴⍵}¨certs[1 4] ⍝ we're secure if URL begins with https/wss (checked by parseURL), or we have a cert or a PublicCertFile
       secureParams←''
       :If secure>RequestOnly ⍝ don't bother generating certificate if only returning request
@@ -407,14 +450,16 @@
               simpleChar←{1<≢⍴⍵:0 ⋄ (⎕DR ⍵)∊80 82}parms
               :Select ⊃';'(≠⊆⊢)contentType
               :Case 'application/x-www-form-urlencoded'
-                  :If ~simpleChar ⍝ if simple character, parms is assumed to already be
-                  :OrIf ~∧/parms∊ValidFormUrlEncodedChars
-                      parms←UrlEncode parms
+                  :If ~simpleChar ⍝ if not simple character...
+                  :OrIf ~∧/parms∊ValidFormUrlEncodedChars ⍝ or not valid URL-encoded
+                      parms←UrlEncode parms ⍝ encode it
                   :EndIf
               :Case 'application/json'
-                  :If ~isJSON parms ⍝ if it's a simple charvec, assume it's already JSON format
-                      parms←SafeJSON 1 ⎕JSON parms
+                  :If ~isJSON parms ⍝ if it's not already JSON
+                      parms←JSONexport parms ⍝ JSONify it
                   :EndIf
+              :Else
+                  parms←∊⍕parms
               :EndSelect
               :If RequestOnly>SuppressHeaders ⍝ Conga supplies content-length, but for RequestOnly we need to insert it
                   hdrs←'Content-Length'(hdrs addHeader)⍴parms
@@ -461,10 +506,7 @@
           Client←''
       :EndIf
      
-      :If Debug=2
-          ∆STOP ⎕STOP'HttpCmd'
-     ∆STOP:⍬ ⎕STOP'HttpCmd'⍝ Setting HttpCommand.Debug←2 will stop here
-      :EndIf
+      stopIf Debug=2
      
       :If 0∊⍴Client
           options←''
@@ -487,61 +529,65 @@
      
           (timedOut done data datalen headerlen header chunked progress)←0 0 ⍬ 0 0 ⍬ 0 0
      
-          :Repeat
-              :If ~done←0≠err←1⊃rc←LDRC.Wait Client Timeout            ⍝ Wait up to 5 secs
-                  (err obj evt dat)←4↑rc
-                  :Select evt
-                  :Case 'HTTPHeader'
-                      :If 1=≡dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP header' ⍝ HTTP header parsing failed?
-                      :Else
-                          r.(HttpVersion HttpStatus HttpMessage Headers)←4↑dat
-                          header←4⊃dat
-                          datalen←⊃toInt{'∘???∘'≡⍵:'¯1' ⋄ ⍵}header Lookup'Content-Length' ⍝ ¯1 if no content length not specified
-                          chunked←∨/'chunked'⍷header Lookup'Transfer-Encoding'
-                          done←(cmd≡'HEAD')∨chunked<datalen<1
+          :Trap 1000 ⍝ in case break is pressed while listening
+              :Repeat
+                  :If ~done←0≠err←1⊃rc←LDRC.Wait Client Timeout            ⍝ Wait up to 5 secs
+                      (err obj evt dat)←4↑rc
+                      :Select evt
+                      :Case 'HTTPHeader'
+                          :If 1=≡dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP header' ⍝ HTTP header parsing failed?
+                          :Else
+                              r.(HttpVersion HttpStatus HttpMessage Headers)←4↑dat
+                              header←4⊃dat
+                              datalen←⊃toInt{'∘???∘'≡⍵:'¯1' ⋄ ⍵}header Lookup'Content-Length' ⍝ ¯1 if no content length not specified
+                              chunked←∨/'chunked'⍷header Lookup'Transfer-Encoding'
+                              done←(cmd≡'HEAD')∨chunked<datalen<1
                            ⍝↓↓↓ hack to deal with HTTP/1.0 behavior of no content-length and no transfer-encoding
                            ⍝    see item 7 under https://tools.ietf.org/html/rfc7230#section-3.3.3
-                          :If chunked<datalen=¯1
-                          :AndIf ∨/'close'⍷header Lookup'Connection' ⍝←←← not sure this is necessary
-                              :Repeat
-                                  rc←LDRC.Wait Client 50
-                              :Until 100≠⊃rc
-                              :If 0=⊃rc
-                              :AndIf rc[3]∊'BlkLast' 'HTTPBody'
-                                  :If toFile ⋄ (4⊃src)⎕NAPPEND outTn
-                                  :Else ⋄ data←4⊃rc
+                              :If chunked<datalen=¯1
+                              :AndIf ∨/'close'⍷header Lookup'Connection' ⍝←←← not sure this is necessary
+                                  :Repeat
+                                      rc←LDRC.Wait Client 50
+                                  :Until 100≠⊃rc
+                                  :If 0=⊃rc
+                                  :AndIf rc[3]∊'BlkLast' 'HTTPBody'
+                                      :If toFile ⋄ (4⊃src)⎕NAPPEND outTn
+                                      :Else ⋄ data←4⊃rc
+                                      :EndIf
                                   :EndIf
                               :EndIf
                           :EndIf
-                      :EndIf
-                  :Case 'HTTPBody'
-                      :If toFile ⋄ dat ⎕NAPPEND outTn
-                      :Else ⋄ data←dat
-                      :EndIf
-                      done←1
-                  :Case 'HTTPChunk'
-                      :If 1=≡dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP chunk' ⍝ HTTP chunk parsing failed?
-                      :ElseIf toFile ⋄ (1⊃dat)⎕NAPPEND outTn
-                      :Else ⋄ data,←1⊃dat
-                      :EndIf
-                  :Case 'HTTPTrailer'
-                      :If 2≠≢⍴dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP trailer' ⍝ HTTP trailer parsing failed?
-                      :Else ⋄ header⍪←dat ⋄ done←1
-                      :EndIf
-                  :Case 'HTTPFail' ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the HTTP reponse'
-                  :Case 'Timeout' ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress
-                  :Case 'Error'
-                      r.msg←'Conga error processing your request: ',,⍕rc ⍝ capture entire Wait result
-                      r.rc←4⊃rc ⍝ set return code to Conga error number
-                      →∆END
-                  :Case 'Closed' ⍝ socket closed while
-                  :Else ⋄ →∆END⊣r.msg←'*** Unhandled Conga event type - ',evt ⍝ This shouldn't happen
-                  :EndSelect
-              :ElseIf 100=err ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress ⍝ timeout?
-              :ElseIf 1119=err
-              :Else ⋄ r.msg←'Conga wait error ',,⍕rc ⍝ some other error (very unlikely)
-              :EndIf
-          :Until done
+                      :Case 'HTTPBody'
+                          :If toFile ⋄ dat ⎕NAPPEND outTn
+                          :Else ⋄ data←dat
+                          :EndIf
+                          done←1
+                      :Case 'HTTPChunk'
+                          :If 1=≡dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP chunk' ⍝ HTTP chunk parsing failed?
+                          :ElseIf toFile∨Stream  ⍝ permit both writing to file and streaming
+                              :If toFile ⋄ (1⊃dat)⎕NAPPEND outTn ⋄ :EndIf
+                              :If Stream ⋄ _streamFn 1⊃dat ⋄ :EndIf
+                          :Else ⋄ data,←1⊃dat
+                          :EndIf
+                      :Case 'HTTPTrailer'
+                          :If 2≠≢⍴dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP trailer' ⍝ HTTP trailer parsing failed?
+                          :Else ⋄ r.Headers⍪←dat ⋄ done←1
+                          :EndIf
+                      :Case 'HTTPFail' ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the HTTP reponse'
+                      :Case 'Timeout' ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress
+                      :Case 'Error'
+                          r.msg←'Conga error processing your request: ',,⍕rc ⍝ capture entire Wait result
+                          r.rc←4⊃rc ⍝ set return code to Conga error number
+                          →∆END
+                      :Case 'Closed' ⍝ socket closed while
+                      :Else ⋄ →∆END⊣r.msg←'*** Unhandled Conga event type - ',evt ⍝ This shouldn't happen
+                      :EndSelect
+                  :ElseIf 100=err ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress ⍝ timeout?
+                  :ElseIf 1119=err
+                  :Else ⋄ r.msg←'Conga wait error ',,⍕rc ⍝ some other error (very unlikely)
+                  :EndIf
+              :Until done
+          :EndTrap
           :If toFile
               r.BytesWritten←(⎕NSIZE outTn)-startSize
           :EndIf
@@ -555,7 +601,7 @@
               r.HttpStatus←toInt r.HttpStatus
               :If ~toFile
                   :Trap Debug↓0 ⍝ If any errors occur, abandon conversion
-                      :Select z←header Lookup'content-encoding' ⍝ was the response compressed?
+                      :Select z←r.Headers Lookup'content-encoding' ⍝ was the response compressed?
                       :Case '∘???∘' ⍝ no content-encoding header, do nothing
                       :Case 'deflate'
                           data←120 ¯100{(2×⍺≡2↑⍵)↓⍺,⍵}83 ⎕DR data ⍝ append 120 156 signature because web servers strip it out due to IE
@@ -564,7 +610,7 @@
                       :Else ⋄ r.msg←'Unhandled content-encoding: ',z
                       :EndSelect
      
-                      :If 0<≢'charset\s*=\s*utf-8'⎕S'&'⍠1⊢header Lookup'content-type'
+                      :If 0<≢'charset\s*=\s*utf-8'⎕S'&'⍠1⊢r.Headers Lookup'content-type'
                           data←'UTF-8'⎕UCS ⎕UCS data ⍝ Convert from UTF-8
                           data←(65279=⎕UCS⊃data)↓data ⍝ drop off BOM, if any
                       :EndIf
@@ -572,15 +618,15 @@
                   r.Data←data
               :EndIf
      
-              (domain path)←r.(Host Path)
-              Cookies←Cookies updateCookies r.Cookies←parseCookies header domain(extractPath path) ⍝!!!
+ ⍝              (domain path)←r.(Host Path)
+              Cookies←Cookies updateCookies r.Cookies←parseCookies r.Headers r.Host(extractPath r.Path)
      
               :If (r.HttpStatus∊301 302 303 307 308)>0=MaxRedirections ⍝ if redirected and allowing redirections
                   :If MaxRedirections<.=¯1,≢r.Redirections ⋄ →∆END⊣r.(rc msg)←¯1('Too many redirections (',(⍕MaxRedirections),')')
                   :Else
-                      :If '∘???∘'≢url←header Lookup'location' ⍝ if we were redirected use the "location" header field for the URL
+                      :If '∘???∘'≢url←r.Headers Lookup'location' ⍝ if we were redirected use the "location" header field for the URL
                           r.Redirections,←t←#.⎕NS''
-                          t.Headers←header
+                          t.Headers←r.Headers
                           t.(URL HttpVersion HttpStatus HttpMessage)←r.(URL HttpVersion HttpStatus HttpMessage)
                           (secure domain path urlparms)←parseURL url
                           {}LDRC.Close Client
@@ -594,7 +640,6 @@
               :AndIf 0=⊃z←LDRC.GetProp Client'PeerCert' ⋄ r.PeerCert←2⊃z
               :EndIf
           :EndIf
-          r.Headers←header
       :Else ⋄ r.msg←'Conga connection failed ',,⍕1↓rc
       :EndIf
       r.rc←1⊃rc ⍝ set the return code to the Conga return code
@@ -603,7 +648,68 @@
      ∆EXIT:
     ∇
 
+    ∇ r←Listen r;done;err;rc;obj;evt;dat;datalen;chunked
+      :Trap 1000 ⍝ in case break is pressed while listening
+          :If ~done←0≠err←1⊃rc←LDRC.Wait Client Timeout            ⍝ Wait up to 5 secs
+              (err obj evt dat)←4↑rc
+              :Select evt
+              :Case 'HTTPHeader'
+                  :If 1=≡dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP header' ⍝ HTTP header parsing failed?
+                  :Else
+                      r.(HttpVersion HttpStatus HttpMessage Headers)←4↑dat
+                      header←4⊃dat
+                      datalen←⊃toInt{'∘???∘'≡⍵:'¯1' ⋄ ⍵}header Lookup'Content-Length' ⍝ ¯1 if no content length not specified
+                      chunked←∨/'chunked'⍷header Lookup'Transfer-Encoding'
+                      done←(cmd≡'HEAD')∨chunked<datalen<1
+                           ⍝↓↓↓ hack to deal with HTTP/1.0 behavior of no content-length and no transfer-encoding
+                           ⍝    see item 7 under https://tools.ietf.org/html/rfc7230#section-3.3.3
+                      :If chunked<datalen=¯1
+                      :AndIf ∨/'close'⍷header Lookup'Connection' ⍝←←← not sure this is necessary
+                          :Repeat
+                              rc←LDRC.Wait Client 50
+                          :Until 100≠⊃rc
+                          :If 0=⊃rc
+                          :AndIf rc[3]∊'BlkLast' 'HTTPBody'
+                              :If toFile ⋄ (4⊃src)⎕NAPPEND outTn
+                              :Else ⋄ data←4⊃rc
+                              :EndIf
+                          :EndIf
+                      :EndIf
+                  :EndIf
+              :Case 'HTTPBody'
+                  :If toFile ⋄ dat ⎕NAPPEND outTn
+                  :Else ⋄ data←dat
+                  :EndIf
+                  done←1
+              :Case 'HTTPChunk'
+                  :If 1=≡dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP chunk' ⍝ HTTP chunk parsing failed?
+                  :ElseIf toFile ⋄ (1⊃dat)⎕NAPPEND outTn
+                  :ElseIf Stream
+                  ⍝!!! Insert _streamFn here
+                  :Else ⋄ data,←1⊃dat
+                  :EndIf
+              :Case 'HTTPTrailer'
+                  :If 2≠≢⍴dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP trailer' ⍝ HTTP trailer parsing failed?
+                  :Else ⋄ header⍪←dat ⋄ done←1
+                  :EndIf
+              :Case 'HTTPFail' ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the HTTP reponse'
+              :Case 'Timeout' ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress
+              :Case 'Error'
+                  r.msg←'Conga error processing your request: ',,⍕rc ⍝ capture entire Wait result
+                  r.rc←4⊃rc ⍝ set return code to Conga error number
+                  →∆END
+              :Case 'Closed' ⍝ socket closed while
+              :Else ⋄ →∆END⊣r.msg←'*** Unhandled Conga event type - ',evt ⍝ This shouldn't happen
+              :EndSelect
+          :ElseIf 100=err ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress ⍝ timeout?
+          :ElseIf 1119=err
+          :Else ⋄ r.msg←'Conga wait error ',,⍕rc ⍝ some other error (very unlikely)
+          :EndIf
+      :EndTrap
+    ∇
+
     ∇ (timedOut donetime progress)←obj checkTimeOut(donetime progress);tmp;snap
+    ⍝!!!
     ⍝ check if request has timed out
     ⍝ if
       →∆EXIT↓⍨timedOut←⎕AI[3]>donetime
@@ -645,15 +751,25 @@
     isChar←{1≥|≡⍵:0 2∊⍨10|⎕DR {⊃⍣(0∊⍴⍵)⊢⍵}⍵ ⋄ ∧/∇¨⍵}
     isSimpleChar←{1≥|≡⍵: isChar ⍵ ⋄ 0}
     isJSON←{~0 2∊⍨10|⎕DR ⍵:0 ⋄ ~(⊃⍵)∊'-{["',⎕D:0 ⋄ {0::0 ⋄1⊣0 ⎕JSON ⍵}⍵} ⍝ test for JSONableness fails on APL that looks like JSON (e.g. '"abc"')
+    stopIf←{1∊⍵:-⎕TRAP←0 'C' '⎕←''Stopped for debugging... (Press Ctrl-Enter)''' ⋄ shy←0} ⍝ faster alternative to setting ⎕STOP
+
+    ∇ r←JSONexport data
+      :Trap 11
+          r←SafeJSON 1 ⎕JSON data ⍝ attempt to export
+      :Else
+          r←SafeJSON(1 ⎕JSON⍠'HighRank' 'Split')data ⍝ Dyalog v18.0 and later
+      :EndTrap
+    ∇
+
+
 
     ∇ r←dyalogRoot
-      :Access Public Shared
+    ⍝ return path to interpreter
       r←{⍵,('/\'∊⍨⊢/⍵)↓'/'}{0∊⍴t←2 ⎕NQ'.' 'GetEnvironment' 'DYALOG':⊃1 ⎕NPARTS⊃2 ⎕NQ'.' 'GetCommandLineArgs' ⋄ t}''
     ∇
 
     ∇ (secure host path urlparms)←parseURL url;path;p
-      :Access Public Shared
-    ⍝ parses a URL and returns
+    ⍝ Parses a URL and returns
     ⍝   secure - Boolean whether running HTTPS or not based on leading http://
     ⍝   host - domain or IP address
     ⍝   path - path on the host for the requested resource, if any
@@ -671,7 +787,6 @@
     ⍝ returns Extended IDN format
     ⍝ this function does almost no validation of its input, we expect a properly formatted date
     ⍝ ill-formatted dates return ⍬
-      :Access public shared
       :Trap 0
           d←{⍵⊆⍨⍵∊⎕A,⎕D}uc date
           r←1 0 1 1 1 1\toInt¨d[4 2 5 6 7]
@@ -684,27 +799,31 @@
 
     ∇ idn←TStoIDN ts
     ⍝ Convert timestamp to extended IDN format
-      :Access public shared
-      idn←(2 ⎕NQ'.' 'DateToIDN'(3↑ts))+(24 60 60 1000⊥4↑3↓ts)÷86400000
+      :Trap 2 ⍝ syntax error if pre-v18.0
+          idn←¯1 1 ⎕DT⊂ts
+      :Else
+          idn←(2 ⎕NQ'.' 'DateToIDN'(3↑ts))+(24 60 60 1000⊥4↑3↓ts)÷86400000
+      :EndTrap
     ∇
 
     ∇ ts←IDNtoTS idn
     ⍝ Convert extended IDN to timestamp
-      :Access public shared
-      ts←3↑2 ⎕NQ'.' 'IDNToDate'(⌊idn)
-      ts,←⌊0.5+24 60 60 1000⊤86400000×1|⍬⍴idn
+      :Trap 2 ⍝ syntax error if pre-v18.0
+          ts←⊃1 ¯1 ⎕DT idn
+      :Else
+          ts←3↑2 ⎕NQ'.' 'IDNToDate'(⌊idn)
+          ts,←⌊0.5+24 60 60 1000⊤86400000×1|⍬⍴idn
+      :EndTrap
     ∇
 
     ∇ idn←Now
     ⍝ Return extended IDN for current time
-      :Access public shared
       idn←TStoIDN ⎕TS
     ∇
 
     ∇ cookies←parseCookies(headers host path);cookie;segs;setcookie;seg;value;name;domain
     ⍝ Parses set-cookie headers into cookie array
     ⍝ Attempts to follow RFC6265 https://datatracker.ietf.org/doc/html/rfc6265
-      :Access public shared ⍝ remove this after testing!!!
       cookies←⍬
       :For setcookie :In headers tableGet'set-cookie'
           segs←dltb¨¨2↑¨'='splitOnFirst⍨¨dltb¨setcookie splitOn';'
@@ -748,9 +867,10 @@
       }
 
       domainMatch←{
-      ⍝ ⍺ - host, ⍵ - cookie domain
-          ⍺≡⍵:1
-          (⍺ endsWith ⍵)∧'.'=⊃⍵
+      ⍝ ⍺ - host, ⍵ - cookie.(domain host)
+          host←(1+0∊⍴1⊃⍵)⊃⍵
+          ⍺≡host:1
+          (⍺ endsWith host)∧'.'=⊃host
       }
 
       pathMatch←{
@@ -760,7 +880,6 @@
 
     ∇ cookies←cookies updateCookies new;cookie;ind
     ⍝ update internal cookies based on result of ParseCookies
-      :Access public shared
       :If 0∊⍴cookies
           cookies←new
       :Else
@@ -783,11 +902,10 @@
 
     ∇ r←state applyCookies cookies;mask
     ⍝ return which cookies to send based on current request and
-      :Access public shared
       r←⍬
       →0⍴⍨0∊⍴mask←1⍴⍨≢cookies ⍝ exit if no cookies
       →0↓⍨∨/mask∧←cookies.Secure≤state.Secure ⍝ HTTPS only filter
-      →0↓⍨∨/mask←mask\state.Host∘domainMatch¨mask/cookies.Domain
+      →0↓⍨∨/mask←mask\state.Host∘domainMatch¨mask/cookies.(Domain Host)
       →0↓⍨∨/mask←mask\state.Path∘pathMatch¨mask/cookies.Path
       →0↓⍨∨/mask←mask\NotExpired¨mask/cookies
       r←mask/cookies
@@ -799,7 +917,6 @@
 
     ∇ r←table Lookup name
     ⍝ lookup a name/value-table value by name, return '∘???∘' if not found
-      :Access Public Shared
       r←table{(⍺[;2],⊂'∘???∘')⊃⍨⍺[;1](⍳ci)eis ⍵}name
     ∇
 
@@ -828,7 +945,6 @@
 
     ∇ r←{a}eis w;f
     ⍝ enclose if simple
-      :Access public shared
       f←{⍺←1 ⋄ ,(⊂⍣(⍺=|≡⍵))⍵}
       :If 0=⎕NC'a' ⋄ r←f w
       :Else ⋄ r←a f w
@@ -942,7 +1058,6 @@
 
     ∇ w←SafeJSON w;i;c;⎕IO
     ⍝ Convert Unicode chars to \uXXXX
-      :Access public shared
       ⎕IO←0
       →0⍴⍨0∊i←⍸127<c←⎕UCS w
       w[i]←{⊂'\u','0123456789ABCDEF'[¯4↑16⊥⍣¯1⊢⍵]}¨c[i]
@@ -964,7 +1079,7 @@
       z←Get url
       :If z.rc≠0
           r←z.(rc msg)
-      :ElseIf (z.HttpStatus=404)∧
+      :ElseIf (z.HttpStatus=404)∧repository≡'HttpCommand'
           repository←'library-conga'
           →∆TRY
       :ElseIf z.HttpStatus≠200
