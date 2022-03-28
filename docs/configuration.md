@@ -1,58 +1,113 @@
-# Configuration Parameters
-We've split **HttpCommand**'s configuration parameters into three categories - Request, Conga, and Operational.
+**`HttpCommand`**'s configuration settings are grouped into four categories - Request, Conga, Operational, and Streaming.
 
-Examples below that use an instance of **HttpCommand** will refer to it as `h` as if created using
-          h←HttpCommand.New ''
+Examples below that use an instance of **`HttpCommand`** will refer to it as `h` as if created using `h←HttpCommand.New ''`
 
-## Request-related Parameters
+### Request-related Settings
 Request-related settings are settings you use to specify attributes of the HTTP request that `HttpCommand` will process.
 
-| Command |   |
-|:---|---|
-|**Description**|The case-insensitive HTTP command (method) for the request. `Command` is not limited to standard HTTP methods like GET, POST, PUT, HEAD, OPTIONS, and DELETE, but can be any string. This makes it possible to support new HTTP methods as well as custom methods. For instance, if you were running a RESTful Jarvis service, you could implement custom RESTful methods and call them from **HttpCommand**.<br/><br/>The default value for `Command` is `'GET'`.|
-|**Usage/Example(s)**|`h.Command←'POST'`|
+#### `Command`
+<table><tr>
+<td>Description</td>
+<td>The case-insensitive HTTP command (method) for the request. <code>Command</code> is not limited to standard HTTP methods like GET, POST, PUT, HEAD, OPTIONS, and DELETE, but can be any string provided that the host has implemented support for it.</td></tr>
+<tr><td>Default</td><td><code>'GET'</code></td></tr>
+<tr><td>Example(s)</td><td><code>h.Command←'POST'</code></td></tr></table>
+#### `URL`
+[details](#url-details)
+<table><tr>
+<td>Description</td>
+<td>The URL for the request.<br>The general format for <code>URL</code> is: 
+<code>[scheme://][userinfo@]host[:port][/path][?query]</code><br>
+At a minimum the <code>URL</code> must specify the host.</td></tr>
+<tr><td>Default</td><td><code>''</code></td></tr>
+<tr><td>Example(s)</td><td><code>h.URL←'dyalog.com'<br>h.URL←'https://user:pwd@adomain.com:8080/apath/?name=Drake</code></td></tr></table>
 
-| URL|   |
-|:---|---|
-|**Description**|The URL for the request (see [URLS](reference.md#urls))<br/><br/>The default value for `URL` is `''`.|
-|**Usage/Example(s)**|`h.URL←'dyalog.com'`|
+#### `Params`
+[details](#params-details)
+<table><tr>
+<td>Description</td>
+<td>The parameters or payload, if any, for the request. The interpretation of <code>Params</code> is dependent on <code>Command</code> and on the <code>content-type</code> HTTP header. <code>Params</code> is interpreted as follows:
+<ul><li>If <code>Command</code> is either <code>'GET'</code> or <code>'HEAD'</code> then <code>HttpCommand</code> will URLencode <code>Params</code> and append it to the query string of the <code>URL</code>. (See <a href="#params-details">details</a>)</li>
+<li>If the <code>content-type</code> HTTP header is <code>'application/x-www-form-urlencoded'</code> (the default), <code>HttpCommand</code> will URLencode <code>Params</code> and insert it into the body of the HTTP request. (See <a href="#params-details">details</a>)</li>
+<li>If the <code>content-type</code> HTTP header is <code>'application/json' Params</code> will be converted to JSON format using <code>⎕JSON</code> and inserted in the body of the request.</li>
+<li>Otherwise, <code>Params</code> will be formatted using <code>∊⍕</code> and inserted into the body of the request.</li></ul>
+<tr><td>Default</td><td><code>''</code></td></tr>
+<tr><td>Example(s)</td><td><code>h.Params←(('name' 'dyalog') ('age' 39))</code><br><code>h.Params←'name=dyalog&age=39'</code><br>
+<code>ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39 ⋄ h.Params←ns</code></td></tr></table>
 
-| Params| |
-|:---|---|
-|**Description**|The parameters or payload, if any, for the request. The interpretation of **Params** is first dependent on the **Command** setting and subsequently on the value of the content-type HTTP header. See [**Params** and **Command** and `content-type`](reference.md#params-and-command-and-content-type).<br/><br/>The defaul value for `Params` is `''`.|
-|**Usage/Example(s)**|Example 1<br/>`h.Command←'get'`<br/>`h.Params←⎕NS ''`<br/>`Params.(name age)←'Drake Mallard' 42`<br/><br/>Example 2<br/>`h.Command←'post'`<br/>`'content-type' h.SetHeader 'application/json'`<br/>`h.Params←'testing' (⍳3) ⍝ HttpCommand will convert JSON`|
+#### `Headers`
+[details](#headers-details)
+<table><tr>
+<td>Description</td>
+<td>The HTTP headers for the request. Specified as <a href="#namevalue-pairs">name/value pairs</a>.
+</td></tr>
+<tr><td>Default</td><td>By default, <code>HttpCommand</code> will create the following headers:</br>
+<code>Host: </code>the host specified in <code>URL</code></br>
+<code>User-Agent: 'Dyalog/HttpCommand'</code></br>
+<code>Accept: '*/*'</code></br></br>
+If <code>Command</code> is not either <code>'GET'</code> or <code>'HEAD'</code>, <code>HttpCommand</code> will specify 
+<code>content-type: x-www-form-urlencoded</code></br>
+except in the case where you use the <code>GetJSON</code> shortcut command, then <code>HttpCommand</code> will assign <code>content-type: application/json</code><br><br><code>HttpCommand</code> will assign these headers at execution time only if you haven't specified them yourself.<br><br>
+If the request has content in the request body, Conga will automatically supply a <code>content-length</code> header.
+</td></tr>
+<tr><td>Example(s)</td><td><code>h.Headers←('accept' 'text/html')('authorization' 'mytoken')</code></td></tr></table>
 
-| Headers|   |
-|:---|---|
-|**Description**|The HTTP headers for the request. **HttpCommand** will supply certain default headers if not specified in **Headers**:<br/>`Host: URL-domain`<br/>`Content-Type: application/x-www-form-urlencoded`<br/>`User-Agent: Dyalog/HttpCommand`<br/>`Accept: */*`<br/>**Headers** headersThe URL for the request (see [URLS](reference.md#urls))|
-|**Usage/Example(s)**|`h.URL←'dyalog.com'`|
-    :field public Headers←0 2⍴⊂''                  ⍝ request headers - name, value
-    :field public ContentType←''                   ⍝ request content-type
-    :field public Cookies←⍬                        ⍝ request cookies - vector of namespaces
+#### `ContentType`
+<table><tr>
+<td>Description</td>
+<td>This setting is a convenient shortcut for setting the <code>content-type</code> HTTP header of the request. If you happen set both <code>ContentType</code> and a <code>content-type</code> header, <code>ContentType</code> takes precedence.
+</td></tr>
+<tr><td>Default</td><td><code>''</code></td></tr>
+<tr><td>Example(s)</td><td><code>h.ContentType←'application/json; charset=UTF-8'</code></td></tr></table>
 
-⍝ Conga-related fields
-    :field public BufferSize←100000                ⍝ Conga buffersize
-    :field public DOSLimit←¯1                      ⍝ use Conga default DOSLimit (1MB)
-    :field public Timeout←5000                     ⍝ Timeout in ms on Wait call
-    :field public Cert←⍬                           ⍝ X509 instance if using HTTPS
-    :field public SSLFlags←32                      ⍝ SSL/TLS flags - 32 = accept cert without checking it
-    :field public Priority←'NORMAL:!CTYPE-OPENPGP' ⍝ GnuTLS priority string
-    :field public PublicCertFile←''                ⍝ if not using an X509 instance, this is the client public certificate file
-    :field public PrivateKeyFile←''                ⍝ if not using an X509 instance, this is the client private key file
-    :field public shared CongaRef←''               ⍝ user-supplied reference to Conga library
-    :field public shared LDRC                      ⍝ HttpCommand-set reference to Conga after CongaRef has been resolved
-    :field public shared CongaPath←''              ⍝ path to user-supplied conga workspace (assumes shared libraries are in the same path)
-
-⍝ Operational fields
-    :field public SuppressHeaders←0                ⍝ set to 1 to suppress HttpCommand-supplied default request headers
-    :field public WaitTime←30                      ⍝ seconds to wait for a response before timing out, negative means reset timeout if any activity
-    :field public RequestOnly←¯1                   ⍝ set to 1 if you only want to return the generated HTTP request, but not actually send it
-    :field public OutFile←''                       ⍝ name of file to send payload to (or to buffer to when streaming) same as ⎕NPUT right argument
-    :field public MaxRedirections←10               ⍝ set to 0 if you don't want to follow any redirected references, ¯1 for unlimited
-    :field public KeepAlive←1                      ⍝ default to not close client connection
-    :field public shared Debug←0                   ⍝ set to 1 to disable trapping
+### Conga-related Parameters
+#### `BufferSize`
+<table><tr>
+<td>Description</td>
+<td>The size limit for the HTTP header of the server's response. If the header exceeds this size, <code>HttpCommand</code> will issue a return code of 1135.</td></tr>
+<tr><td>Default</td><td><code>100000</code></td></tr>
+<tr><td>Example(s)</td><td><code>h.URL←'dyalog.com'<br>h.URL←'https://user:pwd@adomain.com:8080/apath/?name=Drake</code></td></tr></table>
 
 
-## Conga-related Parameters
+### Operational Parameters
 
-## Operational Parameters
+### Streaming Parameters
+
+## Details
+
+#### URL Details
+A URL has the general format:<br>`[scheme://][userinfo@]host[:port][/path][?query]`
+
+So, a URL can be as simple as just a host name like `'dyalog.com'` or as complex as `'https://username:password@ducky.com:1234?id=myid&time=1200'`
+
+The only mandatory segment is the `host`; `HttpCommand` will infer or use default information when it builds the HTTP request to be sent.
+
+- scheme - if supplied, it must be either `'http'` or `'https'` for a secure connection.  If not supplied, `HttpCommand` will use `'http'` unless you have specified the default HTTPS port (443) or provided SSL certificate parameters.
+- userinfo - used for HTTP Basic authentication. HTTP Basic authentication has generally been deprecated, but may still be supported by some hosts. If userinfo is supplied, `HttpCommand` will create a proper Base64-encoded `authorization` header.
+- host - the host/domain for the request
+- port - if not supplied, `HttpCommand` will use the default HTTP port (80) unless the HTTPS scheme is used or certificate parameters are specified in which case the default HTTPS port (443) is used.
+- path - the location of the resource within the domain. If not supplied, it's up to the domain's server to determine the default path.
+- query - the query string for the request. If the HTTP method for the request is `'GET'` or `'HEAD'` and request parameters are specified in `Params`, `HttpCommand` will properly format them and append them to the query string. If you choose to supply query string parameters directly, they should be properly URLencoded. (See [`HttpCommand.URLencode`](reference#urlencode))
+
+#### Params Details
+If `Params` is to be URLencoded, either because `Command` is `'GET'` or `'HEAD'`, or the `'content-type'` HTTP header is `'x-www-form-urlencoded'`, `HttpCommand` will parse `Params` as follows. If `Params` is:
+
+* A simple character vector, `HttpCommand` will leave it unaltered if it consists only of valid URLencode characters (as found in `HttpCommand.ValidFormUrlEncodedChars`).  Otherwise it will URLencode it using [`HttpCommand.URLencode`](reference#urlencode).
+* A [Name/Value Pairs](#namevalue-pairs) specification.
+
+If the `'content-type'` HTTP header is `'application/json'`, `HttpCommand` will interpret `Params` as follows:
+
+* If `Params` is a simple character vector that is a valid JSON representation, it is left unaltered and inserted in the body of the request.
+* Otherwise, the result of `1 ⎕JSON Params` inserted in the body of the request.
+
+In all other cases, the results of `∊⍕Params` is inserted in the body of the request. Any further preparation of `Params`, like Base64-encoding, is the responsibility of the user.
+
+#### Headers Details
+
+
+#### Name/Value Pairs
+`Headers` and, in some cases, `Params` are treated as name/value pairs. `HttpCommand` gives you some flexibility in how you specify name/value pairs. You may use:
+
+* A vector of depth 2 or ¯2 with an even number of elements.<br> For example: `('name' 'dyalog' 'age' 39)`
+* A vector of 2-element vectors, `HttpCommand` will treat each sub-vector as a name/value pair.<br>For example: `(('name' 'dyalog') ('age' 39))`
+* A 2-column matrix where each row represents a name/value pair.<br>For example: `2 2⍴'name' 'dyalog' 'age' 39`
+* A reference to a namespace, `HttpCommand` will treat the variables and their values in the namespace as name/value pairs.<br>For example: `ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39`<br>Note that the names will be alphabetical in the formatted output.
