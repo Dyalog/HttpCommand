@@ -1,13 +1,24 @@
 site_name: HttpCommand
 repo_url: https://github.com/dyalog/httpcommand
 repo_name: Dyalog/HttpCommand
+dev_addr: 127.0.0.1:22222
+copyright: Copyright &copy; 2015-2022 <strong><a href="https://dyalog.com">Dyalog, LTD</a></strong>
 nav:
-    - Home: 'index.md'
-    - 'Quick Start': 'quickstart.md'
-    - Reference:
+    - Overview: 'index.md'
+    - Usage:
+      - 'Quick Start': 'quickstart.md'
       - 'User Guide': 'userguide.md'
-      - Configuration: 'configuration.md'
-      - 'Functional Reference': 'reference.md'
+      - 'Examples': 'usecases.md'
+      - 'Troubleshooting': 'trouble.md'
+    - Reference:
+      - 'Configuration': 'configuration.md'
+      - 'Shared Methods': 'shared.md'
+      - 'Instance Methods': 'instance.md'
+      - 'Result Namespace': 'result.md'
+    - Advanced Topics:
+      - 'HttpCommand and Conga' : 'conga.md'
+      - 'Secure Communications' : 'secure.md'
+      - 'Integrating HttpCommand' : 'integrating.md'
     - About: 
       - License: 'LICENSE.md'
       - 'Release Notes': 'release-notes.md'
@@ -19,6 +30,10 @@ theme:
     - navigation.sections
     - navigation.instant
   name: material
+  custom_dir: overrides
+
+extra: 
+  generator: false
 
 extra_css:
   - css/main.css
@@ -29,5 +44,4 @@ plugins:
 markdown_extensions:
   - admonition
   - abbr
-
-  
+  - footnotes

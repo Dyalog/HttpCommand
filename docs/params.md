@@ -1,8 +1,5 @@
-# Reference
-
-
-
-## Miscellaneous Notes
+### Params
+**`Params`** is the setting used to specify parameters or
 
 ### **Params** and **Command** and `content-type`
 The interpretation of the **`Params`** configuration parameter is dependent the **`Command`** parameter (HTTP method) and the content-type HTTP header, if present. If the HTTP method is GET or HEAD, there is no content in the request and **`Params`** is interpreted to be query parameters for the URL.  For any method other than GET or HEAD, the interpretation of **`Params`** is dependent on the content-type HTTP header. 
@@ -22,20 +19,4 @@ If the content-type header is specified as `'application/json'`, **HttpCommand**
 
 For all other content-types, it is incumbent upon the user to properly format **Params** for the content-type in use.
 
-### Secure Connections
 
-### URLs
-A URL (Uniform Resource Locator) indicates "where" or "what" the request should act upon.  A URL is in the general format: 
-**`[scheme://][userinfo@]host[:port][/path][?query]`**
-
-So, a URL can be as simple as just a host name like fs`'dyalog.com'` or as complex as `'https://username:password@ducky.com:1234?id=myid&time=1200'`
-
-The only mandatory segment is the host - **HttpCommand** will infer or use default information when it builds the HTTP request to be sent.
-
-- scheme - if supplied, it must be either `'http'` or `'https'` for a secure connection.  If not supplied, **HttpCommand** will use `'http'` unless you have specified the default HTTPS port (443) or provided SSL certificate parameters.
-- userinfo - used for HTTP Basic authentication
-- host - the host/domain for the request
-- port - if not supplied, **HttpCommand** will use the default HTTP port (80) unless the HTTPS scheme or certificate parameters are specified, in which case the default HTTPS port (443) is used.
-- path - the location of the resource within the domain. If not supplied, it's up to the domain's server to determine the default path.
-- query - the query string for the request. If the HTTP method for the request is GET and request parameters are specified in the Params configuration setting, **HttpCommand
-- ** will properly format them in the query string.
