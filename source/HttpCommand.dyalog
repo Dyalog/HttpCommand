@@ -106,6 +106,15 @@
       setDisplayFormat r
     ∇
 
+    ∇ r←Show;ro
+    ⍝ Show the request to be sent to the server
+      :Access public
+      ro←RequestOnly
+      RequestOnly←1
+      r←Run
+      RequestOnly←ro
+    ∇
+
     ∇ {r}←setDisplayFormat r;rc;msg;stat;data
     ⍝ set the display format for the namespace result for most HttpCommand commands
       :If 9.1=nameClass r
@@ -228,7 +237,12 @@
       :EndIf
     ∇
 
-    ∇ r←Init r;ref;root;nc;n;ns;congaCopied;class;path
+    ∇ r←Init
+      :Access Public
+      r←(Initialize initResult ⎕NS'').(rc msg)
+    ∇
+
+    ∇ r←Initialize r;ref;root;nc;n;ns;congaCopied;class;path
       ⍝↓↓↓ Check if LDRC exists (VALUE ERROR (6) if not), and is LDRC initialized? (NONCE ERROR (16) if not)
       :Hold 'HttpCommandInit'
           :If {6 16 999::1 ⋄ ''≡LDRC:1 ⋄ 0⊣LDRC.Describe'.'}''
@@ -268,6 +282,7 @@
           :EndIf
           CongaVersion←⊃(//)⎕VFI 1↓∊{'.',⍕⍵}¨2↑LDRC.Version
           LDRC.X509Cert.LDRC←LDRC ⍝ reset X509Cert.LDRC reference
+          r.rc←0
      ∆END:
       :EndHold
     ∇
@@ -292,7 +307,9 @@
               :EndIf
           :EndTrap
       :Case 9.2 ⍝ instance?  e.g. CongaRef←Conga.Init ''
-          LDRC←CongaRef ⍝ an instance is already initialized
+          :If 3=CongaRef.⎕NC'Clt' ⍝ if it looks like a valid Conga reference
+              LDRC←CongaRef ⍝ an instance is already initialized
+          :EndIf
       :Case 2.1 ⍝ variable?  e.g. CongaRef←'#.Conga'
           :Trap Debug↓0
               LDRC←ResolveCongaRef(⍎∊⍕CongaRef)
@@ -381,7 +398,7 @@
               →∆END↓⍨0∊⍴r.msg←(~⎕NEXISTS CongaPath)/'CongaPath "',CongaPath,'" does not exist'
               →∆END↓⍨0∊⍴r.msg←(1≠1 ⎕NINFO CongaPath)/'CongaPath "',CongaPath,'" is not a folder'
           :EndIf
-          →∆END↓⍨0∊⍴(Init r).msg
+          →∆END↓⍨0∊⍴(Initialize r).msg
       :EndIf
      
       url←,url
@@ -407,6 +424,10 @@
       :If 0∊⍴host ⋄ →∆END⊣r.msg←'No host specified' ⋄ :EndIf
      
       :If ~(port>0)∧(port≤65535)∧port=⌊port ⋄ →∆END⊣r.msg←'Invalid port - ',⍕port ⋄ :EndIf
+     
+      secure∨←⍲/{0∊⍴⍵}¨certs[1 4] ⍝ we're secure if URL begins with https/wss (checked by parseURL), or we have a cert or a PublicCertFile
+     
+      r.(Secure Host Port Path)←secure(lc host)port({{'/',¯1↓⍵/⍨⌽∨\'/'=⌽⍵}⍵↓⍨'/'=⊃⍵}path)
      
       hdrs←makeHeaders hdrs
       :If ~SuppressHeaders
@@ -441,7 +462,7 @@
                   :EndIf
               :EndIf
               simpleChar←{1<≢⍴⍵:0 ⋄ (⎕DR ⍵)∊80 82}parms
-              :Select ⊃';'(≠⊆⊢) hdrs Lookup 'Content-Type'
+              :Select ⊃';'(≠⊆⊢)hdrs Lookup'Content-Type'
               :Case 'application/x-www-form-urlencoded'
                   :If ~simpleChar ⍝ if not simple character...
                   :OrIf ~∧/parms∊ValidFormUrlEncodedChars ⍝ or not valid URL-encoded
@@ -465,9 +486,7 @@
           →∆EXIT
       :EndIf
      
-      :If DOSLimit≠¯1 ⍝ did the user set DOSLimit?
-          {{}LDRC.SetProp'.' 'DOSLimit' ⍵}DOSLimit
-      :EndIf
+      {{}LDRC.SetProp'.' 'DOSLimit'⍵}(1+DOSLimit=¯1)⊃DOSLimit,1000000
      
       outTn←0
       (outFile replace)←2↑{⍵,(≢⍵)↓'' 0}eis OutFile
@@ -491,8 +510,6 @@
           :EndTrap
       :EndIf
      
-      secure∨←⍲/{0∊⍴⍵}¨certs[1 4] ⍝ we're secure if URL begins with https/wss (checked by parseURL), or we have a cert or a PublicCertFile
-     
       :If secure
           :If 0≠⊃(rc secureParams)←CreateSecureParams certs
               →∆END⊣r.msg←secureParams
@@ -500,8 +517,6 @@
       :Else
           secureParams←''
       :EndIf
-     
-      r.(Secure Host Port Path)←secure(lc host)port({{'/',¯1↓⍵/⍨⌽∨\'/'=⌽⍵}⍵↓⍨'/'=⊃⍵}path)
      
       stopIf Debug=2
      
