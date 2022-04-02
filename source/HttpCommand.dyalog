@@ -49,7 +49,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '4.0.10' '2022-03-28'
+      r←'HttpCommand' '4.0.12' '2022-04-02'
     ∇
 
     ∇ make
@@ -456,9 +456,9 @@
               ⍝↓↓↓ specify the default content type (if not already specified)
               :If ~SuppressHeaders
                   :If 0∊⍴ContentType
-                      'Content-Type'AddHeader'application/x-www-form-urlencoded'
+                      hdrs←'Content-Type'(hdrs addHeader)'application/x-www-form-urlencoded'
                   :Else
-                      'Content-Type'SetHeader ContentType
+                      hdrs←'Content-Type'(hdrs setHeader)ContentType
                   :EndIf
               :EndIf
               simpleChar←{1<≢⍴⍵:0 ⋄ (⎕DR ⍵)∊80 82}parms
@@ -961,10 +961,14 @@
     ∇ name SetHeader value;ind
     ⍝ set a header value, overwriting any existing one
       :Access public
-      Headers←makeHeaders Headers
-      ind←Headers[;1](⍳ci)eis name
-      Headers↑⍨←ind⌈≢Headers
-      Headers[ind;]←name value
+      Headers←name(Headers setHeader)value
+    ∇
+
+    ∇ hdrs←name(hdrs setHeader)value;ind
+      hdrs←makeHeaders hdrs
+      ind←hdrs[;1](⍳ci)eis name
+      hdrs↑⍨←ind⌈≢hdrs
+      hdrs[ind;]←name value
     ∇
 
     ∇ RemoveHeader name
