@@ -49,7 +49,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '4.0.12' '2022-04-02'
+      r←'HttpCommand' '4.0.13' '2022-04-07'
     ∇
 
     ∇ make
@@ -580,7 +580,7 @@
                                   :Until 100≠⊃rc
                                   :If 0=⊃rc
                                   :AndIf rc[3]∊'BlkLast' 'HTTPBody'
-                                      :If toFile ⋄ (4⊃src)⎕NAPPEND outTn
+                                      :If toFile ⋄ (4⊃rc)⎕NAPPEND outTn
                                       :Else ⋄ data←4⊃rc
                                       :EndIf
                                   :EndIf
@@ -604,15 +604,12 @@
                           :EndIf
                       :Case 'HTTPFail' ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the HTTP reponse'
                       :Case 'Timeout' ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress
-                      :Case 'Error'
-                          r.msg←'Conga error processing your request: ',,⍕rc ⍝ capture entire Wait result
-                          r.rc←4⊃rc ⍝ set return code to Conga error number
-                          →∆END
-                      :Case 'Closed' ⍝ socket closed while
+                      :Case 'Error' ⋄ →∆END⊣r.msg←(1+1119=r.rc←4⊃rc)⊃('Conga error processing your request: ',,⍕rc)'Socket closed by peer'
+                      :Case 'Closed' ⋄ →∆END⊣r.msg←'Socket closed'  ⍝ this should probably never happen
                       :Else ⋄ →∆END⊣r.msg←'*** Unhandled Conga event type - ',evt ⍝ This shouldn't happen
                       :EndSelect
                   :ElseIf 100=err ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress ⍝ timeout?
-                  :ElseIf 1119=err
+                  :ElseIf 1119=err ⋄ r.msg←'Socket closed by server'
                   :Else ⋄ r.msg←'Conga wait error ',,⍕rc ⍝ some other error (very unlikely)
                   :EndIf
               :Until done
@@ -647,7 +644,6 @@
                   r.Data←data
               :EndIf
      
- ⍝              (domain path)←r.(Host Path)
               Cookies←Cookies updateCookies r.Cookies←parseCookies r.Headers r.Host(extractPath r.Path)
      
               :If (r.HttpStatus∊301 302 303 307 308)>0=MaxRedirections ⍝ if redirected and allowing redirections
@@ -676,74 +672,12 @@
       {}{0::⍬ ⋄ LDRC.Close⍣(~KeepAlive)⊢Client}⍬
      ∆EXIT:
     ∇
-
-    ∇ r←Listen r;done;err;rc;obj;evt;dat;datalen;chunked
-      :Trap 1000 ⍝ in case break is pressed while listening
-          :If ~done←0≠err←1⊃rc←LDRC.Wait Client Timeout            ⍝ Wait up to 5 secs
-              (err obj evt dat)←4↑rc
-              :Select evt
-              :Case 'HTTPHeader'
-                  :If 1=≡dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP header' ⍝ HTTP header parsing failed?
-                  :Else
-                      r.(HttpVersion HttpStatus HttpMessage Headers)←4↑dat
-                      header←4⊃dat
-                      datalen←⊃toInt{'∘???∘'≡⍵:'¯1' ⋄ ⍵}header Lookup'Content-Length' ⍝ ¯1 if no content length not specified
-                      chunked←∨/'chunked'⍷header Lookup'Transfer-Encoding'
-                      done←(cmd≡'HEAD')∨chunked<datalen<1
-                           ⍝↓↓↓ hack to deal with HTTP/1.0 behavior of no content-length and no transfer-encoding
-                           ⍝    see item 7 under https://tools.ietf.org/html/rfc7230#section-3.3.3
-                      :If chunked<datalen=¯1
-                      :AndIf ∨/'close'⍷header Lookup'Connection' ⍝←←← not sure this is necessary
-                          :Repeat
-                              rc←LDRC.Wait Client 50
-                          :Until 100≠⊃rc
-                          :If 0=⊃rc
-                          :AndIf rc[3]∊'BlkLast' 'HTTPBody'
-                              :If toFile ⋄ (4⊃src)⎕NAPPEND outTn
-                              :Else ⋄ data←4⊃rc
-                              :EndIf
-                          :EndIf
-                      :EndIf
-                  :EndIf
-              :Case 'HTTPBody'
-                  :If toFile ⋄ dat ⎕NAPPEND outTn
-                  :Else ⋄ data←dat
-                  :EndIf
-                  done←1
-              :Case 'HTTPChunk'
-                  :If 1=≡dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP chunk' ⍝ HTTP chunk parsing failed?
-                  :ElseIf toFile ⋄ (1⊃dat)⎕NAPPEND outTn
-                  :ElseIf Stream
-                  ⍝!!! Insert _streamFn here
-                  :Else ⋄ data,←1⊃dat
-                  :EndIf
-              :Case 'HTTPTrailer'
-                  :If 2≠≢⍴dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP trailer' ⍝ HTTP trailer parsing failed?
-                  :Else ⋄ header⍪←dat ⋄ done←1
-                  :EndIf
-              :Case 'HTTPFail' ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the HTTP reponse'
-              :Case 'Timeout' ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress
-              :Case 'Error'
-                  r.msg←'Conga error processing your request: ',,⍕rc ⍝ capture entire Wait result
-                  r.rc←4⊃rc ⍝ set return code to Conga error number
-                  →∆END
-              :Case 'Closed' ⍝ socket closed while
-              :Else ⋄ →∆END⊣r.msg←'*** Unhandled Conga event type - ',evt ⍝ This shouldn't happen
-              :EndSelect
-          :ElseIf 100=err ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress ⍝ timeout?
-          :ElseIf 1119=err
-          :Else ⋄ r.msg←'Conga wait error ',,⍕rc ⍝ some other error (very unlikely)
-          :EndIf
-      :EndTrap
-    ∇
-
+  
     ∇ (timedOut donetime progress)←obj checkTimeOut(donetime progress);tmp;snap
-    ⍝!!!
     ⍝ check if request has timed out
-    ⍝ if
       →∆EXIT↓⍨timedOut←⎕AI[3]>donetime
       →∆EXIT↓⍨WaitTime<0
-      →∆EXIT↓⍨0=⊃tmp←LDRC.Tree  ⍝ progress should be in elements [4 5]
+      →∆EXIT↓⍨0=⊃tmp←LDRC.Tree obj ⍝ progress should be in elements [4 5]
       snap←(⊂∘⍋⌷⊢)↑(↑2 2⊃tmp)[;1] ⍝ capture current state
       →∆EXIT⍴⍨progress≡snap
       (timedOut donetime progress)←0(donetime+Timeout)snap
@@ -781,7 +715,7 @@
     over←{(⍵⍵ ⍺)⍺⍺(⍵⍵ ⍵)}
     isJSON←{~0 2∊⍨10|⎕DR ⍵:0 ⋄ ~(⊃⍵)∊'-{["',⎕D:0 ⋄ {0::0 ⋄1⊣0 ⎕JSON ⍵}⍵} ⍝ test for JSONableness fails on APL that looks like JSON (e.g. '"abc"')
     stopIf←{1∊⍵:-⎕TRAP←0 'C' '⎕←''Stopped for debugging... (Press Ctrl-Enter)''' ⋄ shy←0} ⍝ faster alternative to setting ⎕STOP
-    seconds←{86400÷⍵} ⍝ convert seconds to fractional day (for cookie max-age)
+    seconds←{⍵÷86400} ⍝ convert seconds to fractional day (for cookie max-age)
 
     ∇ r←JSONexport data
       :Trap 11
