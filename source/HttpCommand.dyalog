@@ -13,7 +13,7 @@
     :field public Cookies←⍬                        ⍝ request cookies - vector of namespaces
 
 ⍝ Conga-related fields
-    :field public BufferSize←100000                ⍝ Conga buffersize
+    :field public BufferSize←200000                ⍝ Conga buffersize
     :field public Timeout←5000                     ⍝ Timeout in ms on Wait call
     :field public Cert←⍬                           ⍝ X509 instance if using HTTPS
     :field public SSLFlags←32                      ⍝ SSL/TLS flags - 32 = accept cert without checking it
@@ -50,7 +50,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '4.0.16' '2022-04-23'
+      r←'HttpCommand' '4.0.17' '2022-04-25'
     ∇
 
     ∇ make
@@ -532,7 +532,6 @@
               Client←ConxProps←''
           :ElseIf 'Timeout'≢3⊃LDRC.Wait Client 0 ⍝ nothing changed, make sure client is alive
               Client←ConxProps←'' ⍝ connection dropped, reset
-              r.msg←'Connection reset'
           :EndIf
       :EndIf
      
@@ -572,36 +571,23 @@
                               r.(HttpVersion HttpStatus HttpMessage Headers)←4↑dat
                               datalen←⊃toInt{'∘???∘'≡⍵:'¯1' ⋄ ⍵}r.Headers Lookup'Content-Length' ⍝ ¯1 if no content length not specified
                               :If datalen>¯1                                                     ⍝ we have a content-length header
-                              :AndIf 2=(0,1+datalen)⍸MaxPayloadSize                              ⍝ does it fall within MaxPayloadSize?
+                              :AndIf 2=(0,1+MaxPayloadSize)⍸datalen                              ⍝ does it fall within MaxPayloadSize?
                                   r.(rc msg)←¯5 'Payload length exceeds MaxPayloadSize'          ⍝ if not, bail out
-                                  done←forceClose←1
+                                  →∆END⊣forceClose←1
                               :Else                                                              ⍝ no content-length header
                                   chunked←∨/'chunked'⍷lc r.Headers Lookup'Transfer-Encoding'     ⍝ are we chunked?
-                                  done←(cmd≡'HEAD')∨chunked<datalen<1 ⍝ we're done if a HEAD request or not chunked and no (or 0) content-length
-     
-                                  ⍝↓↓↓ hack to deal with HTTP/1.0 behavior of no content-length and no transfer-encoding
-                                  ⍝    see item 7 under https://tools.ietf.org/html/rfc7230#section-3.3.3
-                                  :If chunked<datalen=¯1 ⍝ not chunked and no content-length
-                                      :Repeat
-                                          rc←LDRC.Wait Client 50
-                                  :Until 100≠⊃rc
-                                      :If 0=⊃rc
-                                      :AndIf rc[3]∊'BlkLast' 'HTTPBody'
-                                          :If 2>MaxPayloadSize⍸⍨0,1+≢4⊃rc
-                                              :If toFile ⋄ (4⊃rc)⎕NAPPEND outTn
-                                              :Else ⋄ data←4⊃rc
-                                              :EndIf
-                                          :Else
-                                              r.(rc msg)←¯5 'Payload length exceeds MaxPayloadSize'
-                                          :EndIf
-                                              done←forceClose←1
-                                          :EndIf
-                                      :EndIf
-                                  :EndIf
+                                  done←cmd≡'HEAD'
                               :EndIf
-                      :Case 'HTTPBody'
+                          :EndIf
+                      :CaseList 'HTTPBody' 'BlkLast' ⍝ BlkLast included for pre-Conga v3.4 compatibility for RFC7230 (Sec 3.3.3 item 7)
                           :If toFile ⋄ dat ⎕NAPPEND outTn
-                          :Else ⋄ data←dat
+                          :Else
+                              :If 2=(0,1+MaxPayloadSize)⍸≢dat
+                                  r.(rc msg)←¯5 'Payload length exceeds MaxPayloadSize'
+                                  →∆END⊣forceClose←1
+                              :Else
+                                  data←dat
+                              :EndIf
                           :EndIf
                           done←1
                       :Case 'HTTPChunk'
@@ -609,7 +595,13 @@
                           :ElseIf toFile∨Stream  ⍝ permit both writing to file and streaming
                               :If toFile ⋄ (1⊃dat)⎕NAPPEND outTn ⋄ :EndIf
                               :If Stream ⋄ _streamFn 1⊃dat ⋄ :EndIf
-                          :Else ⋄ data,←1⊃dat
+                          :Else
+                              :If 2=(0,1+MaxPayloadSize)⍸(≢data)+≢1⊃dat
+                                  r.(rc msg)←¯5 'Payload length exceeds MaxPayloadSize'
+                                  →∆END⊣forceClose←1
+                              :Else
+                                  data,←1⊃dat
+                              :EndIf
                           :EndIf
                       :Case 'HTTPTrailer'
                           :If 2≠≢⍴dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP trailer' ⍝ HTTP trailer parsing failed?
@@ -638,7 +630,7 @@
           {}⎕NUNTIE outTn
           r.Elapsed←⎕AI[3]-starttime
      
-          :If timedOut ⋄ →∆END⊣r.(rc msg)←(⊃rc)'Request timed out before server responded'
+          :If timedOut ⋄ →∆END⊣r.(rc msg)←100 'Request timed out before server responded'
           :EndIf
           :If 0=err
               r.HttpStatus←toInt r.HttpStatus
