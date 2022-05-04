@@ -67,11 +67,27 @@ If the request has content in the request body, Conga will automatically supply 
 <tr><td>Default</td><td><code>100000</code></td></tr>
 <tr><td>Example(s)</td><td><code>h.URL←'dyalog.com'<br>h.URL←'https://user:pwd@adomain.com:8080/apath/?name=Drake</code></td></tr></table>
 
+#### `DOSLimit`
+#### `TimeOut`
+#### `Cert`
+#### `SSLFlags`
+#### `Priority`
+#### `PublicCertFile`
+#### `PrivateKeyFile`
 
 ### Operational Parameters
-
+#### `SuppressHeaders`
+#### `WaitTime`
+#### `RequestOnly`
+#### `OutFile`
+#### `MaxRedirections`
+#### `KeepAlive`
+#### `TranslateData`
+#### `Debug` 
 ### Streaming Parameters
-
+#### `Stream`
+#### `StreamFn`
+#### `StreamLimit`
 ## Details
 
 #### URL Details

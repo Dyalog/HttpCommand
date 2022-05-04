@@ -15,6 +15,7 @@ nav:
       - 'Shared Methods': 'shared.md'
       - 'Instance Methods': 'instance.md'
       - 'Result Namespace': 'result.md'
+      - 'Messages and Return Codes': 'msgs.md'
     - Advanced Topics:
       - 'HttpCommand and Conga' : 'conga.md'
       - 'Secure Communications' : 'secure.md'
@@ -45,3 +46,5 @@ markdown_extensions:
   - admonition
   - abbr
   - footnotes
+  - toc:
+      title: On this page
