@@ -1,3 +1,7 @@
+** This page is incomplete **
+
+---
+
 In addition to the shared "shortcut" methods listed in [Quick Start](quickstart.md), `HttpCommand` has a few other shared methods are intended to make it easier to manage request and response payload data. 
 
 #### `out←{cpo} HttpCommand.Base64Decode b64`

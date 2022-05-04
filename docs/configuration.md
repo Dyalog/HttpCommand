@@ -1,3 +1,7 @@
+** This page is incomplete **
+
+---
+
 **`HttpCommand`**'s configuration settings are grouped into four categories - Request, Conga, Operational, and Streaming.
 
 Examples below that use an instance of **`HttpCommand`** will refer to it as `h` as if created using `h←HttpCommand.New ''`

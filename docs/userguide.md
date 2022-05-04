@@ -1,3 +1,6 @@
+** This page is incomplete **
+
+---
 ### Shortcut or Instance? 
 There are two common ways to use `HttpCommand`. 
 

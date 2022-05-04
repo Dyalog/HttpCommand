@@ -31,7 +31,6 @@ theme:
     - navigation.sections
     - navigation.instant
   name: material
-  custom_dir: overrides
 
 extra: 
   generator: false

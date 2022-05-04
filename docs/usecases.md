@@ -1,3 +1,7 @@
+** This page is incomplete **
+
+---
+
 ### Interacting with Web Services
 Web services will generally have a published API which describes how to interact with the service.  This will be your guide for how to build requests using `HttpCommand` to access the web service. The API will generally describe the format of the data it returns in the `content-type` header.
 
