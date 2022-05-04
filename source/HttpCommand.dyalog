@@ -33,10 +33,10 @@
     :field public OutFile←''                       ⍝ name of file to send payload to (or to buffer to when streaming) same as ⎕NPUT right argument
     :field public MaxRedirections←10               ⍝ set to 0 if you don't want to follow any redirected references, ¯1 for unlimited
     :field public KeepAlive←1                      ⍝ default to not close client connection
-    :field public TranslateData←1                  ⍝ translate XML or JSON response data
+    :field public TranslateData←0                  ⍝ set to 1 to translate XML or JSON response data
     :field public shared Debug←0                   ⍝ set to 1 to disable trapping, 2 to stop just before creating client
 
-⍝ Streaming-related fields
+⍝ Streaming-related fields (not fully implemented yet)
     :field public Stream←0                         ⍝ set to 1 to stream in a separate thread
     :field public StreamFn←''                      ⍝ function name to call when streaming
     :field public StreamLimit←0                    ⍝ if negative - number of seconds to stream, if positive - number of bytes to stream, if 0 - no limit
@@ -50,7 +50,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '4.0.17' '2022-04-25'
+      r←'HttpCommand' '4.0.20' '2022-05-04'
     ∇
 
     ∇ make
@@ -79,7 +79,7 @@
     ∇ {ns}←initResult ns
     ⍝ initialize the namespace result
       :Access shared
-      ns.(Command URL rc msg HttpVer HttpStatus HttpMessage Headers Data PeerCert Redirections Cookies OutFile Elapsed BytesWritten)←'' '' ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')⍬'' 0 ¯1
+      ns.(Command URL rc msg HttpVersion HttpStatus HttpMessage Headers Data PeerCert Redirections Cookies OutFile Elapsed BytesWritten)←'' '' ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')⍬'' 0 ¯1
     ∇
 
     ∇ Goodbye
@@ -192,14 +192,11 @@
           :If 200=r.HttpStatus
               :If ¯1=r.BytesWritten ⍝ if not writing to file
                   :If ∨/'application/json'⍷lc r.Headers Lookup'content-type'
-                      :Trap Debug↓0
-                          r.Data←0 ##.##.⎕JSON r.Data
-                      :Else ⋄ →∆DONE⊣r.(rc msg)←1 'Could not convert response payload to JSON format'
-                      :EndTrap
+                      r JSONimport r.Data
                   :Else ⋄ →∆DONE⊣r.(rc msg)←2 'Response content-type is not application/json'
                   :EndIf
               :EndIf
-          :Else ⋄ →∆DONE⊣r.(rc msg)←3 'HTTP failure'
+          :Else ⋄ →∆DONE⊣r.(rc msg)←3 'Unexpected HTTP status'
           :EndIf
       :EndIf
      ∆DONE: ⍝ reset ⎕DF if messages have changed
@@ -249,7 +246,6 @@
       :Hold 'HttpCommandInit'
           :If {6 16 999::1 ⋄ ''≡LDRC:1 ⋄ 0⊣LDRC.Describe'.'}''
               LDRC←''
-     
               :If ~0∊⍴CongaRef  ⍝ did the user supply a reference to Conga?
                   LDRC←ResolveCongaRef CongaRef
                   →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/'CongaRef (',(⍕CongaRef),') does not point to a valid instance of Conga'
@@ -266,18 +262,23 @@
                   :Else
      ∆COPY:
                       class←⊃⊃⎕CLASS ⎕THIS
+                      :If ~0∊⍴CongaPath
+                          CongaPath←∊1 ⎕NPARTS CongaPath,'/'
+                          →∆END↓⍨0∊⍴r.msg←(~⎕NEXISTS CongaPath)/'CongaPath "',CongaPath,'" does not exist'
+                          →∆END↓⍨0∊⍴r.msg←(1≠1 ⎕NINFO CongaPath)/'CongaPath "',CongaPath,'" is not a folder'
+                      :EndIf
                       congaCopied←0
                       :For n :In ns
                           :For path :In (1+0∊⍴CongaPath)⊃(⊂CongaPath)((dyalogRoot,'ws/')'') ⍝ if CongaPath specifiec, use it exclusively
                               :Trap Debug↓0
                                   n class.⎕CY path,'conga'
                                   LDRC←ResolveCongaRef(class⍎n)
-                                  →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/n,' was copied from [DYALOG]/ws/conga, but is not valid'
+                                  →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/n,' was copied from ',path,'conga, but is not valid'
                                   →∆COPIED⊣congaCopied←1
                               :EndTrap
                           :EndFor
                       :EndFor
-                      →∆END↓⍨0∊⍴r.msg←(~congaCopied)/'Neither Conga nor DRC were successfully copied from [DYALOG]/ws/conga'
+                      →∆END↓⍨0∊⍴r.msg←(~congaCopied)/'Neither Conga nor DRC were successfully copied'
      ∆COPIED:
                   :EndIf
               :EndIf
@@ -342,10 +343,12 @@
                   :EndIf
                   :Trap Debug↓0
                       cert←⊃LDRC.X509Cert.ReadCertFromFile public
-                  :Else ⋄ →∆FAIL⊣msg←'Unable to decode PublicCertFile "',(∊⍕public),'" as certificate'
+                  :Else
+                      →∆FAIL⊣msg←'Unable to decode PublicCertFile "',(∊⍕public),'" as certificate'
                   :EndTrap
                   cert.KeyOrigin←'DER'private
-              :Else ⋄ →∆FAIL⊣msg←(⊃nmt/'PublicCertFile' 'PrivateKeyFile'),' is empty' ⍝ both must be specified
+              :Else
+                  →∆FAIL⊣msg←(⊃nmt/'PublicCertFile' 'PrivateKeyFile'),' is empty' ⍝ both must be specified
               :EndIf
           :Else
               cert←⎕NEW LDRC.X509Cert
@@ -361,7 +364,7 @@
      ∆FAIL:(rc secureParams)←¯1 msg ⍝ failure
     ∇
 
-    ∇ r←certs(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;chunked;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose
+    ∇ r←certs(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;chunked;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers
     ⍝ issue an HTTP command
     ⍝ certs - X509Cert|(PublicCertFile PrivateKeyFile) SSLValidation Priority PublicCertFile PrivateKeyFile
     ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/path[?query_string]]
@@ -375,17 +378,17 @@
       :If 0∊⍴cmd ⋄ cmd←'GET' ⋄ :EndIf
      
       args←eis args
-      (url parms hdrs cookies)←args,(⍴args)↓''(⎕NS'')'' ''
+      (url parms headers cookies)←args,(⍴args)↓''(⎕NS'')'' ''
      
       r←Result
      
     ⍝ Do some cursory parameter checking
       →∆END↓⍨0∊⍴r.msg←'No URL specified'/⍨0∊⍴url ⍝ exit early if no URL
       →∆END↓⍨0∊⍴r.msg←'URL is not a simple character vector'/⍨~isSimpleChar url
-      →∆END↓⍨0∊⍴r.msg←'Headers are not character'/⍨(0∊⍴hdrs)⍱1↑isChar hdrs
+      →∆END↓⍨0∊⍴r.msg←'Headers are not character'/⍨(0∊⍴headers)⍱1↑isChar headers
       →∆END↓⍨0∊⍴r.msg←'Cookies are not character'/⍨(0∊⍴cookies)⍱1↑isChar cookies
-      hdrs←{0::¯1 ⋄ 0∊t←⍴⍵:0 2⍴⊂'' ⋄ 3=|≡⍵:↑eis∘,¨⍵ ⋄ 2=≢t:⍵ ⋄ ((0.5×t),2)⍴⍵}hdrs
-      →∆END↓⍨0∊⍴r.msg←'Improper header format'/⍨¯1≡hdrs
+      headers←{0::¯1 ⋄ 0∊t←⍴⍵:0 2⍴⊂'' ⋄ 3=|≡⍵:↑eis∘,¨⍵ ⋄ 2=≢t:⍵ ⋄ ((0.5×t),2)⍴⍵}headers
+      →∆END↓⍨0∊⍴r.msg←'Improper header format'/⍨¯1≡headers
      
       :If Stream
           :If ''≡StreamFn
@@ -397,11 +400,6 @@
       :EndIf
      
       :If ~RequestOnly  ⍝ don't bother initializing Conga if only returning request
-          :If ~0∊⍴CongaPath
-              CongaPath←∊1 ⎕NPARTS CongaPath,'/'
-              →∆END↓⍨0∊⍴r.msg←(~⎕NEXISTS CongaPath)/'CongaPath "',CongaPath,'" does not exist'
-              →∆END↓⍨0∊⍴r.msg←(1≠1 ⎕NINFO CongaPath)/'CongaPath "',CongaPath,'" is not a folder'
-          :EndIf
           →∆END↓⍨0∊⍴(Initialize r).msg
       :EndIf
      
@@ -433,7 +431,7 @@
      
       r.(Secure Host Port Path)←secure(lc host)port({{'/',¯1↓⍵/⍨⌽∨\'/'=⌽⍵}⍵↓⍨'/'=⊃⍵}path)
      
-      hdrs←makeHeaders hdrs
+      hdrs←makeHeaders headers
       :If ~SuppressHeaders
           hdrs←'Host'(hdrs addHeader)host,((~defaultPort)/':',⍕port)
           hdrs←'User-Agent'(hdrs addHeader)'Dyalog/HttpCommand'
@@ -512,12 +510,10 @@
           :EndTrap
       :EndIf
      
+      secureParams←''
       :If secure
-          :If 0≠⊃(rc secureParams)←CreateSecureParams certs
-              →∆END⊣r.msg←secureParams
-          :EndIf
-      :Else
-          secureParams←''
+      :AndIf 0≠⊃(rc secureParams)←CreateSecureParams certs
+          →∆END⊣r.(rc msg)←rc secureParams
       :EndIf
      
       stopIf Debug=2
@@ -542,11 +538,13 @@
           :EndIf
      
           :If 0≠⊃(err Client)←2↑rc←LDRC.Clt''host port'http'BufferSize,secureParams,options
-              →∆END⊣r.msg←'Conga client creation failed ',,⍕1↓rc
+              Client←''
+              →∆END⊣r.(rc msg)←err('Conga client creation failed ',,⍕1↓rc)
           :EndIf
      
           :If CongaVersion<3.3
-              {}LDRC.SetProp Client'DecodeBuffers' 15 ⍝ set to decode HTTP messages
+          :AndIf 0≠err←⊃rc←LDRC.SetProp Client'DecodeBuffers' 15 ⍝ set to decode HTTP messages
+              →∆END⊣r.(rc msg)←err('Could not set DecodeBuffers on Conga client "',Client,'": ',,⍕1↓rc)
           :EndIf
       :EndIf
      
@@ -570,38 +568,31 @@
                           :Else
                               r.(HttpVersion HttpStatus HttpMessage Headers)←4↑dat
                               datalen←⊃toInt{'∘???∘'≡⍵:'¯1' ⋄ ⍵}r.Headers Lookup'Content-Length' ⍝ ¯1 if no content length not specified
-                              :If datalen>¯1                                                     ⍝ we have a content-length header
-                              :AndIf 2=(0,1+MaxPayloadSize)⍸datalen                              ⍝ does it fall within MaxPayloadSize?
-                                  r.(rc msg)←¯5 'Payload length exceeds MaxPayloadSize'          ⍝ if not, bail out
-                                  →∆END⊣forceClose←1
-                              :Else                                                              ⍝ no content-length header
-                                  chunked←∨/'chunked'⍷lc r.Headers Lookup'Transfer-Encoding'     ⍝ are we chunked?
-                                  done←cmd≡'HEAD'
-                              :EndIf
+                              done←(cmd≡'HEAD')∨0=datalen
+                              chunked←∨/'chunked'⍷lc r.Headers Lookup'Transfer-Encoding'         ⍝ are we chunked?
+                              →∆END⍴⍨forceClose←r CheckPayloadSize datalen                       ⍝ we have a payload size limit
                           :EndIf
                       :CaseList 'HTTPBody' 'BlkLast' ⍝ BlkLast included for pre-Conga v3.4 compatibility for RFC7230 (Sec 3.3.3 item 7)
-                          :If toFile ⋄ dat ⎕NAPPEND outTn
+                          →∆END⍴⍨forceClose←r CheckPayloadSize≢dat
+                          :If toFile
+                              dat ⎕NAPPEND outTn
                           :Else
-                              :If 2=(0,1+MaxPayloadSize)⍸≢dat
-                                  r.(rc msg)←¯5 'Payload length exceeds MaxPayloadSize'
-                                  →∆END⊣forceClose←1
-                              :Else
-                                  data←dat
-                              :EndIf
+                              data←dat
                           :EndIf
                           done←1
                       :Case 'HTTPChunk'
                           :If 1=≡dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP chunk' ⍝ HTTP chunk parsing failed?
                           :ElseIf toFile∨Stream  ⍝ permit both writing to file and streaming
-                              :If toFile ⋄ (1⊃dat)⎕NAPPEND outTn ⋄ :EndIf
-                              :If Stream ⋄ _streamFn 1⊃dat ⋄ :EndIf
-                          :Else
-                              :If 2=(0,1+MaxPayloadSize)⍸(≢data)+≢1⊃dat
-                                  r.(rc msg)←¯5 'Payload length exceeds MaxPayloadSize'
-                                  →∆END⊣forceClose←1
-                              :Else
-                                  data,←1⊃dat
+                              :If toFile
+                                  →∆END⍴⍨forceClose←r CheckPayloadSize(⎕NSIZE outTn)+≢1⊃dat
+                                  (1⊃dat)⎕NAPPEND outTn
                               :EndIf
+                              :If Stream
+                                  _streamFn 1⊃dat
+                              :EndIf
+                          :Else
+                              →∆END⍴⍨forceClose←r CheckPayloadSize(≢data)+≢1⊃dat
+                              data,←1⊃dat
                           :EndIf
                       :Case 'HTTPTrailer'
                           :If 2≠≢⍴dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP trailer' ⍝ HTTP trailer parsing failed?
@@ -652,43 +643,58 @@
                   :EndTrap
                   :If TranslateData=1
                       :If ∨/∊'text/xml' 'application/xml'⍷¨⊂ct←lc r.Headers Lookup'content-type'
-                          r.Data←{0::⍵ ⋄ ⎕XML ⍵}data
-                      :ElseIf ∨/'application/json'∊ct
-                          r.Data←{0::⍵ ⋄ 11::0 ##.##.⎕JSON ⍵ ⋄ 0 ##.##.⎕JSON⍠'Dialect' 'JSON5'⊢⍵}data
+                          r{0::⍺.(Data msg)←⍵'Could not translate XML payload' ⋄ ⍺.Data←⎕XML ⍵}data
+                      :ElseIf ∨/'application/json'⍷ct
+                          r JSONimport data
                       :Else
                           r.Data←data
                       :EndIf
+                  :Else
+                      r.Data←data
                   :EndIf
               :EndIf
      
-              Cookies←Cookies updateCookies r.Cookies←parseCookies r.Headers r.Host(extractPath r.Path)
+              r.Cookies←parseCookies r.Headers r.Host(extractPath r.Path)
+              Cookies←Cookies updateCookies r.Cookies
      
               :If (r.HttpStatus∊301 302 303 307 308)>0=MaxRedirections ⍝ if redirected and allowing redirections
                   :If MaxRedirections<.=¯1,≢r.Redirections ⋄ →∆END⊣r.(rc msg)←¯1('Too many redirections (',(⍕MaxRedirections),')')
                   :Else
                       :If '∘???∘'≢url←r.Headers Lookup'location' ⍝ if we were redirected use the "location" header field for the URL
                           r.Redirections,←t←#.⎕NS''
-                          t.Headers←r.Headers
-                          t.(URL HttpVersion HttpStatus HttpMessage)←r.(URL HttpVersion HttpStatus HttpMessage)
-                          (secure domain path urlparms)←parseURL url
+                          t.(URL HttpVersion HttpStatus HttpMessage Headers)←r.(URL HttpVersion HttpStatus HttpMessage Headers)
                           {}LDRC.Close Client
                           cmd←(1+303=r.HttpStatus)⊃cmd'GET' ⍝ 303 (See Other) is always followed by a 'GET'. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/303
                           →∆GET
-                      :Else ⋄ r.msg←'Redirection detected, but no "location" header supplied.' ⍝ should never happen from a properly functioning server
+                      :Else
+                          r.msg←'Redirection detected, but no "location" header supplied.' ⍝ should never happen from a properly functioning server
                       :EndIf
                   :EndIf
               :EndIf
               :If secure
-              :AndIf 0=⊃z←LDRC.GetProp Client'PeerCert' ⋄ r.PeerCert←2⊃z
+              :AndIf 0=⊃z←LDRC.GetProp Client'PeerCert'
+                  r.PeerCert←2⊃z
               :EndIf
           :EndIf
-      :Else ⋄ r.msg←'Conga connection failed ',,⍕1↓rc
+      :Else
+          r.msg←'Conga connection failed ',,⍕1↓rc
       :EndIf
       r.rc←1⊃rc ⍝ set the return code to the Conga return code
      ∆END:
       {}Client←{0::'' ⋄ KeepAlive>forceClose:⍵ ⋄ ''⊣LDRC.Close ⍵}Client
      ∆EXIT:
     ∇
+
+    ∇ rc←r CheckPayloadSize size
+    ⍝ checks if payload exceeds MaxPayloadSize
+      rc←0
+      :If MaxPayloadSize≠¯1
+      :AndIf size>MaxPayloadSize
+          r.(rc msg)←¯5 'Payload length exceeds MaxPayloadSize'
+          rc←1
+      :EndIf
+    ∇
+
 
     ∇ (timedOut donetime progress)←obj checkTimeOut(donetime progress);tmp;snap
     ⍝ check if request has timed out
@@ -742,7 +748,11 @@
       :EndTrap
     ∇
 
-
+    ∇ ns JSONimport data
+      ns{0::ns.(rc Data msg)←4 ⍵'Could not convert reponse payload to JSON format'
+          11::⍺.Data←0(3⊃⎕RSI,##).⎕JSON ⍵
+          ⍺.Data←0(3⊃⎕RSI,##).⎕JSON⍠'Dialect' 'JSON5'⊢⍵}data
+    ∇
 
     ∇ r←dyalogRoot
     ⍝ return path to interpreter
