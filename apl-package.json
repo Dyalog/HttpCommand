@@ -1,0 +1,14 @@
+{
+    api: "HttpCommand",
+    assets: "",
+    description: "Utility to execute HTTP requests",
+    group: "dyalog",
+    info_url: "https://dyalog.github.io/HttpCommand",
+    io: 1,
+    ml: 1,
+    name: "HttpCommand",
+    source: "source/HttpCommand.dyalog",
+    tags: "mac-os,windows,linux,http,dyalog",
+    version: "4.0.20",
+    wx: 3,   
+}
