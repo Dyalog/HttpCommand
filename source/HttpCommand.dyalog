@@ -50,7 +50,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '4.0.20' '2022-05-04'
+      r←'HttpCommand' '4.0.21' '2022-05-05'
     ∇
 
     ∇ make
@@ -567,6 +567,7 @@
                           :If 1=≡dat ⋄ →∆END⊣r.(rc Data msg)←¯1 dat'Conga failed to parse the response HTTP header' ⍝ HTTP header parsing failed?
                           :Else
                               r.(HttpVersion HttpStatus HttpMessage Headers)←4↑dat
+                              r.HttpStatus←toInt r.HttpStatus
                               datalen←⊃toInt{'∘???∘'≡⍵:'¯1' ⋄ ⍵}r.Headers Lookup'Content-Length' ⍝ ¯1 if no content length not specified
                               done←(cmd≡'HEAD')∨0=datalen
                               chunked←∨/'chunked'⍷lc r.Headers Lookup'Transfer-Encoding'         ⍝ are we chunked?
@@ -624,7 +625,6 @@
           :If timedOut ⋄ →∆END⊣r.(rc msg)←100 'Request timed out before server responded'
           :EndIf
           :If 0=err
-              r.HttpStatus←toInt r.HttpStatus
               :If ~toFile
                   :Trap Debug↓0 ⍝ If any errors occur, abandon conversion
                       :Select z←lc r.Headers Lookup'content-encoding' ⍝ was the response compressed?
