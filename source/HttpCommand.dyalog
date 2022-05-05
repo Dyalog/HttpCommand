@@ -50,7 +50,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '4.0.21' '2022-05-05'
+      r←'HttpCommand' '4.0.22' '2022-05-05'
     ∇
 
     ∇ make
@@ -606,9 +606,9 @@
                           r.msg←'Conga error processing your request: ',,⍕rc
                           →∆END⊣forceClose←1
                       :Case 'Closed'
-                          r.rc←4⊃rc
+                          ⍝ r.rc←4⊃rc - don't set return code, closing the connection is a "normal" thing
                           r.msg←'Socket closed by server'
-                          →∆END⊣forceClose←1
+                          done←forceClose←1
                       :Else ⋄ →∆END⊣r.msg←'*** Unhandled Conga event type - ',evt ⍝ This shouldn't happen
                       :EndSelect
                   :Else ⋄ r.msg←'Conga wait error ',,⍕rc ⍝ some other error (very unlikely)
@@ -622,8 +622,10 @@
           {}⎕NUNTIE outTn
           r.Elapsed←⎕AI[3]-starttime
      
-          :If timedOut ⋄ →∆END⊣r.(rc msg)←100 'Request timed out before server responded'
-          :EndIf
+          :If timedOut
+              →∆END⊣r.(rc msg)←100 'Request timed out before server responded'
+          :EndIf 
+
           :If 0=err
               :If ~toFile
                   :Trap Debug↓0 ⍝ If any errors occur, abandon conversion
