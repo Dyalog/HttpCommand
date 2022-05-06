@@ -9,6 +9,5 @@
     name: "HttpCommand",
     source: "source/HttpCommand.dyalog",
     tags: "mac-os,windows,linux,http,dyalog",
-    version: "4.0.21",
-    wx: 3,   
+    version: "4.0.23", 
 }

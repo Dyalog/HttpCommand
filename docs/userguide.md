@@ -10,12 +10,12 @@ There are two common ways to use `HttpCommand`.
 ### `HttpCommand`'s Result
 The result of the `Run` method is a namespace containing information related to the result of the request. The display format (`⎕DF`) of the result presents some useful information.
 
-````
+```
       ⊢r ← HttpCommand.Get 'https://www.dyalog.com'
 [rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 20571]
-````
+```
 * `r` is the namespace result
-* `r.rc` is the `HttpCommand`'s numeric return code. 0 means `HttpCommand` was able to create the request to send to the host. </br>If `rc` is less than 0, it means there was some problem sending the request or processing the response.</br>If `rc` is greater than 0, it is the Conga return code and generally means that Conga returned something unexpected.
+* `r.rc` is `HttpCommand`'s numeric return code. 0 means `HttpCommand` was able to create and send the request to the host, send it, and receive and process the response.</br>If `rc` is less than 0, it means there was some problem either composing/sending the request or processing the response.</br>If `rc` is greater than 0, it is the Conga return code and generally means that Conga encountered something unexpected. More information about `rc` can be found [here](msgs.md). 
 * `r.msg` is a (hopefully meaningful) message describing whatever the issue was if `r.rc` is non-zero.
 * `r.HttpStatus` is the numeric HTTP status code returned by the host. A status code in the range 200-299 indicates a successful HTTP response with 200 being the most common code.
 * `r.HttpMessage` is HTTP status message returned by the host.
@@ -26,12 +26,30 @@ The result namespace contains other elements which are described in detail [here
 Typical use of `HttpCommand` might follow this pattern.
 
 ```
- r ← HttpCommand.Get 'some-url'
-:If 0 200 ≢ r.(rc HttpStatus)
-    ⍝ Request failed take some appropriate action here
+ resp ← HttpCommand.Get 'some-url'
+:If 0 ≠ resp.rc
+  ⍝ code to handle bad request
+:ElseIf 200 ≠ resp.HttpStatus
+  ⍝ code to handle unexpected HTTP status (assuming you expect 200)
+:Else
+  ⍝ code to process the response 
 :EndIf
-    ⍝ process the response
 ```
+
+If you expect to make several `HttpCommand` calls, you may want to create an instance and then update the settings and call `Run`.
+
+```
+ hc←HttpCommand.New 'get'  ⍝ in this case we expect all requests to be HTTP GET
+ urls←'url1' 'url2' 'url3'
+:For url :In urls ⍝ loop over the urls
+  hc.URL←url ⍝ set the 
+  resp←hc.Run
+  :If (0 200)≡resp.(rc HttpStatus)
+    ⍝ process the response
+  :Else
+    ⍝ process the exception/error
+  :EndIf
+:EndFor 
    
 
 

@@ -50,7 +50,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '4.0.22' '2022-05-05'
+      r←'HttpCommand' '4.0.23' '2022-05-06'
     ∇
 
     ∇ make
@@ -599,7 +599,7 @@
                           :If 2≠≢⍴dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP trailer' ⍝ HTTP trailer parsing failed?
                           :Else ⋄ r.Headers⍪←dat ⋄ done←1
                           :EndIf
-                      :Case 'HTTPError' ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the HTTP reponse'
+                      :Case 'HTTPFail' ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the HTTP reponse'
                       :Case 'Timeout' ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress
                       :Case 'Error'
                           r.rc←4⊃rc
