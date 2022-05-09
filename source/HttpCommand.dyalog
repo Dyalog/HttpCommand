@@ -50,7 +50,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '4.0.23' '2022-05-06'
+      r←'HttpCommand' '4.0.24' '2022-05-09'
     ∇
 
     ∇ make
@@ -599,8 +599,16 @@
                           :If 2≠≢⍴dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP trailer' ⍝ HTTP trailer parsing failed?
                           :Else ⋄ r.Headers⍪←dat ⋄ done←1
                           :EndIf
-                      :Case 'HTTPFail' ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the HTTP reponse'
-                      :Case 'Timeout' ⋄ timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress
+                      :Case 'HTTPFail'
+                          data,←dat
+                          r.msg←'Conga could not parse the HTTP reponse'
+                          →∆END
+                      :Case 'HTTPError'
+                          data,←dat
+                          r.msg←'Response payload not completely received'
+                          →∆END
+                      :Case 'Timeout'
+                          timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress
                       :Case 'Error'
                           r.rc←4⊃rc
                           r.msg←'Conga error processing your request: ',,⍕rc
@@ -624,8 +632,8 @@
      
           :If timedOut
               →∆END⊣r.(rc msg)←100 'Request timed out before server responded'
-          :EndIf 
-
+          :EndIf
+     
           :If 0=err
               :If ~toFile
                   :Trap Debug↓0 ⍝ If any errors occur, abandon conversion
