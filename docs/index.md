@@ -6,7 +6,7 @@ Not all pages in this documentation are complete.  Incomplete pages will be note
 
 `HttpCommand` is a utility is designed to make it easy for the APL user to send requests to and receive responses from HTTP servers like web servers and web services. `HttpCommand` is included with Dyalog APL as a loadable utility. To bring it into your workspace, simply do:
 ```APL
-      ]load HttpCommand
+      ]Load HttpCommand
 ```
 or, under program control, do:
 ```APL
@@ -14,7 +14,7 @@ or, under program control, do:
 ```
 Beginning with Dyalog v18.2, you can also use the `]get` user command:
 ```APL
-      ]get HttpCommand
+      ]Get HttpCommand
 ```
 
 `HttpCommand` is implemented as a Dyalog class and its typical usage pattern is:
