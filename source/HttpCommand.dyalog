@@ -50,7 +50,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '4.0.24' '2022-05-09'
+      r←'HttpCommand' '4.0.25' '2022-06-03'
     ∇
 
     ∇ make
@@ -434,7 +434,7 @@
       hdrs←makeHeaders headers
       :If ~SuppressHeaders
           hdrs←'Host'(hdrs addHeader)host,((~defaultPort)/':',⍕port)
-          hdrs←'User-Agent'(hdrs addHeader)'Dyalog/HttpCommand'
+          hdrs←'User-Agent'(hdrs addHeader)'Dyalog/',deb⍕2↑Version
           hdrs←'Accept'(hdrs addHeader)'*/*'
           :If '∘???∘'≡hdrs Lookup'cookie' ⍝ if the user has specified a cookie header, it takes precedence
           :AndIf ~0∊⍴cookies←r applyCookies Cookies
@@ -556,15 +556,16 @@
       :If 0=⊃rc←LDRC.Send Client(cmd(path,(0∊⍴urlparms)↓'?',urlparms)'HTTP/1.1'hdrs parms)
           forceClose←~KeepAlive
      
-          (timedOut done data datalen headerlen chunked progress)←0 0 ⍬ 0 0 0 0
+          (timedOut done data datalen chunked progress)←0 0 ⍬ 0 0 0
      
           :Trap 1000 ⍝ in case break is pressed while listening
               :Repeat
-                  :If ~done←0≠err←1⊃rc←LDRC.Wait Client Timeout            ⍝ Wait up to 5 secs
+                  :If ~done←0≠err←1⊃rc←LDRC.Wait Client Timeout
                       (err obj evt dat)←4↑rc
                       :Select evt
                       :Case 'HTTPHeader'
-                          :If 1=≡dat ⋄ →∆END⊣r.(rc Data msg)←¯1 dat'Conga failed to parse the response HTTP header' ⍝ HTTP header parsing failed?
+                          :If 1=≡dat
+                              →∆END⊣r.(rc Data msg)←¯1 dat'Conga failed to parse the response HTTP header' ⍝ HTTP header parsing failed?
                           :Else
                               r.(HttpVersion HttpStatus HttpMessage Headers)←4↑dat
                               r.HttpStatus←toInt r.HttpStatus
@@ -582,7 +583,8 @@
                           :EndIf
                           done←1
                       :Case 'HTTPChunk'
-                          :If 1=≡dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP chunk' ⍝ HTTP chunk parsing failed?
+                          :If 1=≡dat
+                              →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP chunk' ⍝ HTTP chunk parsing failed?
                           :ElseIf toFile∨Stream  ⍝ permit both writing to file and streaming
                               :If toFile
                                   →∆END⍴⍨forceClose←r CheckPayloadSize(⎕NSIZE outTn)+≢1⊃dat
@@ -596,8 +598,10 @@
                               data,←1⊃dat
                           :EndIf
                       :Case 'HTTPTrailer'
-                          :If 2≠≢⍴dat ⋄ →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP trailer' ⍝ HTTP trailer parsing failed?
-                          :Else ⋄ r.Headers⍪←dat ⋄ done←1
+                          :If 2≠≢⍴dat
+                              →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP trailer' ⍝ HTTP trailer parsing failed?
+                          :Else
+                              r.Headers⍪←dat ⋄ done←1
                           :EndIf
                       :Case 'HTTPFail'
                           data,←dat
@@ -614,12 +618,16 @@
                           r.msg←'Conga error processing your request: ',,⍕rc
                           →∆END⊣forceClose←1
                       :Case 'Closed'
-                          ⍝ r.rc←4⊃rc - don't set return code, closing the connection is a "normal" thing
                           r.msg←'Socket closed by server'
                           done←forceClose←1
-                      :Else ⋄ →∆END⊣r.msg←'*** Unhandled Conga event type - ',evt ⍝ This shouldn't happen
+                          :If 0∊⍴r.HttpStatus
+                              →∆END⊣r.rc←4⊃rc ⍝ set return code if closed before receiving HTTPHeader event
+                          :EndIf
+                      :Else
+                          →∆END⊣r.msg←'*** Unhandled Conga event type - ',evt ⍝ This shouldn't happen
                       :EndSelect
-                  :Else ⋄ r.msg←'Conga wait error ',,⍕rc ⍝ some other error (very unlikely)
+                  :Else
+                      r.msg←'Conga wait error ',,⍕rc ⍝ some other error (very unlikely)
                   :EndIf
               :Until done
           :EndTrap
@@ -691,7 +699,7 @@
       :EndIf
       r.rc←1⊃rc ⍝ set the return code to the Conga return code
      ∆END:
-      {}Client←{0::'' ⋄ KeepAlive>forceClose:⍵ ⋄ ''⊣LDRC.Close ⍵}Client
+      Client←{0::'' ⋄ KeepAlive>forceClose:⍵ ⋄ ''⊣LDRC.Close ⍵}Client
      ∆EXIT:
     ∇
 
