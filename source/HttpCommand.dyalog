@@ -11,10 +11,11 @@
     :field public Headers←0 2⍴⊂''                  ⍝ request headers - name, value
     :field public ContentType←''                   ⍝ request content-type
     :field public Cookies←⍬                        ⍝ request cookies - vector of namespaces
+    :field public Token←''                         ⍝ token for token-based authentication
 
 ⍝ Conga-related fields
     :field public BufferSize←200000                ⍝ Conga buffersize
-    :field public Timeout←5000                     ⍝ Timeout in ms on Wait call
+    :field public WaitTime←5000                    ⍝ Timeout in ms on Conga Wait call
     :field public Cert←⍬                           ⍝ X509 instance if using HTTPS
     :field public SSLFlags←32                      ⍝ SSL/TLS flags - 32 = accept cert without checking it
     :field public Priority←'NORMAL:!CTYPE-OPENPGP' ⍝ GnuTLS priority string
@@ -28,7 +29,7 @@
 ⍝ Operational fields
     :field public SuppressHeaders←0                ⍝ set to 1 to suppress HttpCommand-supplied default request headers
     :field public MaxPayloadSize←¯1                ⍝ set to ≥0 to take effect
-    :field public WaitTime←10                      ⍝ seconds to wait for a response before timing out, negative means reset timeout if any activity
+    :field public Timeout←10                       ⍝ seconds to wait for a response before timing out, negative means reset timeout if any activity
     :field public RequestOnly←¯1                   ⍝ set to 1 if you only want to return the generated HTTP request, but not actually send it
     :field public OutFile←''                       ⍝ name of file to send payload to (or to buffer to when streaming) same as ⎕NPUT right argument
     :field public MaxRedirections←10               ⍝ set to 0 if you don't want to follow any redirected references, ¯1 for unlimited
@@ -50,7 +51,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '4.0.25' '2022-06-03'
+      r←'HttpCommand' '5.0.1' '2022-06-07'
     ∇
 
     ∇ make
@@ -90,7 +91,7 @@
     ∇ r←Config
     ⍝ Returns current configuration
       :Access public
-      r←↑{6::⍵'not set' ⋄ ⍵(⍎⍵)}¨⎕THIS⍎'⎕NL ¯2.2'
+      r←↑{6::⍵'not set' ⋄ ⍵(⍎⍵)}¨(⎕THIS⍎'⎕NL ¯2.2')~⊂'ValidFormUrlEncodedChars'
     ∇
 
     ∇ r←Run
@@ -156,7 +157,7 @@
       :If 0=⎕NC'requestOnly' ⋄ requestOnly←¯1 ⋄ :EndIf
       r←''
       :Trap Debug↓0
-          r←⎕NEW ⎕THIS(eis⍣(9.1≠nameClass⊃args)⊢args)
+          r←##.⎕NEW ⎕THIS(eis⍣(9.1≠nameClass⊃args)⊢args)
       :Else
           r←initResult #.⎕NS''
           r.(rc msg)←¯1 ⎕DMX.EM
@@ -189,21 +190,17 @@
      
       :If r.rc=0
           →∆DONE⍴⍨204=r.HttpStatus ⍝ exit if "no content" HTTP status
-          :If 200=r.HttpStatus
-              :If ¯1=r.BytesWritten ⍝ if not writing to file
-                  :If ∨/'application/json'⍷lc r.Headers Lookup'content-type'
-                      r JSONimport r.Data
-                  :Else ⋄ →∆DONE⊣r.(rc msg)←2 'Response content-type is not application/json'
-                  :EndIf
+          :If ¯1=r.BytesWritten ⍝ if not writing to file
+              :If ∨/'application/json'⍷lc r.Headers Lookup'content-type'
+                  r JSONimport r.Data
+              :Else ⋄ →∆DONE⊣r.(rc msg)←2 'Response content-type is not application/json'
               :EndIf
-          :Else ⋄ →∆DONE⊣r.(rc msg)←3 'Unexpected HTTP status'
           :EndIf
       :EndIf
      ∆DONE: ⍝ reset ⎕DF if messages have changed
       setDisplayFormat r
      ∆EXIT:
     ∇
-
 
     ∇ r←{ro}Fix args;z;url;target
     ⍝ retrieve and fix APL code loads the latest version from GitHub
@@ -411,8 +408,8 @@
       (secure host path urlparms)←parseURL r.URL←url
      
       auth←''
-      :If '@'∊host ⍝ Handle user:password@host...
-          auth←('Basic ',(Base64Encode(¯1+p←host⍳'@')↑host))
+      :If 0≠p←¯1↑⍸host='@' ⍝ Handle user:password@host...
+          auth←('Basic ',(Base64Encode(p-1)↑host))
           host←p↓host
       :EndIf
      
@@ -436,6 +433,9 @@
           hdrs←'Host'(hdrs addHeader)host,((~defaultPort)/':',⍕port)
           hdrs←'User-Agent'(hdrs addHeader)'Dyalog/',deb⍕2↑Version
           hdrs←'Accept'(hdrs addHeader)'*/*'
+          :If ~0∊⍴Token
+              hdrs←'Authorization'(hdrs setHeader)'token ',⍕Token
+          :EndIf
           :If '∘???∘'≡hdrs Lookup'cookie' ⍝ if the user has specified a cookie header, it takes precedence
           :AndIf ~0∊⍴cookies←r applyCookies Cookies
               hdrs←'Cookie'(hdrs addHeader)formatCookies cookies
@@ -551,7 +551,7 @@
       (ConxProps←⎕NS'').(Host Port Secure certs)←r.(Host Port Secure),⊂certs ⍝ preserve connection settings for subsequent calls
      
       starttime←⎕AI[3]
-      donetime←⌊starttime+1000×|WaitTime ⍝ time after which we'll time out
+      donetime←⌊starttime+1000×|Timeout ⍝ time after which we'll time out
      
       :If 0=⊃rc←LDRC.Send Client(cmd(path,(0∊⍴urlparms)↓'?',urlparms)'HTTP/1.1'hdrs parms)
           forceClose←~KeepAlive
@@ -560,7 +560,7 @@
      
           :Trap 1000 ⍝ in case break is pressed while listening
               :Repeat
-                  :If ~done←0≠err←1⊃rc←LDRC.Wait Client Timeout
+                  :If ~done←0≠err←1⊃rc←LDRC.Wait Client WaitTime
                       (err obj evt dat)←4↑rc
                       :Select evt
                       :Case 'HTTPHeader'
@@ -614,8 +614,12 @@
                       :Case 'Timeout'
                           timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress
                       :Case 'Error'
-                          r.rc←4⊃rc
-                          r.msg←'Conga error processing your request: ',,⍕rc
+                          :Select ⊃r.rc←4⊃rc
+                          :Case 1135
+                              r.msg←'Response header size exceeds BufferSize (',(⍕BufferSize),')'
+                          :Else
+                              r.msg←'Conga error processing your request: ',,⍕r.rc
+                          :EndSelect
                           →∆END⊣forceClose←1
                       :Case 'Closed'
                           r.msg←'Socket closed by server'
@@ -639,7 +643,9 @@
           r.Elapsed←⎕AI[3]-starttime
      
           :If timedOut
-              →∆END⊣r.(rc msg)←100 'Request timed out before server responded'
+              forceClose←1
+              r.(rc msg)←100 'Request timed out before server responded'
+              →∆END
           :EndIf
      
           :If 0=err
@@ -716,12 +722,12 @@
 
     ∇ (timedOut donetime progress)←obj checkTimeOut(donetime progress);tmp;snap
     ⍝ check if request has timed out
-      →∆EXIT↓⍨timedOut←⎕AI[3]>donetime
-      →∆EXIT↓⍨WaitTime<0
-      →∆EXIT↓⍨0=⊃tmp←LDRC.Tree obj ⍝ progress should be in elements [4 5]
-      snap←(⊂∘⍋⌷⊢)↑(↑2 2⊃tmp)[;1] ⍝ capture current state
-      →∆EXIT⍴⍨progress≡snap
-      (timedOut donetime progress)←0(donetime+Timeout)snap
+      →∆EXIT↓⍨timedOut←⎕AI[3]>donetime ⍝ exit unless donetime hasn't passed
+      →∆EXIT↓⍨Timeout<0                ⍝ if Timeout<0, reset donetime if there's progress
+      →∆EXIT↓⍨0=⊃tmp←LDRC.Tree obj     ⍝ progress should be in elements [4 5]
+      snap←(⊂∘⍋⌷⊢)↑(↑2 2⊃tmp)[;1]      ⍝ capture current state
+      →∆EXIT⍴⍨progress≡snap            ⍝ exit if nothing further received
+      (timedOut donetime progress)←0(donetime+WaitTime)snap ⍝ reset ticker
      ∆EXIT:
     ∇
 
@@ -760,9 +766,9 @@
 
     ∇ r←JSONexport data
       :Trap 11
-          r←SafeJSON 1 ⎕JSON data ⍝ attempt to export
+          r←SafeJSON 1(3⊃⎕RSI,##).⎕JSON data ⍝ attempt to export
       :Else
-          r←SafeJSON(1 ⎕JSON⍠'HighRank' 'Split')data ⍝ Dyalog v18.0 and later
+          r←SafeJSON(1(3⊃⎕RSI,##).⎕JSON⍠'HighRank' 'Split')data ⍝ Dyalog v18.0 and later
       :EndTrap
     ∇
 
@@ -983,9 +989,9 @@
     ∇ r←{cpo}Base64Encode w
     ⍝ Base64 Encode
     ⍝ Optional cpo (code points only) suppresses UTF-8 translation
-    ⍝ if w is numeric (single byte integer), skip any conversion
+    ⍝ if w is integer skip any conversion
       :Access public shared
-      :If 83=⎕DR w ⋄ r←base64 w
+      :If (⎕DR w)∊83 163 ⋄ r←base64 w
       :ElseIf 0=⎕NC'cpo' ⋄ r←base64'UTF-8'⎕UCS w
       :Else ⋄ r←base64 ⎕UCS w
       :EndIf
