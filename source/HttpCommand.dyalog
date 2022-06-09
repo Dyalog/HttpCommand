@@ -383,9 +383,9 @@
       →∆END↓⍨0∊⍴r.msg←'No URL specified'/⍨0∊⍴url ⍝ exit early if no URL
       →∆END↓⍨0∊⍴r.msg←'URL is not a simple character vector'/⍨~isSimpleChar url
       →∆END↓⍨0∊⍴r.msg←'Headers are not character'/⍨(0∊⍴headers)⍱1↑isChar headers
+      hdrs←makeHeaders headers
+      →∆END↓⍨0∊⍴r.msg←'Improper header format'/⍨¯1≡hdrs
       →∆END↓⍨0∊⍴r.msg←'Cookies are not character'/⍨(0∊⍴cookies)⍱1↑isChar cookies
-      headers←{0::¯1 ⋄ 0∊t←⍴⍵:0 2⍴⊂'' ⋄ 3=|≡⍵:↑eis∘,¨⍵ ⋄ 2=≢t:⍵ ⋄ ((0.5×t),2)⍴⍵}headers
-      →∆END↓⍨0∊⍴r.msg←'Improper header format'/⍨¯1≡headers
      
       :If Stream
           :If ''≡StreamFn
@@ -428,7 +428,6 @@
      
       r.(Secure Host Port Path)←secure(lc host)port({{'/',¯1↓⍵/⍨⌽∨\'/'=⌽⍵}⍵↓⍨'/'=⊃⍵}path)
      
-      hdrs←makeHeaders headers
       :If ~SuppressHeaders
           hdrs←'Host'(hdrs addHeader)host,((~defaultPort)/':',⍕port)
           hdrs←'User-Agent'(hdrs addHeader)'Dyalog/',deb⍕2↑Version
@@ -740,7 +739,7 @@
     ci←{(lc ⍺)⍺⍺ lc ⍵} ⍝ case insensitive operator
     deb←' '∘(1↓,(/⍨)1(⊢∨⌽)0,≠) ⍝ delete extraneous blanks
     dlb←{(+/∧\' '=⍵)↓⍵} ⍝ delete leading blanks
-    dltb←{⌽dlb⌽dlb ⍵} ⍝ delete leading and trailing blanks
+    dltb←{(⌽dlb)⍣2⊢⍵} ⍝ delete leading and trailing blanks
     iotaz←((≢⊣)(≥×⊢)⍳)
     nameClass←{⎕NC⊂,'⍵'} ⍝ name class of argument
     splitOnFirst←{(⍺↑⍨¯1+p)(⍺↓⍨p←⌊/⍺⍳⍵)} ⍝ split ⍺ on first occurrence of ⍵ (removing first ⍵)
@@ -749,7 +748,6 @@
     d2h←{⎕IO←0 ⋄ '0123456789ABCDEF'[16(⊥⍣¯1)⍵]} ⍝ decimal to hex
     getchunklen←{¯1=len←¯1+⊃(NL⍷⍵)/⍳⍴⍵:¯1 ¯1 ⋄ chunklen←h2d len↑⍵ ⋄ (⍴⍵)<len+chunklen+4:¯1 ¯1 ⋄ len chunklen}
     toInt←{0∊⍴⍵:⍬ ⋄ ~3 5∊⍨10|⎕DR t←1⊃2⊃⎕VFI ⍕⍵:⍬ ⋄ t≠⌊t:⍬ ⋄ t} ⍝ simple char to int
-    makeHeaders←{0∊⍴⍵:0 2⍴⊂'' ⋄ 2=⍴⍴⍵:⍵ ⋄ ↑2 eis ⍵} ⍝ create header structure [;1] name [;2] value
     fmtHeaders←{0∊⍴⍵:'' ⋄ (firstCaps¨⍵[;1])(,∘⍕¨⍵[;2])} ⍝ formatted HTTP headers
     firstCaps←{1↓{(¯1↓0,'-'=⍵) (819⌶)¨ ⍵}'-',⍵} ⍝ capitalize first letters e.g. Content-Encoding
     addHeader←{'∘???∘'≡⍺⍺ Lookup ⍺:⍺⍺⍪⍺ ⍵ ⋄ ⍺⍺} ⍝ add a header unless it's already defined
@@ -763,6 +761,29 @@
     isJSON←{~0 2∊⍨10|⎕DR ⍵:0 ⋄ ~(⊃⍵)∊'-{["',⎕D:0 ⋄ {0::0 ⋄1⊣0 ⎕JSON ⍵}⍵} ⍝ test for JSONableness fails on APL that looks like JSON (e.g. '"abc"')
     stopIf←{1∊⍵:-⎕TRAP←0 'C' '⎕←''Stopped for debugging... (Press Ctrl-Enter)''' ⋄ shy←0} ⍝ faster alternative to setting ⎕STOP
     seconds←{⍵÷86400} ⍝ convert seconds to fractional day (for cookie max-age)
+
+      makeHeaders←{
+          0::¯1            ⍝ any error
+          ¯1∊⍵:⍵
+          0∊⍴⍵:0 2⍴⊂''     ⍝ empty
+          1≥|≡⍵:∇{         ⍝ simple array
+              2=⍴⍴⍵:1⊂⍵
+              dlb¨¨((,⍵)((~∊)⊆⊣)NL)splitOn¨':'
+          }⍵
+          2=⍴⍴⍵:{          ⍝ matrix
+              0∊≢¨⍵:¯1     ⍝ no empty names or values
+              0 1 1/0,,¨⍵  ⍝ ensure it's 2 columns
+          }⍵
+          3=|≡⍵:∇{         ⍝ depth 3
+              2|≢⊃,/⍵:¯1   ⍝ ensure an even number of element
+              ↑⍵
+          }(eis,)¨⍵
+          2=|≡⍵:∇{
+              ':'∊∊⍵:⍵ splitOn¨':'
+              ((0.5×⍴⍵),2)⍴⍵
+          }⍵
+          ¯1
+      }
 
     ∇ r←JSONexport data
       :Trap 11
