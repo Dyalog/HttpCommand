@@ -11,7 +11,8 @@
     :field public Headers←0 2⍴⊂''                  ⍝ request headers - name, value
     :field public ContentType←''                   ⍝ request content-type
     :field public Cookies←⍬                        ⍝ request cookies - vector of namespaces
-    :field public Token←''                         ⍝ token for token-based authentication
+    :field public Auth←''                          ⍝ authentication string
+    :field public AuthType←'token'                 ⍝ authentication type
 
 ⍝ Conga-related fields
     :field public BufferSize←200000                ⍝ Conga buffersize
@@ -31,16 +32,11 @@
     :field public MaxPayloadSize←¯1                ⍝ set to ≥0 to take effect
     :field public Timeout←10                       ⍝ seconds to wait for a response before timing out, negative means reset timeout if any activity
     :field public RequestOnly←¯1                   ⍝ set to 1 if you only want to return the generated HTTP request, but not actually send it
-    :field public OutFile←''                       ⍝ name of file to send payload to (or to buffer to when streaming) same as ⎕NPUT right argument
+    :field public OutFile←''                       ⍝ name of file to send payload to (format is same as ⎕NPUT right argument)
     :field public MaxRedirections←10               ⍝ set to 0 if you don't want to follow any redirected references, ¯1 for unlimited
     :field public KeepAlive←1                      ⍝ default to not close client connection
     :field public TranslateData←0                  ⍝ set to 1 to translate XML or JSON response data
     :field public shared Debug←0                   ⍝ set to 1 to disable trapping, 2 to stop just before creating client
-
-⍝ Streaming-related fields (not fully implemented yet)
-    :field public Stream←0                         ⍝ set to 1 to stream in a separate thread
-    :field public StreamFn←''                      ⍝ function name to call when streaming
-    :field public StreamLimit←0                    ⍝ if negative - number of seconds to stream, if positive - number of bytes to stream, if 0 - no limit
 
     :field public readonly shared ValidFormUrlEncodedChars←'&=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~*+~%'
 
@@ -51,7 +47,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.0.1' '2022-06-07'
+      r←'HttpCommand' '5.0.2' '2022-08-03'
     ∇
 
     ∇ make
@@ -64,6 +60,7 @@
     ⍝ Constructor arguments - [Command URL Params Headers Cert SSLFlags Priority]
       :Access public
       :Implements constructor
+      →0⍴⍨0∊⍴args
       args←(eis⍣({9.1≠⎕NC⊂,'⍵'}⊃args)⊢args)
       :Select {⊃⎕NC⊂,'⍵'}⊃args
       :Case 2.1 ⍝ array
@@ -100,12 +97,13 @@
       RequestOnly←0⌈RequestOnly
       Result←initResult #.⎕NS''
       :Trap Debug↓0
-          r←(Cert SSLFlags Priority PublicCertFile PrivateKeyFile)(Command HttpCmd)URL Params Headers
+          r←(Cert SSLFlags Priority PublicCertFile PrivateKeyFile)HttpCmd Command URL Params Headers
       :Else ⍝ :Trap
           r←Result
           r.(rc msg)←¯1('Unexpected ',⊃{⍺,' at ',⍵}/2↑⎕DMX.DM)
       :EndTrap
       setDisplayFormat r
+     exit:
     ∇
 
     ∇ r←Show;ro
@@ -157,7 +155,11 @@
       :If 0=⎕NC'requestOnly' ⋄ requestOnly←¯1 ⋄ :EndIf
       r←''
       :Trap Debug↓0
-          r←##.⎕NEW ⎕THIS(eis⍣(9.1≠nameClass⊃args)⊢args)
+          :If 0∊⍴args
+              r←##.⎕NEW ⎕THIS
+          :Else
+              r←##.⎕NEW ⎕THIS(eis⍣(9.1≠nameClass⊃args)⊢args)
+          :EndIf
       :Else
           r←initResult #.⎕NS''
           r.(rc msg)←¯1 ⎕DMX.EM
@@ -253,7 +255,7 @@
                   :EndFor
      
                   :If 9=⊃⌊nc
-                      LDRC←ResolveCongaRef root⍎∊ref
+                      LDRC←ResolveCongaRef(root⍎∊ref)
                       →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/(⍕root),'.',(∊ref),' does not point to a valid instance of Conga'
                       →∆COPY↓⍨{999::0 ⋄ 1⊣LDRC.Describe'.'}'' ⍝ it's possible that Conga was saved in a semi-initialized state
                   :Else
@@ -361,40 +363,27 @@
      ∆FAIL:(rc secureParams)←¯1 msg ⍝ failure
     ∇
 
-    ∇ r←certs(cmd HttpCmd)args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;chunked;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers
+    ∇ {r}←certs HttpCmd args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;chunked;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers;cmd
     ⍝ issue an HTTP command
     ⍝ certs - X509Cert|(PublicCertFile PrivateKeyFile) SSLValidation Priority PublicCertFile PrivateKeyFile
-    ⍝ args  - [1] URL in format [HTTP[S]://][user:pass@]url[:port][/path[?query_string]]
-    ⍝         {2} parameters is using POST - either a namespace or URL-encoded string
-    ⍝         {3} HTTP headers in form {↑}(('hdr1' 'val1')('hdr2' 'val2'))
-    ⍝         {4} cookies in form {↑}(('cookie1' 'val1')('cookie2' 'val2'))
+    ⍝ args  - [1] HTTP method
+    ⍝         [2] URL in format [HTTP[S]://][user:pass@]url[:port][/path[?query_string]]
+    ⍝         {3} parameters is using POST - either a namespace or URL-encoded string
+    ⍝         {4} HTTP headers in form {↑}(('hdr1' 'val1')('hdr2' 'val2'))
+    ⍝         {5} cookies in form {↑}(('cookie1' 'val1')('cookie2' 'val2'))
     ⍝ Makes secure connection if left arg provided or URL begins with https:
      
     ⍝ Result: namespace containing (conga return code) (HTTP Status) (HTTP headers) (HTTP body) [PeerCert if secure]
-     
-      :If 0∊⍴cmd ⋄ cmd←'GET' ⋄ :EndIf
-     
-      args←eis args
-      (url parms headers cookies)←args,(⍴args)↓''(⎕NS'')'' ''
+      args←,⊆args
+      (cmd url parms headers cookies)←args,(⍴args)↓'' ''(⎕NS'')'' ''
      
       r←Result
      
     ⍝ Do some cursory parameter checking
       →∆END↓⍨0∊⍴r.msg←'No URL specified'/⍨0∊⍴url ⍝ exit early if no URL
       →∆END↓⍨0∊⍴r.msg←'URL is not a simple character vector'/⍨~isSimpleChar url
-      →∆END↓⍨0∊⍴r.msg←'Headers are not character'/⍨(0∊⍴headers)⍱1↑isChar headers
-      hdrs←makeHeaders headers
-      →∆END↓⍨0∊⍴r.msg←'Improper header format'/⍨¯1≡hdrs
       →∆END↓⍨0∊⍴r.msg←'Cookies are not character'/⍨(0∊⍴cookies)⍱1↑isChar cookies
-     
-      :If Stream
-          :If ''≡StreamFn
-              _streamFn←{⎕←⍵}
-          :Else
-              →∆END↓⍨0∊⍴r.msg←'StreamFn is not a function'/⍨3≠⎕NC StreamFn
-              _streamFn←⍎StreamFn
-          :EndIf
-      :EndIf
+      →∆END↓⍨0∊⍴r.msg←'Headers are not character'/⍨(0∊⍴headers)⍱1↑isChar headers
      
       :If ~RequestOnly  ⍝ don't bother initializing Conga if only returning request
           →∆END↓⍨0∊⍴(Initialize r).msg
@@ -404,6 +393,10 @@
       cmd←uc,cmd
      
      ∆GET:
+     
+    ⍝ do header initialization here because we may return here on a redirect
+      hdrs←makeHeaders headers
+      →∆END↓⍨0∊⍴r.msg←'Improper header format'/⍨¯1≡hdrs
      
       (secure host path urlparms)←parseURL r.URL←url
      
@@ -416,13 +409,19 @@
       :If defaultPort←(≢host)<ind←host⍳':' ⍝ then if there's no port specified in the host
           port←(1+secure)⊃80 443 ⍝ use the default HTTP/HTTPS port
       :Else
-          :If 0=port←⊃toInt ind↓host ⋄ →∆END⊣r.msg←'Invalid host/port - ',host ⋄ :EndIf
+          :If 0=port←⊃toInt ind↓host
+              →∆END⊣r.msg←'Invalid host/port - ',host
+          :EndIf
           host↑⍨←ind-1
       :EndIf
      
-      :If 0∊⍴host ⋄ →∆END⊣r.msg←'No host specified' ⋄ :EndIf
+      :If 0∊⍴host
+          →∆END⊣r.msg←'No host specified'
+      :EndIf
      
-      :If ~(port>0)∧(port≤65535)∧port=⌊port ⋄ →∆END⊣r.msg←'Invalid port - ',⍕port ⋄ :EndIf
+      :If ~(port>0)∧(port≤65535)∧port=⌊port
+          →∆END⊣r.msg←'Invalid port - ',⍕port
+      :EndIf
      
       secure∨←⍲/{0∊⍴⍵}¨certs[1 4] ⍝ we're secure if URL begins with https/wss (checked by parseURL), or we have a cert or a PublicCertFile
      
@@ -430,10 +429,10 @@
      
       :If ~SuppressHeaders
           hdrs←'Host'(hdrs addHeader)host,((~defaultPort)/':',⍕port)
-          hdrs←'User-Agent'(hdrs addHeader)'Dyalog/',deb⍕2↑Version
+          hdrs←'User-Agent'(hdrs addHeader)deb'Dyalog-',1↓∊'/',¨2↑Version
           hdrs←'Accept'(hdrs addHeader)'*/*'
-          :If ~0∊⍴Token
-              hdrs←'Authorization'(hdrs setHeader)'token ',⍕Token
+          :If ~0∊⍴Auth
+              hdrs←'Authorization'(hdrs setHeader)deb AuthType,' ',⍕Auth
           :EndIf
           :If '∘???∘'≡hdrs Lookup'cookie' ⍝ if the user has specified a cookie header, it takes precedence
           :AndIf ~0∊⍴cookies←r applyCookies Cookies
@@ -445,9 +444,10 @@
       :EndIf
      
       :If ~0∊⍴parms                  ⍝ if we have any parameters
-          :If (⊆cmd)∊'GET' 'HEAD'    ⍝ if the command is GET or HEAD
+          :If (0∊⍴ContentType)∧('∘???∘'≡hdrs Lookup'content-type')∧(⊆cmd)∊'GET' 'HEAD' ⍝ if the command is GET or HEAD and no content-type specified
               :If {2≠⎕NC'⍵':0 ⋄ 1≥|≡⍵}parms ⍝ simple vector or scalar and not a reference
-                  parms←⍕parms       ⍝ deal with possible numeric
+                  parms←∊⍕parms       ⍝ deal with possible numeric
+                  parms←UrlEncode⍣(~∧/parms∊HttpCommand.ValidFormUrlEncodedChars)⊢parms
               :Else
                   parms←UrlEncode parms
               :EndIf
@@ -462,7 +462,9 @@
                       hdrs←'Content-Type'(hdrs setHeader)ContentType
                   :EndIf
               :EndIf
+     
               simpleChar←{1<≢⍴⍵:0 ⋄ (⎕DR ⍵)∊80 82}parms
+     
               :Select ⊃';'(≠⊆⊢)lc hdrs Lookup'Content-Type'
               :Case 'application/x-www-form-urlencoded'
                   :If ~simpleChar ⍝ if not simple character...
@@ -584,14 +586,9 @@
                       :Case 'HTTPChunk'
                           :If 1=≡dat
                               →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP chunk' ⍝ HTTP chunk parsing failed?
-                          :ElseIf toFile∨Stream  ⍝ permit both writing to file and streaming
-                              :If toFile
-                                  →∆END⍴⍨forceClose←r CheckPayloadSize(⎕NSIZE outTn)+≢1⊃dat
-                                  (1⊃dat)⎕NAPPEND outTn
-                              :EndIf
-                              :If Stream
-                                  _streamFn 1⊃dat
-                              :EndIf
+                          :ElseIf toFile
+                              →∆END⍴⍨forceClose←r CheckPayloadSize(⎕NSIZE outTn)+≢1⊃dat
+                              (1⊃dat)⎕NAPPEND outTn
                           :Else
                               →∆END⍴⍨forceClose←r CheckPayloadSize(≢data)+≢1⊃dat
                               data,←1⊃dat
@@ -752,8 +749,8 @@
     firstCaps←{1↓{(¯1↓0,'-'=⍵) (819⌶)¨ ⍵}'-',⍵} ⍝ capitalize first letters e.g. Content-Encoding
     addHeader←{'∘???∘'≡⍺⍺ Lookup ⍺:⍺⍺⍪⍺ ⍵ ⋄ ⍺⍺} ⍝ add a header unless it's already defined
     tableGet←{⍺[;2]/⍨⍺[;1](≡ ci)¨⊂⍵}
-    endsWith←{∧/⍺=⍵↑⍨-≢⍺}
-    beginsWith←{∧/⍺=⍵↑⍨≢⍺}
+    endsWith←{∧/⍵=⍺↑⍨-≢⍵}
+    beginsWith←{∧/⍵=⍺↑⍨≢⍵}
     extractPath←{⍵↑⍨1⌈¯1+⊢/⍸'/'=⍵}∘,
     isChar←{1≥|≡⍵:0 2∊⍨10|⎕DR {⊃⍣(0∊⍴⍵)⊢⍵}⍵ ⋄ ∧/∇¨⍵}
     isSimpleChar←{1≥|≡⍵: isChar ⍵ ⋄ 0}
@@ -762,13 +759,15 @@
     stopIf←{1∊⍵:-⎕TRAP←0 'C' '⎕←''Stopped for debugging... (Press Ctrl-Enter)''' ⋄ shy←0} ⍝ faster alternative to setting ⎕STOP
     seconds←{⍵÷86400} ⍝ convert seconds to fractional day (for cookie max-age)
 
-      makeHeaders←{
+    ∇ r←makeHeaders w
+      :Access public shared
+      r←{
           0::¯1            ⍝ any error
           ¯1∊⍵:⍵
           0∊⍴⍵:0 2⍴⊂''     ⍝ empty
           1≥|≡⍵:∇{         ⍝ simple array
-              2=⍴⍴⍵:1⊂⍵
-              dlb¨¨((,⍵)((~∊)⊆⊣)NL)splitOn¨':'
+              2=⍴⍵:1⊂⍵     ⍝ degenerate case of scalar name and value ('n' 'v' ≡ 'nv')
+              dlb¨¨((,⍵)((~∊)⊆⊣)NL)splitOnFirst¨':'
           }⍵
           2=⍴⍴⍵:{          ⍝ matrix
               0∊≢¨⍵:¯1     ⍝ no empty names or values
@@ -779,11 +778,12 @@
               ↑⍵
           }(eis,)¨⍵
           2=|≡⍵:∇{
-              ':'∊∊⍵:⍵ splitOn¨':'
+              ∧/':'∊¨⍵:⍵ splitOnFirst¨':'
               ((0.5×⍴⍵),2)⍴⍵
           }⍵
           ¯1
-      }
+      }w
+    ∇
 
     ∇ r←JSONexport data
       :Trap 11
@@ -905,9 +905,9 @@
 
       domainMatch←{
       ⍝ ⍺ - host, ⍵ - cookie.(domain host)
-          host←(1+0∊⍴1⊃⍵)⊃⍵
-          ⍺≡host:1
-          (⍺ endsWith host)∧'.'=⊃host
+          dom←(1+0∊⍴1⊃⍵)⊃⍵
+          ⍺≡dom:1
+          (⍺ endsWith dom)∧'.'=⊃dom
       }
 
       pathMatch←{
