@@ -12,7 +12,7 @@
     :field public ContentType←''                   ⍝ request content-type
     :field public Cookies←⍬                        ⍝ request cookies - vector of namespaces
     :field public Auth←''                          ⍝ authentication string
-    :field public AuthType←'token'                 ⍝ authentication type
+    :field public AuthType←''                      ⍝ authentication type
 
 ⍝ Conga-related fields
     :field public BufferSize←200000                ⍝ Conga buffersize
@@ -47,7 +47,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.0.2' '2022-08-03'
+      r←'HttpCommand' '5.0.3' '2022-08-08'
     ∇
 
     ∇ make
@@ -177,15 +177,17 @@
       :If 0=⎕NC'requestOnly' ⋄ requestOnly←¯1 ⋄ :EndIf
      
       →∆EXIT⍴⍨9.1=nameClass cmd←requestOnly New args
-      :If 0∊⍴cmd.ContentType ⋄ cmd.ContentType←'application/json;charset=utf-8' ⋄ :EndIf
       :If 0∊⍴cmd.Command ⋄ cmd.Command←(1+0∊⍴cmd.Params)⊃'POST' 'GET' ⋄ :EndIf
-      :If ~0∊⍴cmd.Params
-          :Trap Debug↓0
-              cmd.Params←JSONexport cmd.Params
-          :Else
-              r←cmd.Result
-              →∆DONE⊣r.(rc msg)←¯1 'Could not convert parameters to JSON format'
-          :EndTrap
+      :If ~(⊂lc cmd.Command)∊'get' 'head'
+          :If 0∊⍴cmd.ContentType ⋄ cmd.ContentType←'application/json;charset=utf-8' ⋄ :EndIf
+          :If ~0∊⍴cmd.Params
+              :Trap Debug↓0
+                  cmd.Params←JSONexport cmd.Params
+              :Else
+                  r←cmd.Result
+                  →∆DONE⊣r.(rc msg)←¯1 'Could not convert parameters to JSON format'
+              :EndTrap
+          :EndIf
       :EndIf
       r←cmd.Run
       →cmd.RequestOnly⍴∆EXIT
@@ -793,11 +795,10 @@
       :EndTrap
     ∇
 
-    ∇ ns JSONimport data
-      ns{0::ns.(rc Data msg)←4 ⍵'Could not convert reponse payload to JSON format'
+      JSONimport←{
+          0::ns.(rc Data msg)←4 ⍵'Could not convert reponse payload to JSON format'
           11::⍺.Data←0(3⊃⎕RSI,##).⎕JSON ⍵
-          ⍺.Data←0(3⊃⎕RSI,##).⎕JSON⍠'Dialect' 'JSON5'⊢⍵}data
-    ∇
+          ⍺.Data←0(3⊃⎕RSI,##).⎕JSON⍠'Dialect' 'JSON5'⊢⍵}
 
     ∇ r←dyalogRoot
     ⍝ return path to interpreter
