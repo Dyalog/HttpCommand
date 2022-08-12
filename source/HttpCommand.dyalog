@@ -47,7 +47,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.0.3' '2022-08-08'
+      r←'HttpCommand' '5.0.4' '2022-08-12'
     ∇
 
     ∇ make
@@ -78,6 +78,7 @@
     ⍝ initialize the namespace result
       :Access shared
       ns.(Command URL rc msg HttpVersion HttpStatus HttpMessage Headers Data PeerCert Redirections Cookies OutFile Elapsed BytesWritten)←'' '' ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')⍬'' 0 ¯1
+      ns.GetHeader←{Headers{1<|≡⍵:⍺∘∇¨⍵ ⋄ (⍺[;2],⊂'')⊃⍨⍺[;1](⍳{(⍵⍵ ⍺)⍺⍺(⍵⍵ ⍵)}(1∘(819⌶)))⊆,⍵}⍵} ⍝ return header value or '' if not found
     ∇
 
     ∇ Goodbye
@@ -195,7 +196,7 @@
       :If r.rc=0
           →∆DONE⍴⍨204=r.HttpStatus ⍝ exit if "no content" HTTP status
           :If ¯1=r.BytesWritten ⍝ if not writing to file
-              :If ∨/'application/json'⍷lc r.Headers Lookup'content-type'
+              :If ∨/'application/json'⍷lc r.Headers'content-type'
                   r JSONimport r.Data
               :Else ⋄ →∆DONE⊣r.(rc msg)←2 'Response content-type is not application/json'
               :EndIf
@@ -379,6 +380,8 @@
       args←,⊆args
       (cmd url parms headers cookies)←args,(⍴args)↓'' ''(⎕NS'')'' ''
      
+      :If 0∊⍴cmd ⋄ cmd←'GET' ⋄ :EndIf
+     
       r←Result
      
     ⍝ Do some cursory parameter checking
@@ -400,7 +403,7 @@
       hdrs←makeHeaders headers
       →∆END↓⍨0∊⍴r.msg←'Improper header format'/⍨¯1≡hdrs
      
-      (secure host path urlparms)←parseURL r.URL←url
+      (secure host path urlparms)←ConxProps parseURL r.URL←url
      
       auth←''
       :If 0≠p←¯1↑⍸host='@' ⍝ Handle user:password@host...
@@ -436,7 +439,7 @@
           :If ~0∊⍴Auth
               hdrs←'Authorization'(hdrs setHeader)deb AuthType,' ',⍕Auth
           :EndIf
-          :If '∘???∘'≡hdrs Lookup'cookie' ⍝ if the user has specified a cookie header, it takes precedence
+          :If '∘???∘'≡hdrs getHeader'cookie' ⍝ if the user has specified a cookie header, it takes precedence
           :AndIf ~0∊⍴cookies←r applyCookies Cookies
               hdrs←'Cookie'(hdrs addHeader)formatCookies cookies
           :EndIf
@@ -446,7 +449,7 @@
       :EndIf
      
       :If ~0∊⍴parms                  ⍝ if we have any parameters
-          :If (0∊⍴ContentType)∧('∘???∘'≡hdrs Lookup'content-type')∧(⊆cmd)∊'GET' 'HEAD' ⍝ if the command is GET or HEAD and no content-type specified
+          :If (0∊⍴ContentType)∧('∘???∘'≡hdrs getHeader'content-type')∧(⊆cmd)∊'GET' 'HEAD' ⍝ if the command is GET or HEAD and no content-type specified
               :If {2≠⎕NC'⍵':0 ⋄ 1≥|≡⍵}parms ⍝ simple vector or scalar and not a reference
                   parms←∊⍕parms       ⍝ deal with possible numeric
                   parms←UrlEncode⍣(~∧/parms∊HttpCommand.ValidFormUrlEncodedChars)⊢parms
@@ -467,7 +470,7 @@
      
               simpleChar←{1<≢⍴⍵:0 ⋄ (⎕DR ⍵)∊80 82}parms
      
-              :Select ⊃';'(≠⊆⊢)lc hdrs Lookup'Content-Type'
+              :Select ⊃';'(≠⊆⊢)lc hdrs getHeader'Content-Type'
               :Case 'application/x-www-form-urlencoded'
                   :If ~simpleChar ⍝ if not simple character...
                   :OrIf ~∧/parms∊ValidFormUrlEncodedChars ⍝ or not valid URL-encoded
@@ -572,9 +575,9 @@
                           :Else
                               r.(HttpVersion HttpStatus HttpMessage Headers)←4↑dat
                               r.HttpStatus←toInt r.HttpStatus
-                              datalen←⊃toInt{'∘???∘'≡⍵:'¯1' ⋄ ⍵}r.Headers Lookup'Content-Length' ⍝ ¯1 if no content length not specified
+                              datalen←⊃toInt{0∊⍴⍵:'¯1' ⋄ ⍵}r.GetHeader'Content-Length' ⍝ ¯1 if no content length not specified
                               done←(cmd≡'HEAD')∨0=datalen
-                              chunked←∨/'chunked'⍷lc r.Headers Lookup'Transfer-Encoding'         ⍝ are we chunked?
+                              chunked←∨/'chunked'⍷lc r.GetHeader'Transfer-Encoding'             ⍝ are we chunked?
                               →∆END⍴⍨forceClose←r CheckPayloadSize datalen                       ⍝ we have a payload size limit
                           :EndIf
                       :CaseList 'HTTPBody' 'BlkLast' ⍝ BlkLast included for pre-Conga v3.4 compatibility for RFC7230 (Sec 3.3.3 item 7)
@@ -649,8 +652,8 @@
           :If 0=err
               :If ~toFile
                   :Trap Debug↓0 ⍝ If any errors occur, abandon conversion
-                      :Select z←lc r.Headers Lookup'content-encoding' ⍝ was the response compressed?
-                      :Case '∘???∘' ⍝ no content-encoding header, do nothing
+                      :Select z←lc r.GetHeader'content-encoding' ⍝ was the response compressed?
+                      :Case '' ⍝ no content-encoding header, do nothing
                       :Case 'deflate'
                           data←120 ¯100{(2×⍺≡2↑⍵)↓⍺,⍵}83 ⎕DR data ⍝ append 120 156 signature because web servers strip it out due to IE
                           data←fromutf8 256|¯2(219⌶)data
@@ -658,13 +661,13 @@
                       :Else ⋄ r.msg←'Unhandled content-encoding: ',z
                       :EndSelect
      
-                      :If 0<≢'charset\s*=\s*utf-8'⎕S'&'⍠1⊢lc r.Headers Lookup'content-type'
+                      :If 0<≢'charset\s*=\s*utf-8'⎕S'&'⍠1⊢lc r.GetHeader'content-type'
                           data←'UTF-8'⎕UCS ⎕UCS data ⍝ Convert from UTF-8
                           data←(65279=⎕UCS⊃data)↓data ⍝ drop off BOM, if any
                       :EndIf
                   :EndTrap
                   :If TranslateData=1
-                      :If ∨/∊'text/xml' 'application/xml'⍷¨⊂ct←lc r.Headers Lookup'content-type'
+                      :If ∨/∊'text/xml' 'application/xml'⍷¨⊂ct←lc r.GetHeader'content-type'
                           r{0::⍺.(Data msg)←⍵'Could not translate XML payload' ⋄ ⍺.Data←⎕XML ⍵}data
                       :ElseIf ∨/'application/json'⍷ct
                           r JSONimport data
@@ -682,7 +685,7 @@
               :If (r.HttpStatus∊301 302 303 307 308)>0=MaxRedirections ⍝ if redirected and allowing redirections
                   :If MaxRedirections<.=¯1,≢r.Redirections ⋄ →∆END⊣r.(rc msg)←¯1('Too many redirections (',(⍕MaxRedirections),')')
                   :Else
-                      :If '∘???∘'≢url←r.Headers Lookup'location' ⍝ if we were redirected use the "location" header field for the URL
+                      :If ''≢url←r.GetHeader'location' ⍝ if we were redirected use the "location" header field for the URL
                           r.Redirections,←t←#.⎕NS''
                           t.(URL HttpVersion HttpStatus HttpMessage Headers)←r.(URL HttpVersion HttpStatus HttpMessage Headers)
                           {}LDRC.Close Client
@@ -749,7 +752,8 @@
     toInt←{0∊⍴⍵:⍬ ⋄ ~3 5∊⍨10|⎕DR t←1⊃2⊃⎕VFI ⍕⍵:⍬ ⋄ t≠⌊t:⍬ ⋄ t} ⍝ simple char to int
     fmtHeaders←{0∊⍴⍵:'' ⋄ (firstCaps¨⍵[;1])(,∘⍕¨⍵[;2])} ⍝ formatted HTTP headers
     firstCaps←{1↓{(¯1↓0,'-'=⍵) (819⌶)¨ ⍵}'-',⍵} ⍝ capitalize first letters e.g. Content-Encoding
-    addHeader←{'∘???∘'≡⍺⍺ Lookup ⍺:⍺⍺⍪⍺ ⍵ ⋄ ⍺⍺} ⍝ add a header unless it's already defined
+    addHeader←{'∘???∘'≡⍺⍺ getHeader ⍺:⍺⍺⍪⍺ (⍕⍵) ⋄ ⍺⍺} ⍝ add a header unless it's already defined
+    getHeader←{⍺{1<|≡⍵:⍺∘∇¨⍵ ⋄ (⍺[;2],⊂'∘???∘')⊃⍨⍺[;1](⍳{(⍵⍵ ⍺)⍺⍺(⍵⍵ ⍵)}(1∘(819⌶)))⊆,⍵}⍵} ⍝ return header value(s) or '∘???∘' if not found
     tableGet←{⍺[;2]/⍨⍺[;1](≡ ci)¨⊂⍵}
     endsWith←{∧/⍵=⍺↑⍨-≢⍵}
     beginsWith←{∧/⍵=⍺↑⍨≢⍵}
@@ -762,7 +766,6 @@
     seconds←{⍵÷86400} ⍝ convert seconds to fractional day (for cookie max-age)
 
     ∇ r←makeHeaders w
-      :Access public shared
       r←{
           0::¯1            ⍝ any error
           ¯1∊⍵:⍵
@@ -805,18 +808,24 @@
       r←{⍵,('/\'∊⍨⊢/⍵)↓'/'}{0∊⍴t←2 ⎕NQ'.' 'GetEnvironment' 'DYALOG':⊃1 ⎕NPARTS⊃2 ⎕NQ'.' 'GetCommandLineArgs' ⋄ t}''
     ∇
 
-    ∇ (secure host path urlparms)←parseURL url;path;p
+    ∇ (secure host path urlparms)←{conx}parseURL url;path;p;protocol
     ⍝ Parses a URL and returns
     ⍝   secure - Boolean whether running HTTPS or not based on leading http://
     ⍝   host - domain or IP address
     ⍝   path - path on the host for the requested resource, if any
     ⍝   urlparms - URL query string, if any
+      :If 0=⎕NC'conx' ⋄ conx←'' ⋄ :EndIf
       (url urlparms)←2↑(url splitOnFirst'?'),⊂''
       p←⍬⍴1+⍸<\'//'⍷url
-      secure←(lc(p-2)↑url)beginsWith'https:'
+      protocol←lc(0⌈p-2)↑url
+      secure←protocol beginsWith'https:'
       url←p↓url                          ⍝ Remove HTTP[s]:// if present
       (host path)←url splitOnFirst'/'    ⍝ Extract host and path from url
       host←lc host                       ⍝ host (domain) is case-insensitive
+      :If ~0∊⍴conx ⍝ if we have an existing connection
+      :AndIf 0∊⍴protocol ⍝ and no protocol was specified
+          secure←(conx.Host≡host)∧conx.Secure ⍝ use the protocol from the existing connection
+      :EndIf
       path←'/',∊(⊂'%20')@(=∘' ')⊢path    ⍝ convert spaces in path name to %20
     ∇
 
@@ -953,12 +962,6 @@
       r←2↓∊cookies.('; ',Name,'=',Value)
     ∇
 
-    ∇ r←table Lookup name
-    ⍝ lookup a name/value-table value by name, return '∘???∘' if not found
-      :Access Public Shared
-      r←table{(⍺[;2],⊂'∘???∘')⊃⍨⍺[;1](⍳ci)eis ⍵}name
-    ∇
-
     ∇ name AddHeader value
     ⍝ add a header unless it's already defined
       :Access public
@@ -976,7 +979,7 @@
       hdrs←makeHeaders hdrs
       ind←hdrs[;1](⍳ci)eis name
       hdrs↑⍨←ind⌈≢hdrs
-      hdrs[ind;]←name value
+      hdrs[ind;]←name(⍕value)
     ∇
 
     ∇ RemoveHeader name
@@ -1046,7 +1049,6 @@
       ⍝      - an even number of name/data character vectors
       ⍝       'name' 'fred' 'type' 'student' > 'name=fred&type=student'
       ⍝      - a namespace containing variable(s) to be encoded
-      ⍝ cpo is an option switch to send Unicode code points
       ⍝ r    is a character vector of the URLEncoded data
      
       :Access Public Shared
@@ -1110,29 +1112,42 @@
     ∇ r←Documentation
     ⍝ return full documentation
       :Access public shared
-      r←'See https://github.com/Dyalog/HttpCommand'
+      r←'See https://dyalog.github.io/HttpCommand/'
     ∇
 
-    ∇ r←Upgrade;z;vers;url;repository
+    ∇ r←Upgrade;z;vers;url;repository;ns;code;newer
     ⍝ loads the latest version from GitHub
       :Access public shared
-      repository←'HttpCommand' ⍝ eventually we won't need to fall back to library-conga
+      repository←'HttpCommand/master/source/' ⍝ eventually we won't need to fall back to library-conga
      ∆TRY:
-      url←'https://raw.githubusercontent.com/Dyalog/',repository,'/master/HttpCommand.dyalog'
+      url←'https://raw.githubusercontent.com/Dyalog/',repository,'HttpCommand.dyalog'
       z←Get url
       :If z.rc≠0
           r←z.(rc msg)
       :ElseIf (z.HttpStatus=404)∧repository≡'HttpCommand'
-          repository←'library-conga'
+          repository←'library-conga/master/'
           →∆TRY
       :ElseIf z.HttpStatus≠200
           r←¯1(⍕z)
       :Else
+          newer←{
+              0∊⍴⍺:0      ⍝ same version
+              (⊃⍺)>⊃⍵:1   ⍝ newer version
+              (⊃⍺)=⊃⍵:(1↓⍺)∇ 1↓⍵
+              ¯1          ⍝ older version
+          }
           {}LDRC.Close'.' ⍝ close Conga
           LDRC←''         ⍝ reset local reference so that Conga gets reloaded
           :Trap 0
-              vers←⍕¨(##.⎕FIX{⍵⊆⍨~⍵∊⎕UCS 13 10 65279}z.Data).Version Version
-              r←0(deb⍕(1+≡/vers)⊃(⍕,'Upgraded to' 'from',⍪vers)('Already using the most current version: ',1⊃vers))
+              ns←⎕NS''
+              code←{⍵⊆⍨~⍵∊⎕UCS 13 10 65279}z.Data
+              vers←(0 ns.⎕FIX code).Version Version
+              :If 1=⊃newer/{2⊃'.'⎕VFI 2⊃⍵}¨vers
+                  ##.⎕FIX code
+                  r←1(deb⍕,'Upgraded to' 'from',⍪vers)
+              :Else
+                  r←0(deb⍕'Already using the most current version: ',2⊃vers)
+              :EndIf
           :Else
               r←¯1('Could not ⎕FIX new HttpCommand: ',2↓∊': '∘,¨⎕DMX.(EM Message))
           :EndTrap
