@@ -1,4 +1,4 @@
-r←test_ping dummy;resp
-r←''
-:if '
-resp←HttpCommand.Get 'localhjost
+{r}←test_ping dummy;result;port;url
+ url←'http://localhost:',⍕port←8090 Using HttpServer
+ result←HttpCommand.Get url,'/ping'
+ r←'ping failed'/⍨result.(rc HttpStatus Data)≢0 200 'pong'

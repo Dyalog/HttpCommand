@@ -5,7 +5,7 @@
     * A namespace named `Conga` which was introduced with Conga version 3.0 and implements behavior that makes it easier to run multiple Conga-based utilities in the same workspace. `Conga` is the recommended API version to use.
     * A namespace named `DRC` which is retained for backward-compatibility with applications which use earlier versions of Conga. `DRC` should only be used in an application where backward compatibility is necessary.
 
-The API looks for a matching version of the shared libraries; as such version of the API and the shared libraries must be the same. For more information on Conga please refer to the [Conga User Guide](https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf).
+The Conga API looks for a matching version of the shared libraries; as such version of the API and the shared libraries must be the same. For more information on Conga please refer to the [Conga User Guide](https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf).
 
 ### Default Behavior
 When first run, `HttpCommand` will attempt find or copy the Conga API and then initialize it. `HttpCommand` will attempt to use the `Conga` version of the API in preference to the `DRC` version. In general, all of this is transparent to the user.
@@ -24,9 +24,15 @@ When first run, `HttpCommand` will attempt find or copy the Conga API and then i
 ### Overriding Default Locations
 There are two methods to tell `HttpCommand`'s default behavior, both of which involve setting a shared public field in the `HttpCommand` class.
 
-* If you have Conga in your workspace`HttpCommand.CongaRef` can be used to specify the location for the API. It can be an actual reference or a character array representing the location of API. For instance:<br>
+* If you have the `Conga` namespace in your workspace in other than default locations the `HttpCommand` will search, `HttpCommand.CongaRef` can be used to specify its location. `CongaRef` can be an actual reference to the namespace or a character array representing the location. For instance:<br>
 `HttpCommand.CongaRef←#.Utils.Conga` or<br>
 `HttpCommand.CongaRef←'#.Utils.Conga'`<br>
 This can be useful when integrating `HttpCommand` into an application that also uses Conga.
-* `HttpCommand.CongaPath` can be used to specify the path to the shared library files. This can be useful when bundling `HttpCommand` in a distributed application. For instance:<br>
-`HttpCommand.CongaPath←(⊃1 ⎕NPARTS ''),'/conga/'` would tell `HttpCommand` to find the shared libraries in the `/conga/` subfolder of the current folder.
+* `HttpCommand.CongaPath` can be used to specify the path to the shared library files and optionally the conga workspace. This can be useful when bundling `HttpCommand` in a distributed application. For instance:<br>
+`HttpCommand.CongaPath←(⊃1 ⎕NPARTS ''),'/conga/'` would tell `HttpCommand` to find the shared libraries in the `/conga/` subfolder of the current folder. See [Integrating `HttpCommand`](./integrating.md) for more information.
+
+### Using Other Versions of Conga
+If you need to use a version of Conga other than the one in the Dyalog installation folder, there are two ways to accomplish this:
+
+* Put the shared libraries and the `conga` workspace in a folder and set `CongaPath` to point to that folder.
+* Put the `Conga` namespace in your workspace (pointing `CongaRef` to it if necesssary) and the shared libraries in a folder set `CongaPath` to point to that folder.

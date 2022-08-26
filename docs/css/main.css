@@ -22,6 +22,14 @@ code {
 		height: 1.8rem!important;
 	}
 }
+td:first-child {
+	white-space: nowrap;
+}
+table.scrollable {
+	display:block;
+	overflow-x: auto;
+	white-space: nowrap;
+}
 /* Custom colors */
 :root {
 	--md-primary-fg-color: #ED7F00;

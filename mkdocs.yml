@@ -6,22 +6,31 @@ copyright: Copyright &copy; 2015-2022 <strong><a href="https://dyalog.com">Dyalo
 nav:
     - Overview: 'index.md'
     - Usage:
-      - 'Quick Start': 'quickstart.md'
-      - 'User Guide': 'userguide.md'
-      - 'Examples': 'usecases.md'
-      - 'Troubleshooting': 'trouble.md'
+      - 'Quick Start': 'quickstart.md' # complete
+      - 'User Guide': 'userguide.md'   # complete
+      - 'Examples': 'examples.md'      # complete
+      - 'Troubleshooting': 'trouble.md' # complete
     - Reference:
-      - 'Configuration': 'configuration.md'
-      - 'Shared Methods': 'shared.md'
-      - 'Instance Methods': 'instance.md'
-      - 'Result Namespace': 'result.md'
-      - 'Messages and Return Codes': 'msgs.md'
+      - 'Settings':
+        - 'Request-related Settings': 'request-settings.md' # complete
+        - 'Conga-related Settings': 'conga-settings.md'     # complete
+        - 'Operational Settings': 'operational-settings.md' # complese
+      - 'Shared Methods':
+        - 'Shortcut Methods': 'shortcut-methods.md' # complete
+        - 'Encode/Decode Methods': 'encode-methods.md' # complete
+        - 'Miscellaneous Methods': 'misc-methods.md' # complete
+      - 'Instance Methods': 'instance-methods.md' # complete
+      - 'Result Namespace':
+        - 'Operational Elements': 'result-operational.md' # complete
+        - 'Request Elements': 'result-request.md' # complete
+        - 'Response Elements': 'result-response.md' # complete
+      - 'Messages and Return Codes': 'msgs.md' # complete
     - Advanced Topics:
-      - 'HttpCommand and Conga' : 'conga.md'
-      - 'Secure Communications' : 'secure.md'
-      - 'Integrating HttpCommand' : 'integrating.md'
+      - 'HttpCommand and Conga' : 'conga.md' # complete
+      - 'Secure Communications' : 'secure.md' # complete
+      - 'Integrating HttpCommand' : 'integrating.md' # complete
     - About: 
-      - License: 'LICENSE.md'
+      - License: 'LICENSE.md' # complete
       - 'Release Notes': 'release-notes.md'
 
 theme:
@@ -40,10 +49,29 @@ extra_css:
 
 plugins:
   - search
+  - print-site:
+      add_to_navigation: true
+      print_page_title: 'Print'
+      add_print_site_banner: false
+      # Table of contents
+      add_table_of_contents: false
+      toc_title: 'Table of Contents'
+      toc_depth: 6
+      # Content-related
+      add_full_urls: false
+      enumerate_headings: false
+      enumerate_figures: false
+      add_cover_page: true
+      cover_page_template: ""
+      path_to_pdf: ""
+      include_css: true
+      enabled: true
+      exclude:
 
 markdown_extensions:
   - admonition
   - abbr
   - footnotes
+  - attr_list 
   - toc:
       title: On this page
