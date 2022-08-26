@@ -47,7 +47,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.0.4' '2022-08-12'
+      r←'HttpCommand' '5.0.5' '2022-08-19'
     ∇
 
     ∇ make
@@ -78,7 +78,7 @@
     ⍝ initialize the namespace result
       :Access shared
       ns.(Command URL rc msg HttpVersion HttpStatus HttpMessage Headers Data PeerCert Redirections Cookies OutFile Elapsed BytesWritten)←'' '' ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')⍬'' 0 ¯1
-      ns.GetHeader←{Headers{1<|≡⍵:⍺∘∇¨⍵ ⋄ (⍺[;2],⊂'')⊃⍨⍺[;1](⍳{(⍵⍵ ⍺)⍺⍺(⍵⍵ ⍵)}(1∘(819⌶)))⊆,⍵}⍵} ⍝ return header value or '' if not found
+      ns.GetHeader←{⍺←Headers ⋄ ⍺{1<|≡⍵:⍺∘∇¨⍵ ⋄ (⍺[;2],⊂'')⊃⍨⍺[;1](⍳{(⍵⍵ ⍺)⍺⍺(⍵⍵ ⍵)}(1∘(819⌶)))⊆,⍵}⍵} ⍝ return header value or '' if not found
     ∇
 
     ∇ Goodbye
@@ -151,7 +151,7 @@
     ∇ r←{requestOnly}New args
     ⍝ Shared method to create new HttpCommand
     ⍝ args - [Command URL Params Headers Cert SSLFlags Priority]
-    ⍝ requestOnly - return, but do not transmit, HTTP request
+    ⍝ requestOnly - initial setting for RequestOnly
       :Access public shared
       :If 0=⎕NC'requestOnly' ⋄ requestOnly←¯1 ⋄ :EndIf
       r←''
@@ -161,13 +161,13 @@
           :Else
               r←##.⎕NEW ⎕THIS(eis⍣(9.1≠nameClass⊃args)⊢args)
           :EndIf
+          r.RequestOnly←requestOnly
       :Else
           r←initResult #.⎕NS''
           r.(rc msg)←¯1 ⎕DMX.EM
           setDisplayFormat r
           →∆EXIT
       :EndTrap
-      r.RequestOnly←(1=requestOnly)∨r.RequestOnly=-requestOnly
      ∆EXIT:
     ∇
 
@@ -341,8 +341,8 @@
           :If ∨/nmt←(~0∊⍴)¨public private ⍝ either file name not empty?
               :If ∧/nmt ⍝ if so, both need to be non-empty
                   :If ∨/t←{0::1 ⋄ ~⎕NEXISTS ⍵}¨public private ⍝ either file not exist?
-                      →∆FAIL⊣msg←'Not found',4↓∊{' and ',(∊⍕⍵),' "',(∊⍕⍎⍵),'"'}¨t/'PublicCertFile' 'PrivateKeyFile'
-                  :EndIf
+                      →∆FAIL⊣msg←'Not found',4↓∊t/'PublicCertFile' 'PrivateKeyFile'{' and ',⍺,' "',(∊⍕⍵),'"'}¨public private
+                  :EndIf                      
                   :Trap Debug↓0
                       cert←⊃LDRC.X509Cert.ReadCertFromFile public
                   :Else
@@ -366,7 +366,7 @@
      ∆FAIL:(rc secureParams)←¯1 msg ⍝ failure
     ∇
 
-    ∇ {r}←certs HttpCmd args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;chunked;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers;cmd
+    ∇ {r}←certs HttpCmd args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;chunked;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers;cmd;file;protocol
     ⍝ issue an HTTP command
     ⍝ certs - X509Cert|(PublicCertFile PrivateKeyFile) SSLValidation Priority PublicCertFile PrivateKeyFile
     ⍝ args  - [1] HTTP method
@@ -403,7 +403,11 @@
       hdrs←makeHeaders headers
       →∆END↓⍨0∊⍴r.msg←'Improper header format'/⍨¯1≡hdrs
      
-      (secure host path urlparms)←ConxProps parseURL r.URL←url
+      (protocol secure host path urlparms)←ConxProps parseURL r.URL←url
+     
+      :If ~(⊂protocol)∊'' 'http:' 'https:'
+          →∆END⊣r.msg←'Invalid protocol: ',¯1↓protocol
+      :EndIf
      
       auth←''
       :If 0≠p←¯1↑⍸host='@' ⍝ Handle user:password@host...
@@ -415,7 +419,7 @@
           port←(1+secure)⊃80 443 ⍝ use the default HTTP/HTTPS port
       :Else
           :If 0=port←⊃toInt ind↓host
-              →∆END⊣r.msg←'Invalid host/port - ',host
+              →∆END⊣r.msg←'Invalid host/port: ',host
           :EndIf
           host↑⍨←ind-1
       :EndIf
@@ -425,7 +429,7 @@
       :EndIf
      
       :If ~(port>0)∧(port≤65535)∧port=⌊port
-          →∆END⊣r.msg←'Invalid port - ',⍕port
+          →∆END⊣r.msg←'Invalid port: ',⍕port
       :EndIf
      
       secure∨←⍲/{0∊⍴⍵}¨certs[1 4] ⍝ we're secure if URL begins with https/wss (checked by parseURL), or we have a cert or a PublicCertFile
@@ -498,7 +502,17 @@
       (outFile replace)←2↑{⍵,(≢⍵)↓'' 0}eis OutFile
       :If toFile←~0∊⍴outFile
           :Trap Debug↓0
-              outFile←∊1 ⎕NPARTS outFile
+              outFile←1 ⎕NPARTS outFile
+              :If ~⎕NEXISTS⊃outFile
+                  →∆END⊣r.msg←'Output file folder ''',(⊃outFile),''' does not exist'
+              :EndIf
+              :If 0∊⍴∊1↓outFile ⍝ no file name specified, try to use the name from the URL
+                  :If ~0∊⍴file←∊1↓1 ⎕NPARTS path
+                      outFile←(⊃outFile),file
+                  :Else ⍝ no file name specified and none in the URL
+                      →∆END⊣r.msg←'No file name specified in OutFile or URL'
+                  :EndIf
+              :EndIf
               :If ⎕NEXISTS outFile
                   :If (0=replace)∧0≠2 ⎕NINFO outFile
                       →∆END⊣r.msg←'Output file ''',outFile,''' is not empty'
@@ -686,6 +700,7 @@
                   :If MaxRedirections<.=¯1,≢r.Redirections ⋄ →∆END⊣r.(rc msg)←¯1('Too many redirections (',(⍕MaxRedirections),')')
                   :Else
                       :If ''≢url←r.GetHeader'location' ⍝ if we were redirected use the "location" header field for the URL
+                          :If '/'=⊃url ⋄ url,⍨←host ⋄ :EndIf ⍝ if a relative redirection, use the current host
                           r.Redirections,←t←#.⎕NS''
                           t.(URL HttpVersion HttpStatus HttpMessage Headers)←r.(URL HttpVersion HttpStatus HttpMessage Headers)
                           {}LDRC.Close Client
@@ -808,7 +823,7 @@
       r←{⍵,('/\'∊⍨⊢/⍵)↓'/'}{0∊⍴t←2 ⎕NQ'.' 'GetEnvironment' 'DYALOG':⊃1 ⎕NPARTS⊃2 ⎕NQ'.' 'GetCommandLineArgs' ⋄ t}''
     ∇
 
-    ∇ (secure host path urlparms)←{conx}parseURL url;path;p;protocol
+    ∇ (protocol secure host path urlparms)←{conx}parseURL url;path;p
     ⍝ Parses a URL and returns
     ⍝   secure - Boolean whether running HTTPS or not based on leading http://
     ⍝   host - domain or IP address
@@ -816,7 +831,7 @@
     ⍝   urlparms - URL query string, if any
       :If 0=⎕NC'conx' ⋄ conx←'' ⋄ :EndIf
       (url urlparms)←2↑(url splitOnFirst'?'),⊂''
-      p←⍬⍴1+⍸<\'//'⍷url
+      p←⍬⍴2+⍸<\'://'⍷url
       protocol←lc(0⌈p-2)↑url
       secure←protocol beginsWith'https:'
       url←p↓url                          ⍝ Remove HTTP[s]:// if present
