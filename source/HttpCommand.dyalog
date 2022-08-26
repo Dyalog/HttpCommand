@@ -47,7 +47,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.0.5' '2022-08-19'
+      r←'HttpCommand' '5.0.6' '2022-08-26'
     ∇
 
     ∇ make
@@ -196,8 +196,8 @@
       :If r.rc=0
           →∆DONE⍴⍨204=r.HttpStatus ⍝ exit if "no content" HTTP status
           :If ¯1=r.BytesWritten ⍝ if not writing to file
-              :If ∨/'application/json'⍷lc r.Headers'content-type'
-                  r JSONimport r.Data
+              :If ∨/'application/json'⍷lc r.Headers getHeader'content-type'
+                  JSONimport r
               :Else ⋄ →∆DONE⊣r.(rc msg)←2 'Response content-type is not application/json'
               :EndIf
           :EndIf
@@ -245,21 +245,25 @@
 
     ∇ r←Initialize r;ref;root;nc;n;ns;congaCopied;class;path
       ⍝↓↓↓ Check if LDRC exists (VALUE ERROR (6) if not), and is LDRC initialized? (NONCE ERROR (16) if not)
+      r.msg←''
       :Hold 'HttpCommandInit'
           :If {6 16 999::1 ⋄ ''≡LDRC:1 ⋄ 0⊣LDRC.Describe'.'}''
               LDRC←''
               :If ~0∊⍴CongaRef  ⍝ did the user supply a reference to Conga?
-                  LDRC←ResolveCongaRef CongaRef
-                  →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/'CongaRef (',(⍕CongaRef),') does not point to a valid instance of Conga'
+                  :If 0∊⍴LDRC←r ResolveCongaRef CongaRef
+                      r.msg,⍨←'Could not initialize Conga using CongaRef "',(⍕CongaRef),'" due to '
+                      →∆END
+                  :EndIf
               :Else
-                  :For root :In ##.## #
+                  :For root :In ## #
                       ref nc←root{1↑¨⍵{(×⍵)∘/¨⍺ ⍵}⍺.⎕NC ⍵}ns←'Conga' 'DRC'
                       :If 9=⊃⌊nc ⋄ :Leave ⋄ :EndIf
                   :EndFor
      
                   :If 9=⊃⌊nc
-                      LDRC←ResolveCongaRef(root⍎∊ref)
-                      →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/(⍕root),'.',(∊ref),' does not point to a valid instance of Conga'
+                      :If 0∊⍴LDRC←r ResolveCongaRef(root⍎∊ref)
+                          →∆END⊣r.msg,⍨←'Could not initialize Conga from "',(∊(⍕root)'.'ref),'" due to '
+                      :EndIf
                       →∆COPY↓⍨{999::0 ⋄ 1⊣LDRC.Describe'.'}'' ⍝ it's possible that Conga was saved in a semi-initialized state
                   :Else
      ∆COPY:
@@ -274,13 +278,16 @@
                           :For path :In (1+0∊⍴CongaPath)⊃(⊂CongaPath)((dyalogRoot,'ws/')'') ⍝ if CongaPath specifiec, use it exclusively
                               :Trap Debug↓0
                                   n class.⎕CY path,'conga'
-                                  LDRC←ResolveCongaRef(class⍎n)
-                                  →∆END↓⍨0∊⍴r.msg←(''≡LDRC)/n,' was copied from ',path,'conga, but is not valid'
+                                  LDRC←r ResolveCongaRef(class⍎n)
+                                  :If 0∊⍴LDRC
+                                      r.msg,⍨←n,' was copied from "',path,'conga", but encountered '
+                                      →∆END
+                                  :EndIf
                                   →∆COPIED⊣congaCopied←1
                               :EndTrap
                           :EndFor
                       :EndFor
-                      →∆END↓⍨0∊⍴r.msg←(~congaCopied)/'Neither Conga nor DRC were successfully copied'
+                      →∆END↓⍨0∊⍴r.msg←(~congaCopied)/'neither Conga nor DRC were successfully copied'
      ∆COPIED:
                   :EndIf
               :EndIf
@@ -294,7 +301,7 @@
       :EndHold
     ∇
 
-    ∇ LDRC←ResolveCongaRef CongaRef;z;failed
+    ∇ LDRC←r ResolveCongaRef CongaRef;failed;z
     ⍝ Attempt to resolve what CongaRef refers to
     ⍝ CongaRef can be a charvec, reference to the Conga or DRC namespaces, or reference to an iConga instance
     ⍝ LDRC is '' if Conga could not be initialized, otherwise it's a reference to the the Conga.LIB instance or the DRC namespace
@@ -304,13 +311,23 @@
       :Case 9.1 ⍝ namespace?  e.g. CongaRef←DRC or Conga
      ∆TRY:
           :Trap Debug↓0
-              :If ∨/'.Conga'⍷⍕CongaRef ⋄ LDRC←CongaPath CongaRef.Init'HttpCommand' ⍝ is it Conga?
-              :ElseIf 0≡⊃CongaPath CongaRef.Init'' ⋄ LDRC←CongaRef ⍝ DRC?
-              :Else ⋄ →∆EXIT⊣LDRC←''
+              :If 2 3≢⌊CongaRef.⎕NC'DllVer' 'Init'
+                  r.msg←'it does not refer to a valid Conga interface'
+                  →∆EXIT⊣LDRC←''
+              :EndIf
+              :If ∨/'.Conga'⍷⍕CongaRef ⍝ Conga?
+                  LDRC←CongaPath CongaRef.Init'HttpCommand'
+              :ElseIf 0≡⊃CongaPath CongaRef.Init'' ⍝ DRC?
+                  LDRC←CongaRef
+              :Else ⍝ should never get to here, but... (paranoia)
+                  r.msg←'it does not refer to a valid Conga interface'
+                  →∆EXIT⊣LDRC←''
               :End
           :Else ⍝ if HttpCommand is reloaded and re-executed in rapid succession, Conga initialization may fail, so we try twice
-              :If failed ⋄ →∆EXIT⊣LDRC←''
-              :Else ⋄ →∆TRY⊣failed←1
+              :If failed
+                  →∆EXIT⊣LDRC←''⊣r.msg←∊{⍺,(~0∊⍴⍵)/': ',⍵}/⎕DMX.(EM Message)
+              :Else
+                  →∆TRY⊣failed←1
               :EndIf
           :EndTrap
       :Case 9.2 ⍝ instance?  e.g. CongaRef←Conga.Init ''
@@ -319,7 +336,12 @@
           :EndIf
       :Case 2.1 ⍝ variable?  e.g. CongaRef←'#.Conga'
           :Trap Debug↓0
-              LDRC←ResolveCongaRef(⍎∊⍕CongaRef)
+              :If 9≠z←⎕NC⍕CongaRef
+                  →∆EXIT⊣r.msg←'CongaRef ',(1+z=0)⊃'is invalid' 'was not found'
+              :EndIf
+              LDRC←r ResolveCongaRef(⍎∊⍕CongaRef)
+          :Else
+              r.msg←∊{⍺,(~0∊⍴⍵)/': ',⍵}/⎕DMX.(EM Message)
           :EndTrap
       :EndSelect
      ∆EXIT:
@@ -331,7 +353,7 @@
     ⍝ flags    - SSL flags
     ⍝ priority - GnuTLS priority
     ⍝ public   - PublicCertFile
-    ⍝ provate  - PrivateKeyFile
+    ⍝ private  - PrivateKeyFile
     ⍝ if cert is empty, check PublicCertFile and PrivateKeyFile
      
       LDRC.X509Cert.LDRC←LDRC ⍝ make sure the X509 instance points to the right LDRC
@@ -342,7 +364,7 @@
               :If ∧/nmt ⍝ if so, both need to be non-empty
                   :If ∨/t←{0::1 ⋄ ~⎕NEXISTS ⍵}¨public private ⍝ either file not exist?
                       →∆FAIL⊣msg←'Not found',4↓∊t/'PublicCertFile' 'PrivateKeyFile'{' and ',⍺,' "',(∊⍕⍵),'"'}¨public private
-                  :EndIf                      
+                  :EndIf
                   :Trap Debug↓0
                       cert←⊃LDRC.X509Cert.ReadCertFromFile public
                   :Else
@@ -413,7 +435,10 @@
       :If 0≠p←¯1↑⍸host='@' ⍝ Handle user:password@host...
           auth←('Basic ',(Base64Encode(p-1)↑host))
           host←p↓host
-      :EndIf
+      :EndIf                 
+      
+   ⍝ This next section is a chicken and egg scenario trying to figure out 
+   ⍝ whether to use HTTPS as well as what port to use 
      
       :If defaultPort←(≢host)<ind←host⍳':' ⍝ then if there's no port specified in the host
           port←(1+secure)⊃80 443 ⍝ use the default HTTP/HTTPS port
@@ -432,7 +457,13 @@
           →∆END⊣r.msg←'Invalid port: ',⍕port
       :EndIf
      
-      secure∨←⍲/{0∊⍴⍵}¨certs[1 4] ⍝ we're secure if URL begins with https/wss (checked by parseURL), or we have a cert or a PublicCertFile
+      secure∨←(0∊⍴protocol)∧port=443 ⍝ if just port 443 was specified, without any protocol, use SSL
+     
+      secure∨←⍲/{0∊⍴⍵}¨certs[1 4] ⍝ we're secure if URL begins with https (checked by parseURL), or we have a cert or a PublicCertFile
+     
+      :If defaultPort∧secure
+          port←443
+      :EndIf
      
       r.(Secure Host Port Path)←secure(lc host)port({{'/',¯1↓⍵/⍨⌽∨\'/'=⌽⍵}⍵↓⍨'/'=⊃⍵}path)
      
@@ -504,7 +535,7 @@
           :Trap Debug↓0
               outFile←1 ⎕NPARTS outFile
               :If ~⎕NEXISTS⊃outFile
-                  →∆END⊣r.msg←'Output file folder ''',(⊃outFile),''' does not exist'
+                  →∆END⊣r.msg←'Output file folder "',(⊃outFile),'" does not exist'
               :EndIf
               :If 0∊⍴∊1↓outFile ⍝ no file name specified, try to use the name from the URL
                   :If ~0∊⍴file←∊1↓1 ⎕NPARTS path
@@ -515,18 +546,18 @@
               :EndIf
               :If ⎕NEXISTS outFile
                   :If (0=replace)∧0≠2 ⎕NINFO outFile
-                      →∆END⊣r.msg←'Output file ''',outFile,''' is not empty'
+                      →∆END⊣r.msg←'Output file "',outFile,'" is not empty'
                   :Else
                       outTn←outFile ⎕NTIE 0
                       {}0 ⎕NRESIZE⍣(1=replace)⊢outTn
                   :EndIf
               :Else
-                  outTn←outFile ⎕NCREATE ¯1
+                  outTn←outFile ⎕NCREATE 0
               :EndIf
               startSize←⎕NSIZE outTn
               r.OutFile←outFile
           :Else
-              →∆END⊣r.msg←⎕DMX.EM,' while trying to initialize output file ''',(⍕outFile),''''
+              →∆END⊣r.msg←({⍺,(~0∊⍴⍵)/' (',⍵,')'}/⎕DMX.(EM Message)),' occurred while trying to initialize output file "',(⍕outFile),'"'
           :EndTrap
       :EndIf
      
@@ -620,10 +651,12 @@
                           :EndIf
                       :Case 'HTTPFail'
                           data,←dat
+                          r.Data←data
                           r.msg←'Conga could not parse the HTTP reponse'
                           →∆END
                       :Case 'HTTPError'
                           data,←dat
+                          r.Data←data
                           r.msg←'Response payload not completely received'
                           →∆END
                       :Case 'Timeout'
@@ -643,7 +676,7 @@
                               →∆END⊣r.rc←4⊃rc ⍝ set return code if closed before receiving HTTPHeader event
                           :EndIf
                       :Else
-                          →∆END⊣r.msg←'*** Unhandled Conga event type - ',evt ⍝ This shouldn't happen
+                          →∆END⊣r.msg←'Unhandled Conga event type: ',evt ⍝ This shouldn't happen
                       :EndSelect
                   :Else
                       r.msg←'Conga wait error ',,⍕rc ⍝ some other error (very unlikely)
@@ -682,9 +715,10 @@
                   :EndTrap
                   :If TranslateData=1
                       :If ∨/∊'text/xml' 'application/xml'⍷¨⊂ct←lc r.GetHeader'content-type'
-                          r{0::⍺.(Data msg)←⍵'Could not translate XML payload' ⋄ ⍺.Data←⎕XML ⍵}data
+                          r{0::⍺.(rc Data msg)←¯2 ⍵'Could not translate XML payload' ⋄ ⍺.Data←⎕XML ⍵}data
                       :ElseIf ∨/'application/json'⍷ct
-                          r JSONimport data
+                          r.Data←data
+                          JSONimport r
                       :Else
                           r.Data←data
                       :EndIf
@@ -717,7 +751,7 @@
               :EndIf
           :EndIf
       :Else
-          r.msg←'Conga connection failed ',,⍕1↓rc
+          r.msg←'Conga error while attempting to send request: ',,⍕1↓rc
       :EndIf
       r.rc←1⊃rc ⍝ set the return code to the Conga return code
      ∆END:
@@ -730,7 +764,7 @@
       rc←0
       :If MaxPayloadSize≠¯1
       :AndIf size>MaxPayloadSize
-          r.(rc msg)←¯5 'Payload length exceeds MaxPayloadSize'
+          r.(rc msg)←¯1 'Payload length exceeds MaxPayloadSize'
           rc←1
       :EndIf
     ∇
@@ -814,9 +848,9 @@
     ∇
 
       JSONimport←{
-          0::ns.(rc Data msg)←4 ⍵'Could not convert reponse payload to JSON format'
-          11::⍺.Data←0(3⊃⎕RSI,##).⎕JSON ⍵
-          ⍺.Data←0(3⊃⎕RSI,##).⎕JSON⍠'Dialect' 'JSON5'⊢⍵}
+          0::⍵.(rc msg)←¯2 ⍵'Could not translate JSON payload'
+          11::⍵.Data←0(3⊃⎕RSI,##).⎕JSON ⍵.Data
+          ⍵.Data←0(3⊃⎕RSI,##).⎕JSON⍠'Dialect' 'JSON5'⊢⍵.Data}
 
     ∇ r←dyalogRoot
     ⍝ return path to interpreter
