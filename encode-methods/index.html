@@ -13,7 +13,7 @@
     
     
       
-        <title>Shared Methods - HttpCommand</title>
+        <title>Encode/Decode Methods - HttpCommand</title>
       
     
     
@@ -33,6 +33,20 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings2.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings3.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings4.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings5.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings6.css">
+    
+      <link rel="stylesheet" href="../css/print-site.css">
+    
+      <link rel="stylesheet" href="../css/print-site-material.css">
     
       <link rel="stylesheet" href="../css/main.css">
     
@@ -60,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#outcpo-httpcommandbase64decode-b64" class="md-skip">
+        <a href="#base64-encoding" class="md-skip">
           Skip to content
         </a>
       
@@ -92,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Shared Methods
+              Encode/Decode Methods
             
           </span>
         </div>
@@ -272,7 +286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usecases/" class="md-nav__link">
+      <a href="../examples/" class="md-nav__link">
         Examples
       </a>
     </li>
@@ -337,9 +351,112 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1">
+          Settings
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Settings" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Settings
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
-        Configuration
+      <a href="../request-settings/" class="md-nav__link">
+        Request-related Settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conga-settings/" class="md-nav__link">
+        Conga-related Settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operational-settings/" class="md-nav__link">
+        Operational Settings
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Shared Methods
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Shared Methods" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Shared Methods
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shortcut-methods/" class="md-nav__link">
+        Shortcut Methods
       </a>
     </li>
   
@@ -360,12 +477,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Shared Methods
+          Encode/Decode Methods
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Shared Methods
+        Encode/Decode Methods
       </a>
       
         
@@ -384,30 +501,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#outcpo-httpcommandbase64decode-b64" class="md-nav__link">
-    out←{cpo} HttpCommand.Base64Decode b64
+  <a href="#base64-encoding" class="md-nav__link">
+    Base64 Encoding
   </a>
+  
+    <nav class="md-nav" aria-label="Base64 Encoding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base64decode" class="md-nav__link">
+    Base64Decode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#base64encode" class="md-nav__link">
+    Base64Encode
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#b64cpo-httpcommandbase64encode-in" class="md-nav__link">
-    b64←{cpo} HttpCommand.Base64Encode in
+  <a href="#url-encoding" class="md-nav__link">
+    URL Encoding
+  </a>
+  
+    <nav class="md-nav" aria-label="URL Encoding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#urldecode" class="md-nav__link">
+    UrlDecode
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#httpcommandurldecode" class="md-nav__link">
-    HttpCommand.UrlDecode
+        
+          <li class="md-nav__item">
+  <a href="#urlencode" class="md-nav__link">
+    UrlEncode
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#httpcommandurlencode" class="md-nav__link">
-    HttpCommand.UrlEncode
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -426,7 +569,28 @@
   
   
     <li class="md-nav__item">
-      <a href="../instance/" class="md-nav__link">
+      <a href="../misc-methods/" class="md-nav__link">
+        Miscellaneous Methods
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instance-methods/" class="md-nav__link">
         Instance Methods
       </a>
     </li>
@@ -439,10 +603,71 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          Result Namespace
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Result Namespace" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Result Namespace
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../result/" class="md-nav__link">
-        Result Namespace
+      <a href="../result-operational/" class="md-nav__link">
+        Operational Elements
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result-request/" class="md-nav__link">
+        Request Elements
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result-response/" class="md-nav__link">
+        Response Elements
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -610,6 +835,21 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../print_page/" class="md-nav__link">
+        Print
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -637,30 +877,56 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#outcpo-httpcommandbase64decode-b64" class="md-nav__link">
-    out←{cpo} HttpCommand.Base64Decode b64
+  <a href="#base64-encoding" class="md-nav__link">
+    Base64 Encoding
   </a>
+  
+    <nav class="md-nav" aria-label="Base64 Encoding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base64decode" class="md-nav__link">
+    Base64Decode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#base64encode" class="md-nav__link">
+    Base64Encode
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#b64cpo-httpcommandbase64encode-in" class="md-nav__link">
-    b64←{cpo} HttpCommand.Base64Encode in
+  <a href="#url-encoding" class="md-nav__link">
+    URL Encoding
+  </a>
+  
+    <nav class="md-nav" aria-label="URL Encoding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#urldecode" class="md-nav__link">
+    UrlDecode
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#httpcommandurldecode" class="md-nav__link">
-    HttpCommand.UrlDecode
+        
+          <li class="md-nav__item">
+  <a href="#urlencode" class="md-nav__link">
+    UrlEncode
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#httpcommandurlencode" class="md-nav__link">
-    HttpCommand.UrlEncode
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -676,44 +942,96 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/dyalog/httpcommand/edit/master/docs/shared.md" title="Edit this page" class="md-content__button md-icon">
+<a href="https://github.com/dyalog/httpcommand/edit/master/docs/encode-methods.md" title="Edit this page" class="md-content__button md-icon">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
 </a>
 
 
 
-  <h1>Shared Methods</h1>
+  <h1>Encode/Decode Methods</h1>
 
-<p><strong> This page is incomplete </strong></p>
-<hr />
-<p>In addition to the shared "shortcut" methods listed in <a href="../quickstart/">Quick Start</a>, <code>HttpCommand</code> has a few other shared methods are intended to make it easier to manage request and response payload data. </p>
-<h4 id="outcpo-httpcommandbase64decode-b64"><code>out←{cpo} HttpCommand.Base64Decode b64</code></h4>
+<h2 id="base64-encoding">Base64 Encoding</h2>
+<p>Base64 is a binary-to-text encoding scheme that is used to transmit binary data over channels the only reliably support text content. Among Base64's uses are:</p>
+<ul>
+<li>Embed images or other binary assets in HTML files.</li>
+<li>Encode user credentials for HTTP Basic Authentication  </li>
+</ul>
+<h3 id="base64decode"><code>Base64Decode</code></h3>
+<p>Decode a Base64-encoded string or single-byte integer vector.</p>
 <table>
+<tr><td>Syntax</td>
+<td><code>out←{cpo} HttpCommand.Base64Decode b64</code></td></tr>
+<tr><td><code>b64</code></td>
+<td>Either a single-byte integer or character vector to be decoded</td></tr>
+<tr><td><code>cpo</code></td>
+<td>(optional) If set to 0 or not supplied, Base64Decode will perform UTF-8 conversion on the result. If set to 1, no conversion will be performed. In almost all cases, you can ignore (and not supply) this argument.</td></tr>
+<tr><td><code>out</code></td>
+<td>A character vector representing the decodes base-64 right argument.</td></tr>
+<tr><td>Example(s)</td>
+<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Base64Decode 'RHlhbG9nIOKNuuKNtOKMig=='</code><br>
+<code>Dyalog ⍺⍴⌊</code></td></tr>
+</table>
+
+<h3 id="base64encode"><code>Base64Encode</code></h3>
+<p>Base64 encode a string or integer vector.</p>
+<table>
+<tr><td>Syntax</td>
+<td><code>b64←{cpo} HttpCommand.Base64Encode in</code></td></tr>
 <tr><td><code>in</code></td>
-<td>Either a single-byte integer or character vector to be encoded</td></tr>
+<td>Either an integer or character vector to be encoded</td></tr>
 <tr><td><code>cpo</code></td>
 <td>(optional) If set to 0 or not supplied, Base64Encode will first perform UTF-8 conversion on a character argument. If set to 1, no conversion will be performed. In almost all cases, you can ignore (and not supply) this argument.</td></tr>
 <tr><td><code>b64</code></td>
 <td>A character vector representing the base-64 encoding of the right argument.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Base64Encode 'Dyalog ⍺⍴⌊'</code><br>
-<code>RHlhbG9nIOKNuuKNtOKMig==</code></td></tr>
+<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Base64Decode 'RHlhbG9nIOKNuuKNtOKMig=='</code><br>
+<code>Dyalog ⍺⍴⌊</code></td></tr>
 </table>
 
-<h4 id="b64cpo-httpcommandbase64encode-in"><code>b64←{cpo} HttpCommand.Base64Encode in</code></h4>
+<h2 id="url-encoding">URL Encoding</h2>
+<p>URLs can only be sent over the Internet using the ASCII character set. However, URLs often contain characters outside the ASCII character set. URL encoding converts strings to a format acceptable for transmission over the Internet.  URLEncoding is also used to encode payloads for content-type <code>'application/x-www-form-urlencoded'</code>.</p>
+<h3 id="urldecode"><code>UrlDecode</code></h3>
+<p>URLDecode a URLEncoded string.</p>
 <table>
+<tr><td>Syntax</td>
+<td><code>out←HttpCommand.UrlDecode in</code></td></tr>
 <tr><td><code>in</code></td>
-<td>Either a single-byte integer or character vector to be encoded</td></tr>
-<tr><td><code>cpo</code></td>
-<td>(optional) If set to 0 or not supplied, Base64Encode will first perform UTF-8 conversion on a character argument. If set to 1, no conversion will be performed. In almost all cases, you can ignore (and not supply) this argument.</td></tr>
-<tr><td><code>b64</code></td>
-<td>A character vector representing the base-64 encoding of the right argument.</td></tr>
+<td>A URLEncoded string</td></tr>
+<tr><td><code>out</code></td>
+<td>The URLDecoding of <code>in</code>.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Base64Encode 'Dyalog ⍺⍴⌊'</code><br>
-<code>RHlhbG9nIOKNuuKNtOKMig==</code></td></tr>
+<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlDecode 'Dyalog%20%E2%8D%BA%E2%8D%B4%E2%8C%8A'</code><br/>
+<code>Dyalog ⍺⍴⌊</code><br/><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlDecode 'name=Donald%20Duck'</code><br/>
+<code>name=Donald Duck</code><br/><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlDecode 'first=Donald&last=O%27Mallard'</code><br/>
+<code>first=Donald&last=O'Mallard</code><br/>
+</td></tr>
 </table>
-<h4 id="httpcommandurldecode"><code>HttpCommand.UrlDecode</code></h4>
-<h4 id="httpcommandurlencode"><code>HttpCommand.UrlEncode</code></h4>
+
+<h3 id="urlencode"><code>UrlEncode</code></h3>
+<p>URLEncode a string or a set of name/value pairs.</p>
+<table>
+<tr><td>Syntax</td>
+<td><code>out←{name} HttpCommand.UrlEncode in</code></td></tr>
+<tr><td><code>in</code></td>
+<td>One of:<ul>
+<li>a simple character vector to be URLEncoded</li>
+<li>a set of <a href="/request-settings#namevalue-pairs">name/value pairs</a></li>
+</ul></td></tr>
+<tr><td><code>name</code></td>
+<td>(optional) The name for the URLEncoded right argument. Applies only in the case where <code>in</code> is a simple character vector.</td></tr>
+<tr><td><code>out</code></td>
+<td>The URLEncoding of <code>in</code>.</td></tr>
+<tr><td>Example(s)</td>
+<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlEncode 'Dyalog ⍺⍴⌊'</code><br/>
+<code>Dyalog%20%E2%8D%BA%E2%8D%B4%E2%8C%8A</code><br/><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'name' HttpCommand.UrlEncode 'Donald Duck'</code><br/>
+<code>name=Donald%20Duck</code><br/><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlEncode ('first' 'Donald') ('last' 'O''Mallard')</code><br/>
+<code>first=Donald&last=O%27Mallard</code><br/>
+</td></tr>
+</table>
 
               
             </article>
@@ -727,7 +1045,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../configuration/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Configuration" rel="prev">
+        <a href="../shortcut-methods/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Shortcut Methods" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -736,20 +1054,20 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Configuration
+              Shortcut Methods
             </div>
           </div>
         </a>
       
       
         
-        <a href="../instance/" class="md-footer__link md-footer__link--next" aria-label="Next: Instance Methods" rel="next">
+        <a href="../misc-methods/" class="md-footer__link md-footer__link--next" aria-label="Next: Miscellaneous Methods" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Instance Methods
+              Miscellaneous Methods
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -782,6 +1100,8 @@
     
     
       <script src="../assets/javascripts/bundle.8aa65030.min.js"></script>
+      
+        <script src="../js/print-site.js"></script>
       
     
   </body>

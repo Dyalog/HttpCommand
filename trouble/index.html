@@ -34,6 +34,20 @@
       
     
     
+      <link rel="stylesheet" href="../css/print-site-enum-headings2.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings3.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings4.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings5.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings6.css">
+    
+      <link rel="stylesheet" href="../css/print-site.css">
+    
+      <link rel="stylesheet" href="../css/print-site-material.css">
+    
       <link rel="stylesheet" href="../css/main.css">
     
     <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -60,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#check-rc-and-msg" class="md-skip">
+        <a href="#first-check-rc-and-msg" class="md-skip">
           Skip to content
         </a>
       
@@ -274,7 +288,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usecases/" class="md-nav__link">
+      <a href="../examples/" class="md-nav__link">
         Examples
       </a>
     </li>
@@ -320,8 +334,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#check-rc-and-msg" class="md-nav__link">
-    Check rc and msg
+  <a href="#first-check-rc-and-msg" class="md-nav__link">
+    First check rc and msg
   </a>
   
 </li>
@@ -336,6 +350,13 @@
         <li class="md-nav__item">
   <a href="#examine-the-request-that-httpcommand-will-send" class="md-nav__link">
     Examine the request that HttpCommand will send
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#debug-mode" class="md-nav__link">
+    Debug Mode
   </a>
   
 </li>
@@ -390,9 +411,35 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1">
+          Settings
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Settings" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Settings
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
-        Configuration
+      <a href="../request-settings/" class="md-nav__link">
+        Request-related Settings
       </a>
     </li>
   
@@ -405,8 +452,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../shared/" class="md-nav__link">
-        Shared Methods
+      <a href="../conga-settings/" class="md-nav__link">
+        Conga-related Settings
       </a>
     </li>
   
@@ -419,7 +466,103 @@
   
   
     <li class="md-nav__item">
-      <a href="../instance/" class="md-nav__link">
+      <a href="../operational-settings/" class="md-nav__link">
+        Operational Settings
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Shared Methods
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Shared Methods" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Shared Methods
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shortcut-methods/" class="md-nav__link">
+        Shortcut Methods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../encode-methods/" class="md-nav__link">
+        Encode/Decode Methods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../misc-methods/" class="md-nav__link">
+        Miscellaneous Methods
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instance-methods/" class="md-nav__link">
         Instance Methods
       </a>
     </li>
@@ -432,10 +575,71 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          Result Namespace
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Result Namespace" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Result Namespace
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../result/" class="md-nav__link">
-        Result Namespace
+      <a href="../result-operational/" class="md-nav__link">
+        Operational Elements
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result-request/" class="md-nav__link">
+        Request Elements
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result-response/" class="md-nav__link">
+        Response Elements
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -603,6 +807,21 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../print_page/" class="md-nav__link">
+        Print
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -630,8 +849,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#check-rc-and-msg" class="md-nav__link">
-    Check rc and msg
+  <a href="#first-check-rc-and-msg" class="md-nav__link">
+    First check rc and msg
   </a>
   
 </li>
@@ -646,6 +865,13 @@
         <li class="md-nav__item">
   <a href="#examine-the-request-that-httpcommand-will-send" class="md-nav__link">
     Examine the request that HttpCommand will send
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#debug-mode" class="md-nav__link">
+    Debug Mode
   </a>
   
 </li>
@@ -670,17 +896,24 @@
 
   <h1>Troubleshooting</h1>
 
-<p>In a perfect world, all HTTP requests would be well-formed, their target hosts would be up, and their APIs well-documented.  Unfortunately, we don't live in a perfect world and so, in this section, we attempt to provide you with some guidance for troubleshooting requests that aren't working as you expect.</p>
-<h4 id="check-rc-and-msg">Check <code>rc</code> and <code>msg</code></h4>
-<p>If <code>rc</code> is non-0, <code>msg</code> should have relevant information about what went wrong</p>
-<pre><code>      ⎕←r←HttpCommand.Get ''
+<p>In a perfect world, all HTTP requests would be well-formed, target hosts would be available, and APIs well-documented.  Unfortunately, we don't live in a perfect world and so, in this section, we attempt to provide you with some guidance for troubleshooting requests that aren't working as you expect.</p>
+<p>The result namespace returned by <code>HttpCommand.Run</code> contains information that may help in troubleshooting. The display format of the result contains some useful information:
+* <code>rc</code> is the <code>HttpCommand</code>'s return code
+* <code>msg</code> is a diagnostic message if <code>rc≠0</code>
+* <code>HTTP Status</code> indicates the host's HTTP return code and status message
+* <code>⍴Data</code> indicates the shape of the payload, if any, received in the response. This is the shape of the payload data after any automatic conversion done by <code>HttpCommand</code>.   </p>
+<h4 id="first-check-rc-and-msg">First check <code>rc</code> and <code>msg</code></h4>
+<p>If <code>rc</code> is not 0, <code>msg</code> should have relevant information about what went wrong. <code>rc</code> values less than 0 indicate a problem that wasn't Conga-related. <code>rc</code> values greater than 0 are the Conga return code if there was a Conga-related error.</p>
+<pre><code>      HttpCommand.Get ''
 [rc: ¯1 | msg: No URL specified | HTTP Status:  &quot;&quot; | ⍴Data: 0]
-      r.msg
-No URL specified
+
+      HttpCommand.Get 'non_existent_url'
+[rc: 1106 | msg: Conga client creation failed  ERR_INVALID_HOST  Host 
+identification not resolved  | HTTP Status:  &quot;&quot; | ⍴Data: 0]
 </code></pre>
 <h4 id="check-httpmessage-and-data">Check <code>HttpMessage</code> and <code>Data</code></h4>
 <p>If <code>rc=0</code>, but <code>HttpStatus</code> is not what you expect, examine both <code>HttpMessage</code> and <code>Data</code>.  In the example below, GitHub returns a URL pointing to their API documentation for getting information about an organization.</p>
-<pre><code>      ⎕←r←HttpCommand.Get 'https://api.github.com/orgs/bloofo'
+<pre><code>      ⊢r ← HttpCommand.Get 'https://api.github.com/orgs/bloofo'
 [rc: 0 | msg:  | HTTP Status: 404 &quot;Not Found&quot; | ⍴Data: 109]
       r.HttpMessage
 Not Found
@@ -688,13 +921,16 @@ Not Found
 {&quot;message&quot;:&quot;Not Found&quot;,&quot;documentation_url&quot;:&quot;https://docs.github.com/rest/reference/orgs#get-an-organization&quot;}
 </code></pre>
 <h4 id="examine-the-request-that-httpcommand-will-send">Examine the request that <code>HttpCommand</code> will send</h4>
-<p>It can be useful to examine the actual request that <code>HttpCommand</code> will send to the host, particularly when interacting with web services that publish sample requests. The instance setting <code>RequestOnly</code> controls whether <code>HttpCommand</code> will send the request to the host or simply return the request that <em>would</em> be sent to the host. You can make use of <code>RequestOnly</code> in several ways:</p>
-<ul>
-<li>Pass 1 as the optional left argument to the shortcut methods <code>Get</code>, <code>GetJSON</code>, or <code>Do</code>.</li>
-</ul>
-<pre><code>       1 HttpCommand.GetJSON 'post' 'www.someurl.net' (⍳10) ('a-header' 'header value')
+<p>It can be useful to examine the actual request that <code>HttpCommand</code> will send to the host. Many web services will publish sample requests that you can use for comparison. Check that the headers, particularly <code>content-type</code>, are correct.</p>
+<p>The instance setting <code>RequestOnly</code> controls whether <code>HttpCommand</code> will send the request to the host or simply return the request that <em>would</em> be sent to the host. You can set <code>RequestOnly</code> in several ways:
+* Pass 1 as the optional left argument to the shortcut methods <code>Get</code>, <code>GetJSON</code>, or <code>Do</code>.</p>
+<pre><code>       method ← 'post'
+       url ← 'www.someurl.net'
+       payload ← ⍳10
+       headers ← 'a-header' 'some value'
+       1 HttpCommand.GetJSON method url payload headers
 POST / HTTP/1.1
-a-header: header value
+a-header: some value
 Host: www.someurl.net
 User-Agent: Dyalog/HttpCommand
 Accept: */*
@@ -712,12 +948,9 @@ GET / HTTP/1.1
 Host: dyalog.com
 User-Agent: Dyalog/HttpCommand
 Accept: */*
-
-
       c.RequestOnly←0
       c.Run
 [rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 20684]
-
 </code></pre>
 <ul>
 <li>Use the <code>Show</code> instance method. </li>
@@ -733,8 +966,11 @@ header-name: header value
 Host: someurl.com
 User-Agent: Dyalog/HttpCommand
 Accept: */*
-
 </code></pre>
+<h4 id="debug-mode">Debug Mode</h4>
+<p>Setting <code>HttpCommand.Debug←1</code> will disable <code>HttpCommand</code>'s error checking and cause <code>HttpCommand</code> to suspend if and where an error occurs.</p>
+<p>Setting <code>HttpCommand.Debug←2</code> will cause <code>HttpCommand</code> to suspend just before it attempts to create the client connection to the host.  This will give you the opportunity to examine the request's state and step through the code.</p>
+<p><strong>Note:</strong> <code>HttpCommand.Debug</code> is a shared setting and will affect all instances of <code>HttpCommand</code>.</p>
 
               
             </article>
@@ -748,7 +984,7 @@ Accept: */*
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../usecases/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Examples" rel="prev">
+        <a href="../examples/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Examples" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -764,13 +1000,13 @@ Accept: */*
       
       
         
-        <a href="../configuration/" class="md-footer__link md-footer__link--next" aria-label="Next: Configuration" rel="next">
+        <a href="../request-settings/" class="md-footer__link md-footer__link--next" aria-label="Next: Request-related Settings" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Configuration
+              Request-related Settings
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -803,6 +1039,8 @@ Accept: */*
     
     
       <script src="../assets/javascripts/bundle.8aa65030.min.js"></script>
+      
+        <script src="../js/print-site.js"></script>
       
     
   </body>

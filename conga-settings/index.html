@@ -13,7 +13,7 @@
     
     
       
-        <title>Configuration - HttpCommand</title>
+        <title>Conga-related Settings - HttpCommand</title>
       
     
     
@@ -33,6 +33,20 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings2.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings3.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings4.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings5.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings6.css">
+    
+      <link rel="stylesheet" href="../css/print-site.css">
+    
+      <link rel="stylesheet" href="../css/print-site-material.css">
     
       <link rel="stylesheet" href="../css/main.css">
     
@@ -60,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#request-related-settings" class="md-skip">
+        <a href="#instance-settings" class="md-skip">
           Skip to content
         </a>
       
@@ -92,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Configuration
+              Conga-related Settings
             
           </span>
         </div>
@@ -272,7 +286,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../usecases/" class="md-nav__link">
+      <a href="../examples/" class="md-nav__link">
         Examples
       </a>
     </li>
@@ -339,6 +353,48 @@
     
   
   
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1">
+          Settings
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Settings" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Settings
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../request-settings/" class="md-nav__link">
+        Request-related Settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
     <li class="md-nav__item md-nav__item--active">
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
@@ -346,12 +402,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Configuration
+          Conga-related Settings
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Configuration
+        Conga-related Settings
       </a>
       
         
@@ -370,59 +426,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#request-related-settings" class="md-nav__link">
-    Request-related Settings
+  <a href="#instance-settings" class="md-nav__link">
+    Instance Settings
   </a>
   
-    <nav class="md-nav" aria-label="Request-related Settings">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#command" class="md-nav__link">
-    Command
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#url" class="md-nav__link">
-    URL
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#params" class="md-nav__link">
-    Params
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#headers" class="md-nav__link">
-    Headers
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#contenttype" class="md-nav__link">
-    ContentType
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#conga-related-parameters" class="md-nav__link">
-    Conga-related Parameters
-  </a>
-  
-    <nav class="md-nav" aria-label="Conga-related Parameters">
+    <nav class="md-nav" aria-label="Instance Settings">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -433,15 +441,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#doslimit" class="md-nav__link">
-    DOSLimit
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#timeout" class="md-nav__link">
-    TimeOut
+  <a href="#waittime" class="md-nav__link">
+    WaitTime
   </a>
   
 </li>
@@ -449,20 +450,6 @@
           <li class="md-nav__item">
   <a href="#cert" class="md-nav__link">
     Cert
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sslflags" class="md-nav__link">
-    SSLFlags
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#priority" class="md-nav__link">
-    Priority
   </a>
   
 </li>
@@ -481,71 +468,16 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#operational-parameters" class="md-nav__link">
-    Operational Parameters
-  </a>
-  
-    <nav class="md-nav" aria-label="Operational Parameters">
-      <ul class="md-nav__list">
-        
           <li class="md-nav__item">
-  <a href="#suppressheaders" class="md-nav__link">
-    SuppressHeaders
+  <a href="#sslflags" class="md-nav__link">
+    SSLFlags
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#waittime" class="md-nav__link">
-    WaitTime
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#requestonly" class="md-nav__link">
-    RequestOnly
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#outfile" class="md-nav__link">
-    OutFile
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#maxredirections" class="md-nav__link">
-    MaxRedirections
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#keepalive" class="md-nav__link">
-    KeepAlive
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#translatedata" class="md-nav__link">
-    TranslateData
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#debug" class="md-nav__link">
-    Debug
+  <a href="#priority" class="md-nav__link">
+    Priority
   </a>
   
 </li>
@@ -556,71 +488,37 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#streaming-parameters" class="md-nav__link">
-    Streaming Parameters
+  <a href="#shared-settings" class="md-nav__link">
+    Shared Settings
   </a>
   
-    <nav class="md-nav" aria-label="Streaming Parameters">
+    <nav class="md-nav" aria-label="Shared Settings">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#stream" class="md-nav__link">
-    Stream
+  <a href="#congapath" class="md-nav__link">
+    CongaPath
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#streamfn" class="md-nav__link">
-    StreamFn
+  <a href="#congaref" class="md-nav__link">
+    CongaRef
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#streamlimit" class="md-nav__link">
-    StreamLimit
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#details" class="md-nav__link">
-    Details
-  </a>
-  
-    <nav class="md-nav" aria-label="Details">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#url-details" class="md-nav__link">
-    URL Details
+  <a href="#ldrc" class="md-nav__link">
+    LDRC
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#params-details" class="md-nav__link">
-    Params Details
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#headers-details" class="md-nav__link">
-    Headers Details
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#namevalue-pairs" class="md-nav__link">
-    Name/Value Pairs
+  <a href="#congaversion" class="md-nav__link">
+    CongaVersion
   </a>
   
 </li>
@@ -645,8 +543,55 @@
   
   
     <li class="md-nav__item">
-      <a href="../shared/" class="md-nav__link">
-        Shared Methods
+      <a href="../operational-settings/" class="md-nav__link">
+        Operational Settings
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Shared Methods
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Shared Methods" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Shared Methods
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shortcut-methods/" class="md-nav__link">
+        Shortcut Methods
       </a>
     </li>
   
@@ -659,7 +604,42 @@
   
   
     <li class="md-nav__item">
-      <a href="../instance/" class="md-nav__link">
+      <a href="../encode-methods/" class="md-nav__link">
+        Encode/Decode Methods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../misc-methods/" class="md-nav__link">
+        Miscellaneous Methods
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instance-methods/" class="md-nav__link">
         Instance Methods
       </a>
     </li>
@@ -672,10 +652,71 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          Result Namespace
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Result Namespace" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Result Namespace
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
-      <a href="../result/" class="md-nav__link">
-        Result Namespace
+      <a href="../result-operational/" class="md-nav__link">
+        Operational Elements
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result-request/" class="md-nav__link">
+        Request Elements
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result-response/" class="md-nav__link">
+        Response Elements
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -843,6 +884,21 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../print_page/" class="md-nav__link">
+        Print
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -870,59 +926,11 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#request-related-settings" class="md-nav__link">
-    Request-related Settings
+  <a href="#instance-settings" class="md-nav__link">
+    Instance Settings
   </a>
   
-    <nav class="md-nav" aria-label="Request-related Settings">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#command" class="md-nav__link">
-    Command
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#url" class="md-nav__link">
-    URL
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#params" class="md-nav__link">
-    Params
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#headers" class="md-nav__link">
-    Headers
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#contenttype" class="md-nav__link">
-    ContentType
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#conga-related-parameters" class="md-nav__link">
-    Conga-related Parameters
-  </a>
-  
-    <nav class="md-nav" aria-label="Conga-related Parameters">
+    <nav class="md-nav" aria-label="Instance Settings">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -933,15 +941,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#doslimit" class="md-nav__link">
-    DOSLimit
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#timeout" class="md-nav__link">
-    TimeOut
+  <a href="#waittime" class="md-nav__link">
+    WaitTime
   </a>
   
 </li>
@@ -949,20 +950,6 @@
           <li class="md-nav__item">
   <a href="#cert" class="md-nav__link">
     Cert
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#sslflags" class="md-nav__link">
-    SSLFlags
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#priority" class="md-nav__link">
-    Priority
   </a>
   
 </li>
@@ -981,71 +968,16 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#operational-parameters" class="md-nav__link">
-    Operational Parameters
-  </a>
-  
-    <nav class="md-nav" aria-label="Operational Parameters">
-      <ul class="md-nav__list">
-        
           <li class="md-nav__item">
-  <a href="#suppressheaders" class="md-nav__link">
-    SuppressHeaders
+  <a href="#sslflags" class="md-nav__link">
+    SSLFlags
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#waittime" class="md-nav__link">
-    WaitTime
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#requestonly" class="md-nav__link">
-    RequestOnly
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#outfile" class="md-nav__link">
-    OutFile
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#maxredirections" class="md-nav__link">
-    MaxRedirections
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#keepalive" class="md-nav__link">
-    KeepAlive
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#translatedata" class="md-nav__link">
-    TranslateData
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#debug" class="md-nav__link">
-    Debug
+  <a href="#priority" class="md-nav__link">
+    Priority
   </a>
   
 </li>
@@ -1056,71 +988,37 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#streaming-parameters" class="md-nav__link">
-    Streaming Parameters
+  <a href="#shared-settings" class="md-nav__link">
+    Shared Settings
   </a>
   
-    <nav class="md-nav" aria-label="Streaming Parameters">
+    <nav class="md-nav" aria-label="Shared Settings">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#stream" class="md-nav__link">
-    Stream
+  <a href="#congapath" class="md-nav__link">
+    CongaPath
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#streamfn" class="md-nav__link">
-    StreamFn
+  <a href="#congaref" class="md-nav__link">
+    CongaRef
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#streamlimit" class="md-nav__link">
-    StreamLimit
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#details" class="md-nav__link">
-    Details
-  </a>
-  
-    <nav class="md-nav" aria-label="Details">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#url-details" class="md-nav__link">
-    URL Details
+  <a href="#ldrc" class="md-nav__link">
+    LDRC
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#params-details" class="md-nav__link">
-    Params Details
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#headers-details" class="md-nav__link">
-    Headers Details
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#namevalue-pairs" class="md-nav__link">
-    Name/Value Pairs
+  <a href="#congaversion" class="md-nav__link">
+    CongaVersion
   </a>
   
 </li>
@@ -1142,136 +1040,154 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/dyalog/httpcommand/edit/master/docs/configuration.md" title="Edit this page" class="md-content__button md-icon">
+<a href="https://github.com/dyalog/httpcommand/edit/master/docs/conga-settings.md" title="Edit this page" class="md-content__button md-icon">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
 </a>
 
 
 
-  <h1>Configuration</h1>
+  <h1>Conga-related Settings</h1>
 
-<p><strong> This page is incomplete </strong></p>
-<hr />
-<p><strong><code>HttpCommand</code></strong>'s configuration settings are grouped into four categories - Request, Conga, Operational, and Streaming.</p>
-<p>Examples below that use an instance of <strong><code>HttpCommand</code></strong> will refer to it as <code>h</code> as if created using <code>h←HttpCommand.New ''</code></p>
-<h3 id="request-related-settings">Request-related Settings</h3>
-<p>Request-related settings are settings you use to specify attributes of the HTTP request that <code>HttpCommand</code> will process.</p>
-<h4 id="command"><code>Command</code></h4>
+<p>In general, you will not need to set any of the Conga-related settings since the <code>HttpCommand</code>'s defaults will suffice for almost all requests. For more information on Conga, please refer to the <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf" target="_blank">Conga User Guide</a>.</p>
+<h2 id="instance-settings">Instance Settings</h2>
+<h3 id="buffersize"><code>BufferSize</code></h3>
 <table><tr>
 <td>Description</td>
-<td>The case-insensitive HTTP command (method) for the request. <code>Command</code> is not limited to standard HTTP methods like GET, POST, PUT, HEAD, OPTIONS, and DELETE, but can be any string provided that the host has implemented support for it.</td></tr>
-<tr><td>Default</td><td><code>'GET'</code></td></tr>
-<tr><td>Example(s)</td><td><code>h.Command←'POST'</code></td></tr></table>
-<h4 id="url"><code>URL</code></h4>
-<p><a href="#url-details">details</a></p>
+<td>The maximum number of bytes that <code>HttpCommand</code> will accept for the HTTP status and headers received from the host.</td></tr>
+<tr><td>Default</td>
+<td><code>200000</code></td></tr>
+<tr><td>Example(s)</td>
+<td><code>h.BufferSize←50000 ⍝ set a lower threshold</code></td></tr>
+<tr><td>Details</td>
+<td>By default, when using Conga's HTTP mode, as <code>HttpCommand</code> does, <code>BufferSize</code> applies only to the data received by the <code>HTTPHeader</code> event. The intent is to protect against a maliciously large response from the host.  If the data received by the <code>HTTPHeader</code> event exceeds <code>BufferSize</code>, <code>HttpCommand</code> will exit with a return code of 1135.</td></tr></table>
+
+<h3 id="waittime"><code>WaitTime</code></h3>
 <table><tr>
 <td>Description</td>
-<td>The URL for the request.<br>The general format for <code>URL</code> is: 
-<code>[scheme://][userinfo@]host[:port][/path][?query]</code><br>
-At a minimum the <code>URL</code> must specify the host.</td></tr>
-<tr><td>Default</td><td><code>''</code></td></tr>
-<tr><td>Example(s)</td><td><code>h.URL←'dyalog.com'<br>h.URL←'https://user:pwd@adomain.com:8080/apath/?name=Drake</code></td></tr></table>
+<td>The number of milliseconds that Conga will wait (listen) for a response before timing out.</td></tr>
+<tr><td>Default</td>
+<td><code>5000</code></td></tr>
+<tr><td>Example(s)</td>
+<td><code>h.WaitTime←10000 ⍝ wait 10 seconds</code></td></tr>
+<tr><td>Details</td>
+<td>Applies only to the time Conga will wait for a response, not how long <code>HttpCommand</code> will wait which is controlled by the <a href="operational-settings.md#timeout"><code>Timeout</code></a> setting. In general, this setting should be set to an acceptable amount of time for the host to respond to the HTTP request.</td></tr></table>
 
-<h4 id="params"><code>Params</code></h4>
-<p><a href="#params-details">details</a></p>
+<h3 id="cert"><code>Cert</code></h3>
 <table><tr>
 <td>Description</td>
-<td>The parameters or payload, if any, for the request. The interpretation of <code>Params</code> is dependent on <code>Command</code> and on the <code>content-type</code> HTTP header. <code>Params</code> is interpreted as follows:
-<ul><li>If <code>Command</code> is either <code>'GET'</code> or <code>'HEAD'</code> then <code>HttpCommand</code> will URLencode <code>Params</code> and append it to the query string of the <code>URL</code>. (See <a href="#params-details">details</a>)</li>
-<li>If the <code>content-type</code> HTTP header is <code>'application/x-www-form-urlencoded'</code> (the default), <code>HttpCommand</code> will URLencode <code>Params</code> and insert it into the body of the HTTP request. (See <a href="#params-details">details</a>)</li>
-<li>If the <code>content-type</code> HTTP header is <code>'application/json' Params</code> will be converted to JSON format using <code>⎕JSON</code> and inserted in the body of the request.</li>
-<li>Otherwise, <code>Params</code> will be formatted using <code>∊⍕</code> and inserted into the body of the request.</li></ul>
-<tr><td>Default</td><td><code>''</code></td></tr>
-<tr><td>Example(s)</td><td><code>h.Params←(('name' 'dyalog') ('age' 39))</code><br><code>h.Params←'name=dyalog&age=39'</code><br>
-<code>ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39 ⋄ h.Params←ns</code></td></tr></table>
+<td>The certificate specification to be used for secure communications over SSL/TLS. If set, <code>Cert</code> can be either:
+<ul><li>an instance of the Conga <code>X509Cert</code> class</li>
+<li>a 2-element vector of character vectors representing the full path names to a public certificate file and a private key file. This is a shortcut that can be used instead of specifying both the <code>PrivateKeyFile</code> and <code>PublicCertFile</code> settings.</li>
+</ul></td></tr>
+<tr><td>Default</td>
+<td><code>''</code></td></tr>
+<tr><td>Example(s)</td>
+<td><code>h.Init ⍝ initialize the local instance of Conga</code>
+<br/>
+<code>h.Cert← 1⊃h.LDRC.X509Cert.ReadCertUrls ⍝ use the first MS certificate store cert</code>
+<br/><br/>
+<code>h.Cert← 'path-to-certfile.pem' 'path-to-keyfile.pem'</code></td></tr>
+<tr><td>Details</td>
+<td>In most cases when using HTTPS for secure communications, the anonymous certificate that <code>HttpCommand</code> will create for you will suffice and you need not set <code>Cert</code>. It should only be necessary to assign <code>Cert</code> in those cases where you need to specify a certificate for authentication purposes.<br/><br/>
+Note: <code>Cert</code> is also a positional argument for the shortcut methods (<code>Get</code>, <code>GetJSON</code>, <code>Do</code>, and <code>New</code>) as well as the <code>HttpCommand</code> constructor. <code>Cert</code> appears after the <code>Headers</code> positional argument.  For example:<br/>
+<code>h← HttpCommand.Get 'someurl.com' '' '' ('certfile.pem' 'keyfile.pem')</code></td></tr></table>
 
-<h4 id="headers"><code>Headers</code></h4>
-<p><a href="#headers-details">details</a></p>
+<h3 id="publiccertfile"><code>PublicCertFile</code></h3>
 <table><tr>
 <td>Description</td>
-<td>The HTTP headers for the request. Specified as <a href="#namevalue-pairs">name/value pairs</a>.
-</td></tr>
-<tr><td>Default</td><td>By default, <code>HttpCommand</code> will create the following headers:</br>
-<code>Host: </code>the host specified in <code>URL</code></br>
-<code>User-Agent: 'Dyalog/HttpCommand'</code></br>
-<code>Accept: '*/*'</code></br></br>
-If <code>Command</code> is not either <code>'GET'</code> or <code>'HEAD'</code>, <code>HttpCommand</code> will specify 
-<code>content-type: x-www-form-urlencoded</code></br>
-except in the case where you use the <code>GetJSON</code> shortcut command, then <code>HttpCommand</code> will assign <code>content-type: application/json</code><br><br><code>HttpCommand</code> will assign these headers at execution time only if you haven't specified them yourself.<br><br>
-If the request has content in the request body, Conga will automatically supply a <code>content-length</code> header.
-</td></tr>
-<tr><td>Example(s)</td><td><code>h.Headers←('accept' 'text/html')('authorization' 'mytoken')</code></td></tr></table>
+<td><code>PublicCertFile</code> is a character vector containing the full path to a public certificate file when using HTTPS for secure communications. <code>PublicCertFile</code> is used in conjunction with <a href="#privatekeyfile"><code>PrivateKeyFile</code></a></td></tr>
+<tr><td>Default</td>
+<td><code>''</code></td></tr>
+<tr><td>Example(s)</td>
+<td><code>h.PublicCertFile←'path-to-certfile.pem'</code></td></tr>
+<tr><td>Details</td>
+<td>The use of <code>Cert</code> and <code>PublicCertFile</code>/<code>PrivateKeyFile</code> are mutually exclusive and you should only one or the other. If both <code>Cert</code> and <code>PublicCertFile</code>/<code>PrivateKeyFile</code> are specified, <code>Cert</code> takes priority.</td></tr></table>
 
-<h4 id="contenttype"><code>ContentType</code></h4>
+<h3 id="privatekeyfile"><code>PrivateKeyFile</code></h3>
 <table><tr>
 <td>Description</td>
-<td>This setting is a convenient shortcut for setting the <code>content-type</code> HTTP header of the request. If you happen set both <code>ContentType</code> and a <code>content-type</code> header, <code>ContentType</code> takes precedence.
-</td></tr>
-<tr><td>Default</td><td><code>''</code></td></tr>
-<tr><td>Example(s)</td><td><code>h.ContentType←'application/json; charset=UTF-8'</code></td></tr></table>
+<td><code>PrivateKeyFile</code> is a character vector containing the full path to a private key file when using HTTPS for secure communications. <code>PrivateKeyFile</code> is used in conjunction with <a href="#publiccertfile"><code>PublicCertFile</code></a></td></tr>
+<tr><td>Default</td>
+<td><code>''</code></td></tr>
+<tr><td>Example(s)</td>
+<td><code>h.PrivateKeyFile←'path-to-keyfile.pem'</code></td></tr>
+<tr><td>Details</td>
+<td>The use of <code>Cert</code> and <code>PublicCertFile</code>/<code>PrivateKeyFile</code> are mutually exclusive and you should only one or the other. If both <code>Cert</code> and <code>PublicCertFile</code>/<code>PrivateKeyFile</code> are specified, <code>Cert</code> takes priority.</td></tr></table>
 
-<h3 id="conga-related-parameters">Conga-related Parameters</h3>
-<h4 id="buffersize"><code>BufferSize</code></h4>
+<h3 id="sslflags"><code>SSLFlags</code></h3>
 <table><tr>
 <td>Description</td>
-<td>The size limit for the HTTP header of the server's response. If the header exceeds this size, <code>HttpCommand</code> will issue a return code of 1135.</td></tr>
-<tr><td>Default</td><td><code>100000</code></td></tr>
-<tr><td>Example(s)</td><td><code>h.URL←'dyalog.com'<br>h.URL←'https://user:pwd@adomain.com:8080/apath/?name=Drake</code></td></tr></table>
+<td><code>SSLFlags</code> is used when using HTTPS for secure communications. It is a part of the certificate checking process and determines whether to connect to a server that does not have a valid certificate.</td></tr>
+<tr><td>Default</td>
+<td><code>32</code> which means accept the server certificate without checking it</td></tr>
+<tr><td>Example(s)</td>
+<td><code>h.SSLFlags←8</code></td></tr>
+<tr><td>Details</td>
+<td>For more information on the interpretation of <code>SSLFlag</code> values, see <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf">Conga User Guide</a> Appendix C.<br/><br/>
+Note: <code>SSLFlags</code> is also a positional argument for the shortcut methods (<code>Get</code>, <code>GetJSON</code>, <code>Do</code>, and <code>New</code>) as well as the <code>HttpCommand</code> constructor. <code>SSLFlags</code> appears after the <code>Cert</code> positional argument.</td></tr></table>
 
-<h4 id="doslimit"><code>DOSLimit</code></h4>
-<h4 id="timeout"><code>TimeOut</code></h4>
-<h4 id="cert"><code>Cert</code></h4>
-<h4 id="sslflags"><code>SSLFlags</code></h4>
-<h4 id="priority"><code>Priority</code></h4>
-<h4 id="publiccertfile"><code>PublicCertFile</code></h4>
-<h4 id="privatekeyfile"><code>PrivateKeyFile</code></h4>
-<h3 id="operational-parameters">Operational Parameters</h3>
-<h4 id="suppressheaders"><code>SuppressHeaders</code></h4>
-<h4 id="waittime"><code>WaitTime</code></h4>
-<h4 id="requestonly"><code>RequestOnly</code></h4>
-<h4 id="outfile"><code>OutFile</code></h4>
-<h4 id="maxredirections"><code>MaxRedirections</code></h4>
-<h4 id="keepalive"><code>KeepAlive</code></h4>
-<h4 id="translatedata"><code>TranslateData</code></h4>
-<h4 id="debug"><code>Debug</code></h4>
-<h3 id="streaming-parameters">Streaming Parameters</h3>
-<h4 id="stream"><code>Stream</code></h4>
-<h4 id="streamfn"><code>StreamFn</code></h4>
-<h4 id="streamlimit"><code>StreamLimit</code></h4>
-<h2 id="details">Details</h2>
-<h4 id="url-details">URL Details</h4>
-<p>A URL has the general format:<br><code>[scheme://][userinfo@]host[:port][/path][?query]</code></p>
-<p>So, a URL can be as simple as just a host name like <code>'dyalog.com'</code> or as complex as <code>'https://username:password@ducky.com:1234?id=myid&amp;time=1200'</code></p>
-<p>The only mandatory segment is the <code>host</code>; <code>HttpCommand</code> will infer or use default information when it builds the HTTP request to be sent.</p>
-<ul>
-<li>scheme - if supplied, it must be either <code>'http'</code> or <code>'https'</code> for a secure connection.  If not supplied, <code>HttpCommand</code> will use <code>'http'</code> unless you have specified the default HTTPS port (443) or provided SSL certificate parameters.</li>
-<li>userinfo - used for HTTP Basic authentication. HTTP Basic authentication has generally been deprecated, but may still be supported by some hosts. If userinfo is supplied, <code>HttpCommand</code> will create a proper Base64-encoded <code>authorization</code> header.</li>
-<li>host - the host/domain for the request</li>
-<li>port - if not supplied, <code>HttpCommand</code> will use the default HTTP port (80) unless the HTTPS scheme is used or certificate parameters are specified in which case the default HTTPS port (443) is used.</li>
-<li>path - the location of the resource within the domain. If not supplied, it's up to the domain's server to determine the default path.</li>
-<li>query - the query string for the request. If the HTTP method for the request is <code>'GET'</code> or <code>'HEAD'</code> and request parameters are specified in <code>Params</code>, <code>HttpCommand</code> will properly format them and append them to the query string. If you choose to supply query string parameters directly, they should be properly URLencoded. (See <a href="reference#urlencode"><code>HttpCommand.URLencode</code></a>)</li>
-</ul>
-<h4 id="params-details">Params Details</h4>
-<p>If <code>Params</code> is to be URLencoded, either because <code>Command</code> is <code>'GET'</code> or <code>'HEAD'</code>, or the <code>'content-type'</code> HTTP header is <code>'x-www-form-urlencoded'</code>, <code>HttpCommand</code> will parse <code>Params</code> as follows. If <code>Params</code> is:</p>
-<ul>
-<li>A simple character vector, <code>HttpCommand</code> will leave it unaltered if it consists only of valid URLencode characters (as found in <code>HttpCommand.ValidFormUrlEncodedChars</code>).  Otherwise it will URLencode it using <a href="reference#urlencode"><code>HttpCommand.URLencode</code></a>.</li>
-<li>A <a href="#namevalue-pairs">Name/Value Pairs</a> specification.</li>
-</ul>
-<p>If the <code>'content-type'</code> HTTP header is <code>'application/json'</code>, <code>HttpCommand</code> will interpret <code>Params</code> as follows:</p>
-<ul>
-<li>If <code>Params</code> is a simple character vector that is a valid JSON representation, it is left unaltered and inserted in the body of the request.</li>
-<li>Otherwise, the result of <code>1 ⎕JSON Params</code> inserted in the body of the request.</li>
-</ul>
-<p>In all other cases, the results of <code>∊⍕Params</code> is inserted in the body of the request. Any further preparation of <code>Params</code>, like Base64-encoding, is the responsibility of the user.</p>
-<h4 id="headers-details">Headers Details</h4>
-<h4 id="namevalue-pairs">Name/Value Pairs</h4>
-<p><code>Headers</code> and, in some cases, <code>Params</code> are treated as name/value pairs. <code>HttpCommand</code> gives you some flexibility in how you specify name/value pairs. You may use:</p>
-<ul>
-<li>A vector of depth 2 or ¯2 with an even number of elements.<br> For example: <code>('name' 'dyalog' 'age' 39)</code></li>
-<li>A vector of 2-element vectors, <code>HttpCommand</code> will treat each sub-vector as a name/value pair.<br>For example: <code>(('name' 'dyalog') ('age' 39))</code></li>
-<li>A 2-column matrix where each row represents a name/value pair.<br>For example: <code>2 2⍴'name' 'dyalog' 'age' 39</code></li>
-<li>A reference to a namespace, <code>HttpCommand</code> will treat the variables and their values in the namespace as name/value pairs.<br>For example: <code>ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39</code><br>Note that the names will be alphabetical in the formatted output.</li>
-</ul>
+<h3 id="priority"><code>Priority</code></h3>
+<table><tr>
+<td>Description</td>
+<td>The GnuTLS priority string that specifies the TLS session's handshake algorithms.</td></tr>
+<tr><td>Default</td>
+<td><code>'NORMAL:!CTYPE-OPENPGP'</code></td></tr>
+<tr><td>Example(s)</td>
+<td>h.Priority←'SECURE128:-VERS-TLS1.0'</td></tr>
+<tr><td>Details</td>
+<td>In general, you would use a different value than the default only in rare and very specific circumstances. See <a href="https://gnutls.org/manual/html_node/Priority-Strings.html">GnuTLS Priority Strings"</a> for more information.
+<br/><br/>
+Note: <code>Priority</code> is also a positional argument for the shortcut methods (<code>Get</code>, <code>GetJSON</code>, <code>Do</code>, and <code>New</code>) as well as the <code>HttpCommand</code> constructor. <code>Priority</code> appears after the <code>SSLFlags</code> positional argument.</td></tr></table>
+
+<h2 id="shared-settings">Shared Settings</h2>
+<p>Shared settings are set in the <code>HttpCommand</code> class and are used by all instances of <code>HttpCommand</code>.</p>
+<h3 id="congapath"><code>CongaPath</code></h3>
+<table><tr>
+<td>Description</td>
+<td>The path to Conga resources</td></tr>
+<tr><td>Default</td>
+<td><code>''</code></td></tr>
+<tr><td>Example(s)</td>
+<td><code>HttpCommand.CongaPath←'/myapp/dlls/'</code></td></tr>
+<tr><td>Details</td>
+<td>
+This setting is intended to be used when Conga is not located in the Dyalog installation folder or the current folder, as might be the case when deploying <code>HttpCommand</code> as a part of a runtime application. <code>CongaPath</code> is used for two purposes:<ul><li>If the <code>Conga</code> or <code>DRC</code> namespace is not found in the <code>HttpCommand</code>'s parent namespace or in the root namespace (<code>#</code>), then <code>CongaPath</code> should be the path to the folder containing the <code>conga</code> workspace from which <code>HttpCommand</code> will copy the <code>Conga</code> namespace.</li>
+<li><code>CongaPath</code> should be the path to the folder containing the Conga shared libraries</li></ul>See <a href="/conga">HttpCommand and Conga</a> and/or <a href="/integrating">Integrating HttpCommand</a> for more information.</td></tr></table>
+
+<h3 id="congaref"><code>CongaRef</code></h3>
+<table><tr>
+<td>Description</td>
+<td>A reference to the <code>Conga</code> or <code>DRC</code> namespace or to an initialized instance of the <code>Conga.LIB</code> class.</td></tr>
+<tr><td>Default</td>
+<td><code>''</code></td></tr>
+<tr><td>Example(s)</td>
+<td>HttpCommand.CongaRef← #.Utils.Conga</td></tr>
+<tr><td>Details</td>
+<td>This setting is intended to be used when your application has other components that use Conga. To avoid having multiple copies of Conga, you can set <code>CongaRef</code> to point to an existing copy of the Conga API.<br/>See <a href="/conga">HttpCommand and Conga</a> and/or <a href="/integrating">Integrating HttpCommand</a> for more information.</td></tr></table>
+
+<h3 id="ldrc"><code>LDRC</code></h3>
+<table><tr>
+<td>Description</td>
+<td>Once <code>HttpCommand</code> has been initialized by processing a request, <code>LDRC</code> is a reference to the Conga API that <code>HttpCommand</code> is using.</td></tr>
+<tr><td>Default</td>
+<td>N/A</td></tr>
+<tr><td>Example(s)</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.Get 'dyalog.com' ⍝ run a request</code><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.LDRC.Version</code><br/>
+<code>3 4 1612</td></tr>
+<tr><td>Details</td>
+<td><code>LDRC</code> should be treated as a read-only setting. It provides a means to access the Conga API which may be helpful for debugging and informational purposes.</td></tr></table>
+
+<h3 id="congaversion"><code>CongaVersion</code></h3>
+<table><tr>
+<td>Description</td>
+<td>Once <code>HttpCommand</code> has been initialized by processing a request, <code>CongaVersion</code> is the version number, in major.minor format, of the Conga API that <code>HttpCommand</code> is using.</td></tr>
+<tr><td>Default</td>
+<td>N/A</td></tr>
+<tr><td>Example(s)</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.Get 'dyalog.com' ⍝ run a request</code><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.CongaVersion</code><br/>
+<code>3.4</code></td></tr>
+<tr><td>Details</td>
+<td><code>CongaVersion</code> should be treated as a read-only setting. It provides information which may be helpful for debugging and informational purposes.</td></tr></table>
 
               
             </article>
@@ -1285,7 +1201,7 @@ If the request has content in the request body, Conga will automatically supply 
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../trouble/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Troubleshooting" rel="prev">
+        <a href="../request-settings/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Request-related Settings" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -1294,20 +1210,20 @@ If the request has content in the request body, Conga will automatically supply 
               <span class="md-footer__direction">
                 Previous
               </span>
-              Troubleshooting
+              Request-related Settings
             </div>
           </div>
         </a>
       
       
         
-        <a href="../shared/" class="md-footer__link md-footer__link--next" aria-label="Next: Shared Methods" rel="next">
+        <a href="../operational-settings/" class="md-footer__link md-footer__link--next" aria-label="Next: Operational Settings" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Shared Methods
+              Operational Settings
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -1340,6 +1256,8 @@ If the request has content in the request body, Conga will automatically supply 
     
     
       <script src="../assets/javascripts/bundle.8aa65030.min.js"></script>
+      
+        <script src="../js/print-site.js"></script>
       
     
   </body>
