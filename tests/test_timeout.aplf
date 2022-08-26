@@ -1,0 +1,7 @@
+ r←test_timeout dummy;result;port;url;c
+ url←'http://localhost:',⍕port←8090 Using HttpServer
+ c←HttpCommand.New'get'(url,'/timeout_test')
+ c.Timeout←5
+ ⎕←result←c.Run
+ c.Timeout←10
+ ⎕←result←c.Run
