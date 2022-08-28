@@ -47,7 +47,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.0.6' '2022-08-26'
+      r←'HttpCommand' '5.0.7' '2022-08-27'
     ∇
 
     ∇ make
@@ -435,10 +435,10 @@
       :If 0≠p←¯1↑⍸host='@' ⍝ Handle user:password@host...
           auth←('Basic ',(Base64Encode(p-1)↑host))
           host←p↓host
-      :EndIf                 
-      
-   ⍝ This next section is a chicken and egg scenario trying to figure out 
-   ⍝ whether to use HTTPS as well as what port to use 
+      :EndIf
+     
+   ⍝ This next section is a chicken and egg scenario trying to figure out
+   ⍝ whether to use HTTPS as well as what port to use
      
       :If defaultPort←(≢host)<ind←host⍳':' ⍝ then if there's no port specified in the host
           port←(1+secure)⊃80 443 ⍝ use the default HTTP/HTTPS port
@@ -1164,42 +1164,43 @@
       r←'See https://dyalog.github.io/HttpCommand/'
     ∇
 
-    ∇ r←Upgrade;z;vers;url;repository;ns;code;newer
-    ⍝ loads the latest version from GitHub
+    ∇ r←Upgrade;releases;latest;url;z;newer;ns;code;vers
+    ⍝ loads the latest released version from GitHub
       :Access public shared
-      repository←'HttpCommand/master/source/' ⍝ eventually we won't need to fall back to library-conga
-     ∆TRY:
-      url←'https://raw.githubusercontent.com/Dyalog/',repository,'HttpCommand.dyalog'
-      z←Get url
-      :If z.rc≠0
-          r←z.(rc msg)
-      :ElseIf (z.HttpStatus=404)∧repository≡'HttpCommand'
-          repository←'library-conga/master/'
-          →∆TRY
-      :ElseIf z.HttpStatus≠200
-          r←¯1(⍕z)
-      :Else
-          newer←{
-              0∊⍴⍺:0      ⍝ same version
-              (⊃⍺)>⊃⍵:1   ⍝ newer version
-              (⊃⍺)=⊃⍵:(1↓⍺)∇ 1↓⍵
-              ¯1          ⍝ older version
-          }
-          {}LDRC.Close'.' ⍝ close Conga
-          LDRC←''         ⍝ reset local reference so that Conga gets reloaded
-          :Trap 0
-              ns←⎕NS''
-              code←{⍵⊆⍨~⍵∊⎕UCS 13 10 65279}z.Data
-              vers←(0 ns.⎕FIX code).Version Version
-              :If 1=⊃newer/{2⊃'.'⎕VFI 2⊃⍵}¨vers
-                  ##.⎕FIX code
-                  r←1(deb⍕,'Upgraded to' 'from',⍪vers)
-              :Else
-                  r←0(deb⍕'Already using the most current version: ',2⊃vers)
-              :EndIf
+      :Trap Debug↓0
+          releases←(GetJSON'get' 'https://api.github.com/repos/Dyalog/HttpCommand/releases').Data
+          latest←(⊃⍒releases.published_at)⊃releases
+          url←latest.((assets.name⍳⊂'HttpCommand.dyalog')⊃assets.browser_download_url)
+          z←Get url
+          :If z.rc≠0
+              r←z.(rc msg)
+          :ElseIf z.HttpStatus≠200
+              r←¯1(⍕z)
           :Else
-              r←¯1('Could not ⎕FIX new HttpCommand: ',2↓∊': '∘,¨⎕DMX.(EM Message))
-          :EndTrap
-      :EndIf
+              newer←{
+                  0∊⍴⍺:0      ⍝ same version
+                  (⊃⍺)>⊃⍵:1   ⍝ newer version
+                  (⊃⍺)=⊃⍵:(1↓⍺)∇ 1↓⍵
+                  ¯1          ⍝ older version
+              }
+              {}LDRC.Close'.' ⍝ close Conga
+              LDRC←''         ⍝ reset local reference so that Conga gets reloaded
+              :Trap 0
+                  ns←⎕NS''
+                  code←{⍵⊆⍨~⍵∊⎕UCS 13 10 65279}'UTF-8' ⎕UCS ⎕UCS z.Data
+                  vers←(0 ns.⎕FIX code).Version Version
+                  :If 1=⊃newer/{2⊃'.'⎕VFI 2⊃⍵}¨vers
+                      ##.⎕FIX code
+                      r←1(deb⍕,'Upgraded to' 'from',⍪vers)
+                  :Else
+                      r←0(deb⍕'Already using the most current version: ',2⊃vers)
+                  :EndIf
+              :Else
+                  r←¯1('Could not ⎕FIX new HttpCommand: ',2↓∊': '∘,¨⎕DMX.(EM Message))
+              :EndTrap
+          :EndIf
+      :Else
+          r←¯1('Unexpected ',⊃{⍺,' at ',⍵}/2↑⎕DMX.DM)
+      :EndTrap
     ∇
 :EndClass
