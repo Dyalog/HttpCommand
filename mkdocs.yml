@@ -7,7 +7,7 @@ nav:
     - Overview: 'index.md'
     - Usage:
       - 'Quick Start': 'quickstart.md' # complete
-      - 'User Guide': 'userguide.md'   # complete
+      - 'Usage Guide': 'userguide.md'   # complete
       - 'Examples': 'examples.md'      # complete
       - 'Troubleshooting': 'trouble.md' # complete
     - Reference:
@@ -73,5 +73,8 @@ markdown_extensions:
   - abbr
   - footnotes
   - attr_list 
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
   - toc:
       title: On this page

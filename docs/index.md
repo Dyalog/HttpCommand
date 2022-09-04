@@ -14,10 +14,26 @@ Beginning with Dyalog v18.2, you can also use the `]get` user command:
       ]Get HttpCommand
 ```
 
+Dyalog versions 18.2 and 18.0 have version 4 of `HttpCommand` pre-installed. This documentation describes Version 5 of `HttpCommand`.  To upgrade to version 5:
+
+```
+      ]load HttpCommand
+#.HttpCommand
+      #.HttpCommand.Upgrade
+0  Upgraded to HttpCommand 4.0.14 2022-09-04 from HttpCommand 4.0.13 2022-04-07 
+      #.HttpCommand.Upgrade
+0  Upgraded to HttpCommand 5.0.7 2022-08-27 from HttpCommand 4.0.14 2022-09-04
+```
+
+:point_right: It is recommended that you save your own copy of `HttpCommand` in your application rather than dynamically getting or upgrading it at runtime. 
+
+
 `HttpCommand` is implemented as a Dyalog class and its typical usage pattern is:
 
-1. Create an instance of `HttpCommand`
-1. Set fields appropriate to describe the request
+1. Create an instance of the `HttpCommand` class using the function `HttpCommand.New`<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`instance ← HttpCommand.New ''`<br/>or by using the `⎕NEW` system function<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`instance ← ⎕NEW HttpCommand`
+1. Set fields (settings) appropriate to describe the request
 1. Send the request
 1. Examine the response result
 
@@ -49,10 +65,12 @@ The result of `HttpCommand.Run` is a namespace containing information about the 
 This documentation should provide sufficient information to use `HttpCommand` to make most HTTP requests. In some cases, some further knowledge of HTTP may be necessary. This documentation does not attempt to be an exhaustive HTTP reference.
 
 ## Use of Conga
-`HttpCommand` uses Conga, Dyalog's TCP/IP utility library, for communication. Conga consists of two parts:
+`HttpCommand` uses Conga, Dyalog's TCP/IP utility library, for communication. Conga is installed as a part of Dyalog APL. By default `HttpCommand` will attempt to locate and use the installed Conga.  Conga consists of two parts:
 
 * Two shared library files that are specific to the operating system and implement the low-level communications and security interfaces.
 * An APL object that implements a cross-platform interface to the shared libraries.  The object will be either the `DRC` namespace or an instance of the `Conga.LIB` class. For the purposes of this document we will refer to this object as the __Conga API__.
+
+See [HttpCommand and Conga](./conga.md) for more information on how `HttpCommand` interacts with Conga.  See [Intergrating HttpCommand](./integrating.md) for more information on how to package Conga and `HttpCommand` in a distributed application. 
 
 ## Further Reading
 * This documentation does not attempt to be an in-depth examination of either Conga or the HTTP protocol. For more information on Conga, see the [Conga User Guide](https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf)

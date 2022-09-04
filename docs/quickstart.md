@@ -16,28 +16,28 @@ To use a namespace argument, create a namespace and assign the appropriate param
 ````
       ns←⎕NS ''
       ns.(Command URL)←'post' 'www.someurl.com'
-      ns.Params←'<h1>Hello World!</h1>'
-      ns.Headers←'Content-Type' 'text/html'
+      ns.Params←⎕JSON ⍳10
+      ns.Headers←'Content-Type' 'application/json'
       r←HttpCommand.Do ns
 ````
 ### **`Get`**
 Sends an HTTP request using the HTTP GET method.<br>
-`r← {ro} HttpCommand.Get URL [Params [Headers]]`<br>
-`r← {ro} HttpCommand.Get namespace`<br>
+`r← [ro] HttpCommand.Get URL [Params [Headers]]`<br>
+`r← [ro] HttpCommand.Get namespace`<br>
 
 ### **`GetJSON`**
 Sends an HTTP request to a JSON-based web service using the HTTP method you specify. Unless otherwise specified, request parameters and response payload are automatically converted between APL and JSON.<br>
-`r← {ro} HttpCommand.GetJSON Command URL [Params [Headers]]`<br>
-`r← {ro} HttpCommand.GetJSON namespace`<br>
+`r← [ro] HttpCommand.GetJSON Command URL [Params [Headers]]`<br>
+`r← [ro] HttpCommand.GetJSON namespace`<br>
 ### **`Do`**
 Sends an HTTP request using the HTTP method you specify.<br>
-`r← {ro} HttpCommand.Do Command URL [Params [Headers]]`<br>
-`r← {ro} HttpCommand.Do namespace`<br>
+`r← [ro] HttpCommand.Do Command URL [Params [Headers]]`<br>
+`r← [ro] HttpCommand.Do namespace`<br>
 
 ### **`New`**
 Creates a new instance of `HttpCommand`.<br>
-`h← {ro} HttpCommand.New Command URL [Params [Headers]]`<br>
-`h← {ro} HttpCommand.New namespace`<br><br>
+`h← [ro] HttpCommand.New Command URL [Params [Headers]]`<br>
+`h← [ro] HttpCommand.New namespace`<br><br>
 Once the instance is created, additional settings can be assigned directly if necessary. Then use the `Run` method to send the request.<br> 
 `r← h.Run`
 
