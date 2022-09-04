@@ -355,7 +355,7 @@
   
     <li class="md-nav__item">
       <a href="../userguide/" class="md-nav__link">
-        User Guide
+        Usage Guide
       </a>
     </li>
   
@@ -949,26 +949,26 @@
 <p>To use a namespace argument, create a namespace and assign the appropriate parameters for the request.  For example:</p>
 <pre><code>      ns←⎕NS ''
       ns.(Command URL)←'post' 'www.someurl.com'
-      ns.Params←'&lt;h1&gt;Hello World!&lt;/h1&gt;'
-      ns.Headers←'Content-Type' 'text/html'
+      ns.Params←⎕JSON ⍳10
+      ns.Headers←'Content-Type' 'application/json'
       r←HttpCommand.Do ns
 </code></pre>
 <h3 id="get"><strong><code>Get</code></strong></h3>
 <p>Sends an HTTP request using the HTTP GET method.<br>
-<code>r← {ro} HttpCommand.Get URL [Params [Headers]]</code><br>
-<code>r← {ro} HttpCommand.Get namespace</code><br></p>
+<code>r← [ro] HttpCommand.Get URL [Params [Headers]]</code><br>
+<code>r← [ro] HttpCommand.Get namespace</code><br></p>
 <h3 id="getjson"><strong><code>GetJSON</code></strong></h3>
 <p>Sends an HTTP request to a JSON-based web service using the HTTP method you specify. Unless otherwise specified, request parameters and response payload are automatically converted between APL and JSON.<br>
-<code>r← {ro} HttpCommand.GetJSON Command URL [Params [Headers]]</code><br>
-<code>r← {ro} HttpCommand.GetJSON namespace</code><br></p>
+<code>r← [ro] HttpCommand.GetJSON Command URL [Params [Headers]]</code><br>
+<code>r← [ro] HttpCommand.GetJSON namespace</code><br></p>
 <h3 id="do"><strong><code>Do</code></strong></h3>
 <p>Sends an HTTP request using the HTTP method you specify.<br>
-<code>r← {ro} HttpCommand.Do Command URL [Params [Headers]]</code><br>
-<code>r← {ro} HttpCommand.Do namespace</code><br></p>
+<code>r← [ro] HttpCommand.Do Command URL [Params [Headers]]</code><br>
+<code>r← [ro] HttpCommand.Do namespace</code><br></p>
 <h3 id="new"><strong><code>New</code></strong></h3>
 <p>Creates a new instance of <code>HttpCommand</code>.<br>
-<code>h← {ro} HttpCommand.New Command URL [Params [Headers]]</code><br>
-<code>h← {ro} HttpCommand.New namespace</code><br><br>
+<code>h← [ro] HttpCommand.New Command URL [Params [Headers]]</code><br>
+<code>h← [ro] HttpCommand.New namespace</code><br><br>
 Once the instance is created, additional settings can be assigned directly if necessary. Then use the <code>Run</code> method to send the request.<br> 
 <code>r← h.Run</code></p>
 <h2 id="arguments">Arguments</h2>
@@ -1039,13 +1039,13 @@ Once the instance is created, additional settings can be assigned directly if ne
       
       
         
-        <a href="../userguide/" class="md-footer__link md-footer__link--next" aria-label="Next: User Guide" rel="next">
+        <a href="../userguide/" class="md-footer__link md-footer__link--next" aria-label="Next: Usage Guide" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              User Guide
+              Usage Guide
             </div>
           </div>
           <div class="md-footer__button md-icon">
