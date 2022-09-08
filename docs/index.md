@@ -14,19 +14,28 @@ Beginning with Dyalog v18.2, you can also use the `]get` user command:
       ]Get HttpCommand
 ```
 
-Dyalog versions 18.2 and 18.0 have version 4 of `HttpCommand` pre-installed. This documentation describes Version 5 of `HttpCommand`.  To upgrade to version 5:
+## Upgrading to `HttpCommand` Version 5
+This documentation describes version 5 of `HttpCommand`.  Dyalog versions 18.2 and 18.0 have earlier versions of `HttpCommand` pre-installed. To upgrade your in-workspace copy of `HttpCommand` to version 5, you may have to run [`HttpCommand.Upgrade`](./misc-methods.md#upgrade) once or twice depending on how recent your Dyalog installation is.
 
+If `HttpCommand.Version` reports a version earlier than 4.0.14, `HttpCommand.Upgrade` will upgrade to the latest version 4. Then running `HttpCommand.Upgrade` once more will upgrade to version 5.
+
+For example, `HttpCommand` version 3.4 may be found in Dyalog version 18.0.
 ```
-      ]load HttpCommand
+       ]load HttpCommand
 #.HttpCommand
-      #.HttpCommand.Upgrade
-0  Upgraded to HttpCommand 4.0.14 2022-09-04 from HttpCommand 4.0.13 2022-04-07 
-      #.HttpCommand.Upgrade
-0  Upgraded to HttpCommand 5.0.7 2022-08-27 from HttpCommand 4.0.14 2022-09-04
+      HttpCommand.Version
+ HttpCommand  3.4  2021-05-28 
+      HttpCommand.Upgrade
+0   
+      HttpCommand.Version  ⍝ verify that we upgraded to v4.0.14
+ HttpCommand  4.0.14  2022-09-04 
+      HttpCommand.Upgrade  ⍝ now upgrade to v5
+0  Upgraded to HttpCommand 5.0.7 2022-08-27 from HttpCommand 4.0.14 2022-09-04 
 ```
 
 :point_right: It is recommended that you save your own copy of `HttpCommand` in your application rather than dynamically getting or upgrading it at runtime. 
 
+## Typical Usage Pattern
 
 `HttpCommand` is implemented as a Dyalog class and its typical usage pattern is:
 
@@ -57,12 +66,13 @@ The result of `HttpCommand.Run` is a namespace containing information about the 
       50↑(HttpCommand.Get 'www.dyalog.com').Data
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Trans      
 ```
-## Dyalog Classes
-`HttpCommand` is implemented as a Dyalog class. While it's not necessary to have an in-depth knowledge of Dyalog classes, it is useful to understand a couple basic concepts. A class can have "shared" methods and settings (known as fields) and "instance" methods and settings. For instance, the "shortcut" methods like `Get`, `GetJSON`, `Do` and `New` are shared methods whereas the instance methods like `Show` and `Run` are only available in an `HttpCommand` instance. Similarly, `Debug` and `CongaPath` are shared settings whereas `URL` and `Command` are instance settings. We will attempt to make the distinction between shared and instance references throughout this documentation.
 ## Philosophy
 `HttpCommand` has been designed to be easy to integrate into your application by having a small footprint (it's a single class) and making almost no assumptions about the environment in which you'll use it. `HttpComand` attempts to use sensible default values for request settings while still giving you full control should you need it.  `HttpCommand`'s feature set has expanded over time as new use cases and feature requests have arisen. We expect this trend to continue and encourage you to submit feature requests or report any bugs via [GitHub](https://github.com/Dyalog/HttpCommand/issues).
 
 This documentation should provide sufficient information to use `HttpCommand` to make most HTTP requests. In some cases, some further knowledge of HTTP may be necessary. This documentation does not attempt to be an exhaustive HTTP reference.
+
+## Dyalog Classes
+`HttpCommand` is implemented as a Dyalog class. While it's not necessary to have an in-depth knowledge of Dyalog classes, it is useful to understand a couple basic concepts. A class can have "shared" methods and settings (known as fields) and "instance" methods and settings. For instance, the "shortcut" methods like `Get`, `GetJSON`, `Do` and `New` are shared methods whereas the instance methods like `Show` and `Run` are only available in an `HttpCommand` instance. Similarly, `Debug` and `CongaPath` are shared settings whereas `URL` and `Command` are instance settings. We will attempt to make the distinction between shared and instance references throughout this documentation.
 
 ## Use of Conga
 `HttpCommand` uses Conga, Dyalog's TCP/IP utility library, for communication. Conga is installed as a part of Dyalog APL. By default `HttpCommand` will attempt to locate and use the installed Conga.  Conga consists of two parts:
