@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dyalog-classes" class="md-skip">
+        <a href="#upgrading-to-httpcommand-version-5" class="md-skip">
           Skip to content
         </a>
       
@@ -247,8 +247,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#dyalog-classes" class="md-nav__link">
-    Dyalog Classes
+  <a href="#upgrading-to-httpcommand-version-5" class="md-nav__link">
+    Upgrading to HttpCommand Version 5
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#typical-usage-pattern" class="md-nav__link">
+    Typical Usage Pattern
   </a>
   
 </li>
@@ -256,6 +263,13 @@
         <li class="md-nav__item">
   <a href="#philosophy" class="md-nav__link">
     Philosophy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dyalog-classes" class="md-nav__link">
+    Dyalog Classes
   </a>
   
 </li>
@@ -847,8 +861,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#dyalog-classes" class="md-nav__link">
-    Dyalog Classes
+  <a href="#upgrading-to-httpcommand-version-5" class="md-nav__link">
+    Upgrading to HttpCommand Version 5
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#typical-usage-pattern" class="md-nav__link">
+    Typical Usage Pattern
   </a>
   
 </li>
@@ -856,6 +877,13 @@
         <li class="md-nav__item">
   <a href="#philosophy" class="md-nav__link">
     Philosophy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dyalog-classes" class="md-nav__link">
+    Dyalog Classes
   </a>
   
 </li>
@@ -904,15 +932,23 @@
 <p>Beginning with Dyalog v18.2, you can also use the <code>]get</code> user command:</p>
 <pre><code class="language-APL">      ]Get HttpCommand
 </code></pre>
-<p>Dyalog versions 18.2 and 18.0 have version 4 of <code>HttpCommand</code> pre-installed. This documentation describes Version 5 of <code>HttpCommand</code>.  To upgrade to version 5:</p>
-<pre><code>      ]load HttpCommand
+<h2 id="upgrading-to-httpcommand-version-5">Upgrading to <code>HttpCommand</code> Version 5</h2>
+<p>This documentation describes version 5 of <code>HttpCommand</code>.  Dyalog versions 18.2 and 18.0 have earlier versions of <code>HttpCommand</code> pre-installed. To upgrade your in-workspace copy of <code>HttpCommand</code> to version 5, you may have to run <a href="misc-methods/#upgrade"><code>HttpCommand.Upgrade</code></a> once or twice depending on how recent your Dyalog installation is.</p>
+<p>If <code>HttpCommand.Version</code> reports a version earlier than 4.0.14, <code>HttpCommand.Upgrade</code> will upgrade to the latest version 4. Then running <code>HttpCommand.Upgrade</code> once more will upgrade to version 5.</p>
+<p>For example, <code>HttpCommand</code> version 3.4 may be found in Dyalog version 18.0.</p>
+<pre><code>       ]load HttpCommand
 #.HttpCommand
-      #.HttpCommand.Upgrade
-0  Upgraded to HttpCommand 4.0.14 2022-09-04 from HttpCommand 4.0.13 2022-04-07 
-      #.HttpCommand.Upgrade
-0  Upgraded to HttpCommand 5.0.7 2022-08-27 from HttpCommand 4.0.14 2022-09-04
+      HttpCommand.Version
+ HttpCommand  3.4  2021-05-28 
+      HttpCommand.Upgrade
+0   
+      HttpCommand.Version  ⍝ verify that we upgraded to v4.0.14
+ HttpCommand  4.0.14  2022-09-04 
+      HttpCommand.Upgrade  ⍝ now upgrade to v5
+0  Upgraded to HttpCommand 5.0.7 2022-08-27 from HttpCommand 4.0.14 2022-09-04 
 </code></pre>
 <p><img alt="👉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f449.svg" title=":point_right:" /> It is recommended that you save your own copy of <code>HttpCommand</code> in your application rather than dynamically getting or upgrading it at runtime. </p>
+<h2 id="typical-usage-pattern">Typical Usage Pattern</h2>
 <p><code>HttpCommand</code> is implemented as a Dyalog class and its typical usage pattern is:</p>
 <ol>
 <li>Create an instance of the <code>HttpCommand</code> class using the function <code>HttpCommand.New</code><br/>
@@ -938,11 +974,11 @@
 <pre><code class="language-APL">      50↑(HttpCommand.Get 'www.dyalog.com').Data
 &lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Trans      
 </code></pre>
-<h2 id="dyalog-classes">Dyalog Classes</h2>
-<p><code>HttpCommand</code> is implemented as a Dyalog class. While it's not necessary to have an in-depth knowledge of Dyalog classes, it is useful to understand a couple basic concepts. A class can have "shared" methods and settings (known as fields) and "instance" methods and settings. For instance, the "shortcut" methods like <code>Get</code>, <code>GetJSON</code>, <code>Do</code> and <code>New</code> are shared methods whereas the instance methods like <code>Show</code> and <code>Run</code> are only available in an <code>HttpCommand</code> instance. Similarly, <code>Debug</code> and <code>CongaPath</code> are shared settings whereas <code>URL</code> and <code>Command</code> are instance settings. We will attempt to make the distinction between shared and instance references throughout this documentation.</p>
 <h2 id="philosophy">Philosophy</h2>
 <p><code>HttpCommand</code> has been designed to be easy to integrate into your application by having a small footprint (it's a single class) and making almost no assumptions about the environment in which you'll use it. <code>HttpComand</code> attempts to use sensible default values for request settings while still giving you full control should you need it.  <code>HttpCommand</code>'s feature set has expanded over time as new use cases and feature requests have arisen. We expect this trend to continue and encourage you to submit feature requests or report any bugs via <a href="https://github.com/Dyalog/HttpCommand/issues">GitHub</a>.</p>
 <p>This documentation should provide sufficient information to use <code>HttpCommand</code> to make most HTTP requests. In some cases, some further knowledge of HTTP may be necessary. This documentation does not attempt to be an exhaustive HTTP reference.</p>
+<h2 id="dyalog-classes">Dyalog Classes</h2>
+<p><code>HttpCommand</code> is implemented as a Dyalog class. While it's not necessary to have an in-depth knowledge of Dyalog classes, it is useful to understand a couple basic concepts. A class can have "shared" methods and settings (known as fields) and "instance" methods and settings. For instance, the "shortcut" methods like <code>Get</code>, <code>GetJSON</code>, <code>Do</code> and <code>New</code> are shared methods whereas the instance methods like <code>Show</code> and <code>Run</code> are only available in an <code>HttpCommand</code> instance. Similarly, <code>Debug</code> and <code>CongaPath</code> are shared settings whereas <code>URL</code> and <code>Command</code> are instance settings. We will attempt to make the distinction between shared and instance references throughout this documentation.</p>
 <h2 id="use-of-conga">Use of Conga</h2>
 <p><code>HttpCommand</code> uses Conga, Dyalog's TCP/IP utility library, for communication. Conga is installed as a part of Dyalog APL. By default <code>HttpCommand</code> will attempt to locate and use the installed Conga.  Conga consists of two parts:</p>
 <ul>
