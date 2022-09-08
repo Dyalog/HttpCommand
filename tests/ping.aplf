@@ -1,4 +1,4 @@
  ping←{
      ⍵.Response.Payload←'pong'
-     'content-type'⍵.SetHeader'text/plain'
+     'content-type' ⍵.SetHeader 'text/plain'
  }
