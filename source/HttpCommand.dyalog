@@ -31,7 +31,7 @@
     :field public shared LDRC                      ⍝ HttpCommand-set reference to Conga after CongaRef has been resolved
     :field public shared CongaPath←''              ⍝ path to user-supplied conga workspace (assumes shared libraries are in the same path)
     :field public shared CongaRef←''               ⍝ user-supplied reference to Conga library
-    :field public shared CongaVersion←''           ⍝ Conga major.minor version
+    :field public shared CongaVersion←''           ⍝ Conga [major minor build]
 
 ⍝ Operational fields
     :field public SuppressHeaders←0                ⍝ set to 1 to suppress HttpCommand-supplied default request headers
@@ -298,7 +298,7 @@
                   :EndIf
               :EndIf
           :EndIf
-          CongaVersion←⊃(//)⎕VFI 1↓∊{'.',⍕⍵}¨2↑LDRC.Version
+          CongaVersion←LDRC.Version
           LDRC.X509Cert.LDRC←LDRC ⍝ reset X509Cert.LDRC reference
           :If 0≠⊃LDRC.SetProp'.' 'EventMode' 1
               r.msg←'Unable to set EventMode on Conga root'
@@ -440,6 +440,9 @@
       secure∨←⍲/{0∊⍴⍵}¨certs[1 4] ⍝ we're also secure if we have a cert or a PublicCertFile
      
       :If proxied←~0∊⍴ProxyURL
+          :If CongaVersion(~atLeast)3 4 1626 ⍝ Conga build that introduced proxy support
+              →∆END⊣r.msg←'Conga version 3.4.1626 or later is required to use a proxy'
+          :EndIf
           proxy←ConnectionProperties ProxyURL
           →∆END↓⍨0∊⍴r.msg←proxy.msg
           proxy.headers←makeHeaders ProxyHeaders
@@ -591,7 +594,7 @@
      
       :If 0∊⍴Client
           options←''
-          :If CongaVersion≥3.3
+          :If CongaVersion atLeast 3 3
               options←⊂'Options'LDRC.Options.DecodeHttp
           :EndIf
      
@@ -636,7 +639,7 @@
               :EndIf
           :EndIf
      
-          :If CongaVersion<3.3
+          :If CongaVersion(~atLeast)3 3
           :AndIf 0≠err←⊃rc←LDRC.SetProp Client'DecodeBuffers' 15 ⍝ set to decode HTTP messages
               →∆END⊣r.(rc msg)←err('Could not set DecodeBuffers on Conga client "',Client,'": ',,⍕1↓rc)
           :EndIf
@@ -853,6 +856,7 @@
     isJSON←{~0 2∊⍨10|⎕DR ⍵:0 ⋄ ~(⊃⍵)∊'-{["',⎕D:0 ⋄ {0::0 ⋄1⊣0 ⎕JSON ⍵}⍵} ⍝ test for JSONableness fails on APL that looks like JSON (e.g. '"abc"')
     stopIf←{1∊⍵:-⎕TRAP←0 'C' '⎕←''Stopped for debugging... (Press Ctrl-Enter)''' ⋄ shy←0} ⍝ faster alternative to setting ⎕STOP
     seconds←{⍵÷86400} ⍝ convert seconds to fractional day (for cookie max-age)
+    atLeast←{a←(≢⍵)↑⍺ ⋄ ⊃((~∧\⍵=a)/a>⍵),1} ⍝ checks if ⍺ is at least version ⍵
 
     ∇ r←makeHeaders w
       r←{
