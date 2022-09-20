@@ -14,6 +14,12 @@
     :field public Auth←''                          ⍝ authentication string
     :field public AuthType←''                      ⍝ authentication type
 
+⍝ Proxy-related fields - only used if connecting through a proxy server
+    :field public ProxyURL←''                      ⍝ address of the proxy server
+    :field public ProxyAuth←''                     ⍝ authentication string, if any, for the proxy server
+    :field public ProxyAuthType←''                 ⍝ authentication type, if any, for the proxy server
+    :field public ProxyHeaders←0 2⍴⊂''             ⍝ any headers that the proxy server might need
+
 ⍝ Conga-related fields
     :field public BufferSize←200000                ⍝ Conga buffersize
     :field public WaitTime←5000                    ⍝ Timeout in ms on Conga Wait call
@@ -47,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.0.7' '2022-08-27'
+      r←'HttpCommand' '5.1.1' '2022-09-16'
     ∇
 
     ∇ make
@@ -347,19 +353,22 @@
      ∆EXIT:
     ∇
 
-    ∇ (rc secureParams)←CreateSecureParams(cert flags priority public private);nmt;msg;t
+    ∇ (rc secureParams)←CreateSecureParams certs;cert;flags;priority;public;private;nmt;msg;t
     ⍝ certs is:
     ⍝ cert     - X509Cert instance or (PublicCertFile PrivateKeyFile)
     ⍝ flags    - SSL flags
     ⍝ priority - GnuTLS priority
     ⍝ public   - PublicCertFile
     ⍝ private  - PrivateKeyFile
-    ⍝ if cert is empty, check PublicCertFile and PrivateKeyFile
+     
+      certs←,⊆certs
+      (cert flags priority public private)←5↑certs,(≢certs)↓'' 0 'NORMAL:!CTYPE-OPENPGP' '' ''
      
       LDRC.X509Cert.LDRC←LDRC ⍝ make sure the X509 instance points to the right LDRC
      
       :If 0∊⍴cert ⍝ if X509 (or public private) not supplied
      ∆CHECK:
+    ⍝ if cert is empty, check PublicCertFile and PrivateKeyFile
           :If ∨/nmt←(~0∊⍴)¨public private ⍝ either file name not empty?
               :If ∧/nmt ⍝ if so, both need to be non-empty
                   :If ∨/t←{0::1 ⋄ ~⎕NEXISTS ⍵}¨public private ⍝ either file not exist?
@@ -388,7 +397,7 @@
      ∆FAIL:(rc secureParams)←¯1 msg ⍝ failure
     ∇
 
-    ∇ {r}←certs HttpCmd args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;chunked;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers;cmd;file;protocol
+    ∇ {r}←certs HttpCmd args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers;cmd;file;protocol;conx;proxied;proxy;cert
     ⍝ issue an HTTP command
     ⍝ certs - X509Cert|(PublicCertFile PrivateKeyFile) SSLValidation Priority PublicCertFile PrivateKeyFile
     ⍝ args  - [1] HTTP method
@@ -425,44 +434,15 @@
       hdrs←makeHeaders headers
       →∆END↓⍨0∊⍴r.msg←'Improper header format'/⍨¯1≡hdrs
      
-      (protocol secure host path urlparms)←ConxProps parseURL r.URL←url
+      conx←ConxProps ConnectionProperties r.URL←url
+      →∆END↓⍨0∊⍴r.msg←conx.msg
+      (protocol secure auth host port path urlparms defaultPort)←conx.(protocol secure auth host port path urlparms defaultPort)
+      secure∨←⍲/{0∊⍴⍵}¨certs[1 4] ⍝ we're also secure if we have a cert or a PublicCertFile
      
-      :If ~(⊂protocol)∊'' 'http:' 'https:'
-          →∆END⊣r.msg←'Invalid protocol: ',¯1↓protocol
-      :EndIf
-     
-      auth←''
-      :If 0≠p←¯1↑⍸host='@' ⍝ Handle user:password@host...
-          auth←('Basic ',(Base64Encode(p-1)↑host))
-          host←p↓host
-      :EndIf
-     
-   ⍝ This next section is a chicken and egg scenario trying to figure out
-   ⍝ whether to use HTTPS as well as what port to use
-     
-      :If defaultPort←(≢host)<ind←host⍳':' ⍝ then if there's no port specified in the host
-          port←(1+secure)⊃80 443 ⍝ use the default HTTP/HTTPS port
-      :Else
-          :If 0=port←⊃toInt ind↓host
-              →∆END⊣r.msg←'Invalid host/port: ',host
-          :EndIf
-          host↑⍨←ind-1
-      :EndIf
-     
-      :If 0∊⍴host
-          →∆END⊣r.msg←'No host specified'
-      :EndIf
-     
-      :If ~(port>0)∧(port≤65535)∧port=⌊port
-          →∆END⊣r.msg←'Invalid port: ',⍕port
-      :EndIf
-     
-      secure∨←(0∊⍴protocol)∧port=443 ⍝ if just port 443 was specified, without any protocol, use SSL
-     
-      secure∨←⍲/{0∊⍴⍵}¨certs[1 4] ⍝ we're secure if URL begins with https (checked by parseURL), or we have a cert or a PublicCertFile
-     
-      :If defaultPort∧secure
-          port←443
+      :If proxied←~0∊⍴ProxyURL
+          proxy←ConnectionProperties ProxyURL
+          →∆END↓⍨0∊⍴r.msg←proxy.msg
+          proxy.headers←makeHeaders ProxyHeaders
       :EndIf
      
       r.(Secure Host Port Path)←secure(lc host)port({{'/',¯1↓⍵/⍨⌽∨\'/'=⌽⍵}⍵↓⍨'/'=⊃⍵}path)
@@ -472,6 +452,10 @@
           hdrs←'User-Agent'(hdrs addHeader)deb'Dyalog-',1↓∊'/',¨2↑Version
           hdrs←'Accept'(hdrs addHeader)'*/*'
           :If ~0∊⍴Auth
+              :If 'basic'≡lc AuthType
+              :AndIf (1<|≡Auth)∨':'∊Auth ⍝ (userid password) or userid:password
+                  Auth←Base64Encode ¯1↓∊(,⊆Auth),¨':'
+              :EndIf
               hdrs←'Authorization'(hdrs setHeader)deb AuthType,' ',⍕Auth
           :EndIf
           :If '∘???∘'≡hdrs getHeader'cookie' ⍝ if the user has specified a cookie header, it takes precedence
@@ -480,6 +464,18 @@
           :EndIf
           :If ~0∊⍴auth
               hdrs←'Authorization'(hdrs addHeader)auth
+          :EndIf
+          :If proxied
+              :If ~0∊⍴ProxyAuth
+                  :If 'basic'≡lc ProxyAuthType
+                  :AndIf (1<|≡ProxyAuth)∨':'∊ProxyAuth ⍝ (userid password) or userid:password
+                      ProxyAuth←Base64Encode ¯1↓∊(,⊆ProxyAuth),¨':'
+                  :EndIf
+                  proxy.headers←'Proxy-Authorization'(proxy.headers setHeader)deb ProxyAuthType,' ',⍕ProxyAuth
+              :EndIf
+              :If ~0∊⍴proxy.auth
+                  proxy.headers←'Authorization'(proxy.headers addHeader)proxy.auth
+              :EndIf
           :EndIf
       :EndIf
      
@@ -567,6 +563,14 @@
           →∆END⊣r.(rc msg)←rc secureParams
       :EndIf
      
+      :If proxied
+          proxy.secureParams←''
+          :If proxy.secure
+          :AndIf 0≠⊃(rc proxy.secureParams)←CreateSecureParams'' 0
+              →∆END⊣r.(rc msg)←rc('PROXY: ',proxy.secureParams)
+          :EndIf
+      :EndIf
+     
       stopIf Debug=2
      
       :If ~0∊⍴Client                    ⍝ do we have a client already?
@@ -582,15 +586,54 @@
           :EndIf
       :EndIf
      
+      starttime←⎕AI[3]
+      donetime←⌊starttime+1000×|Timeout ⍝ time after which we'll time out
+     
       :If 0∊⍴Client
           options←''
           :If CongaVersion≥3.3
               options←⊂'Options'LDRC.Options.DecodeHttp
           :EndIf
      
-          :If 0≠⊃(err Client)←2↑rc←LDRC.Clt''host port'http'BufferSize,secureParams,options
-              Client←''
-              →∆END⊣r.(rc msg)←err('Conga client creation failed ',,⍕1↓rc)
+          :If ~proxied
+              :If 0≠⊃(err Client)←2↑rc←LDRC.Clt''host port'http'BufferSize,secureParams,options
+                  Client←''
+                  →∆END⊣r.(rc msg)←err('Conga client creation failed ',,⍕1↓rc)
+              :EndIf
+          :Else ⍝ proxied
+              forceClose←1 ⍝ any error forces client to close, forceClose gets reset later if no proxy connection errors
+              ⍝ connect to proxy
+              :If 0≠⊃(err Client)←2↑rc←LDRC.Clt''proxy.host proxy.port'http'BufferSize proxy.secureParams,options
+                  Client←''
+                  →∆END⊣r←(rc msg)←err('Conga proxy client creation failed ',,⍕1↓rc)
+              :EndIf
+     
+              ⍝ connect to proxied host
+              :If 0≠err←⊃rc←LDRC.Send Client('CONNECT'(host,':',⍕port)'HTTP/1.1'proxy.headers'')
+                  →∆END⊣r.(rc msg)←err('Proxy CONNECT failed: ',⍕1↓rc)
+              :EndIf
+     
+              :If 0≠err←⊃rc←LDRC.Wait Client 1000
+                  →∆END⊣r.(rc msg)←err('Proxy CONNECT wait failed: ',∊⍕1↓rc)
+              :Else
+                  (err obj evt dat)←4↑rc
+                  :If evt≢'HTTPHeader'
+                      →∆END⊣r.(rc msg)←err('Proxy CONNECT did not respond with HTTPHeader event: ',∊⍕1↓rc)
+                  :EndIf
+                  :If '200'≢2⊃dat
+                      r.(msg HttpStatus HttpMessage Headers)←(⊂'Proxy CONNECT response failed'),1↓dat
+                      r.HttpStatus←⊃toInt r.HttpStatus
+                      datalen←⊃toInt{0∊⍴⍵:'¯1' ⋄ ⍵}r.GetHeader'Content-Length' ⍝ ¯1 if no content length not specified
+                      →(datalen≠0)↓∆END,∆LISTEN
+                  :EndIf
+              :EndIf
+     
+              ⍝ if secure, upgrade to SSL
+              :If proxied∧secure
+                  cert←1 2⊃secureParams
+              :AndIf 0≠err←⊃rc←LDRC.SetProp Client'StartTLS'(cert.AsArg,('SSLValidation' 0)('Address'host))
+                  →∆END⊣r.(rc msg)←err('Proxy failed to upgrade to secure connection: ',∊⍕1↓rc)
+              :EndIf
           :EndIf
      
           :If CongaVersion<3.3
@@ -601,16 +644,14 @@
      
       (ConxProps←⎕NS'').(Host Port Secure certs)←r.(Host Port Secure),⊂certs ⍝ preserve connection settings for subsequent calls
      
-      starttime←⎕AI[3]
-      donetime←⌊starttime+1000×|Timeout ⍝ time after which we'll time out
-     
       :If 0=⊃rc←LDRC.Send Client(cmd(path,(0∊⍴urlparms)↓'?',urlparms)'HTTP/1.1'hdrs parms)
-          forceClose←~KeepAlive
      
-          (timedOut done data datalen chunked progress)←0 0 ⍬ 0 0 0
+     ∆LISTEN:
+          forceClose←~KeepAlive
+          (timedOut done data progress)←0 0 ⍬ 0
      
           :Trap 1000 ⍝ in case break is pressed while listening
-              :Repeat
+              :While ~done
                   :If ~done←0≠err←1⊃rc←LDRC.Wait Client WaitTime
                       (err obj evt dat)←4↑rc
                       :Select evt
@@ -622,8 +663,7 @@
                               r.HttpStatus←toInt r.HttpStatus
                               datalen←⊃toInt{0∊⍴⍵:'¯1' ⋄ ⍵}r.GetHeader'Content-Length' ⍝ ¯1 if no content length not specified
                               done←(cmd≡'HEAD')∨0=datalen
-                              chunked←∨/'chunked'⍷lc r.GetHeader'Transfer-Encoding'             ⍝ are we chunked?
-                              →∆END⍴⍨forceClose←r CheckPayloadSize datalen                       ⍝ we have a payload size limit
+                              →∆END⍴⍨forceClose←r CheckPayloadSize datalen             ⍝ we have a payload size limit
                           :EndIf
                       :CaseList 'HTTPBody' 'BlkLast' ⍝ BlkLast included for pre-Conga v3.4 compatibility for RFC7230 (Sec 3.3.3 item 7)
                           →∆END⍴⍨forceClose←r CheckPayloadSize≢dat
@@ -681,7 +721,7 @@
                   :Else
                       r.msg←'Conga wait error ',,⍕rc ⍝ some other error (very unlikely)
                   :EndIf
-              :Until done
+              :EndWhile
           :EndTrap
           :If toFile
               r.BytesWritten←(⎕NSIZE outTn)-startSize
@@ -855,6 +895,56 @@
     ∇ r←dyalogRoot
     ⍝ return path to interpreter
       r←{⍵,('/\'∊⍨⊢/⍵)↓'/'}{0∊⍴t←2 ⎕NQ'.' 'GetEnvironment' 'DYALOG':⊃1 ⎕NPARTS⊃2 ⎕NQ'.' 'GetCommandLineArgs' ⋄ t}''
+    ∇
+
+    ∇ ns←{ConxProps}ConnectionProperties url;p;defaultPort;ind;msg;protocol;secure;auth;host;port;path;urlparms
+     
+      :If 0=⎕NC'ConxProps' ⋄ ConxProps←'' ⋄ :EndIf
+     
+      ns←⎕NS''
+      msg←''
+      (protocol secure host path urlparms)←ConxProps parseURL url
+     
+      :If ~(⊂protocol)∊'' 'http:' 'https:'
+          →∆END⊣msg←'Invalid protocol: ',¯1↓protocol
+      :EndIf
+     
+      auth←''
+      :If 0≠p←¯1↑⍸host='@' ⍝ Handle user:password@host...
+          auth←('Basic ',(Base64Encode(p-1)↑host))
+          host←p↓host
+      :EndIf
+     
+   ⍝ This next section is a chicken and egg scenario trying to figure out
+   ⍝ whether to use HTTPS as well as what port to use
+     
+      :If defaultPort←(≢host)<ind←host⍳':' ⍝ then if there's no port specified in the host
+          port←(1+secure)⊃80 443 ⍝ use the default HTTP/HTTPS port
+      :Else
+          :If 0=port←⊃toInt ind↓host
+              →∆END⊣msg←'Invalid host/port: ',host
+          :EndIf
+          host↑⍨←ind-1
+      :EndIf
+     
+      :If 0∊⍴host
+          →∆END⊣msg←'No host specified'
+      :EndIf
+     
+      :If ~(port>0)∧(port≤65535)∧port=⌊port
+          →∆END⊣msg←'Invalid port: ',⍕port
+      :EndIf
+     
+      secure∨←(0∊⍴protocol)∧port=443 ⍝ if just port 443 was specified, without any protocol, use SSL
+     
+      :If defaultPort∧secure
+          port←443
+      :EndIf
+     
+      ns.(protocol secure auth host port path urlparms defaultPort)←protocol secure auth host port path urlparms defaultPort
+     
+     ∆END:
+      ns.msg←msg
     ∇
 
     ∇ (protocol secure host path urlparms)←{conx}parseURL url;path;p
@@ -1187,7 +1277,7 @@
               LDRC←''         ⍝ reset local reference so that Conga gets reloaded
               :Trap 0
                   ns←⎕NS''
-                  code←{⍵⊆⍨~⍵∊⎕UCS 13 10 65279}'UTF-8' ⎕UCS ⎕UCS z.Data
+                  code←{⍵⊆⍨~⍵∊⎕UCS 13 10 65279}'UTF-8'⎕UCS ⎕UCS z.Data
                   vers←(0 ns.⎕FIX code).Version Version
                   :If 1=⊃newer/{2⊃'.'⎕VFI 2⊃⍵}¨vers
                       ##.⎕FIX code
