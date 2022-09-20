@@ -608,7 +608,7 @@
               ⍝ connect to proxy
               :If 0≠⊃(err Client)←2↑rc←LDRC.Clt''proxy.host proxy.port'http'BufferSize proxy.secureParams,options
                   Client←''
-                  →∆END⊣r←(rc msg)←err('Conga proxy client creation failed ',,⍕1↓rc)
+                  →∆END⊣r.(rc msg)←err('Conga proxy client creation failed ',,⍕1↓rc)
               :EndIf
      
               ⍝ connect to proxied host
