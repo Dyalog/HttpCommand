@@ -14,7 +14,8 @@ nav:
       - 'Settings':
         - 'Request-related Settings': 'request-settings.md' # complete
         - 'Conga-related Settings': 'conga-settings.md'     # complete
-        - 'Operational Settings': 'operational-settings.md' # complese
+        - 'Operational Settings': 'operational-settings.md' # complete
+        - 'Proxy-related Settings': 'proxy-settings.md'     # complete
       - 'Shared Methods':
         - 'Shortcut Methods': 'shortcut-methods.md' # complete
         - 'Encode/Decode Methods': 'encode-methods.md' # complete
@@ -28,6 +29,7 @@ nav:
     - Advanced Topics:
       - 'HttpCommand and Conga' : 'conga.md' # complete
       - 'Secure Communications' : 'secure.md' # complete
+      - 'Using a Proxy Server': 'proxy.md' 
       - 'Integrating HttpCommand' : 'integrating.md' # complete
     - About: 
       - License: 'LICENSE.md' # complete
