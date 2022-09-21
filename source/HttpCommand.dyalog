@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.1' '2022-09-16'
+      r←'HttpCommand' '5.1.2' '2022-09-21'
     ∇
 
     ∇ make
@@ -455,9 +455,10 @@
           hdrs←'User-Agent'(hdrs addHeader)deb'Dyalog-',1↓∊'/',¨2↑Version
           hdrs←'Accept'(hdrs addHeader)'*/*'
           :If ~0∊⍴Auth
-              :If 'basic'≡lc AuthType
-              :AndIf (1<|≡Auth)∨':'∊Auth ⍝ (userid password) or userid:password
+              :If (1<|≡Auth)∨':'∊Auth ⍝ (userid password) or userid:password
+              :AndIf ('basic'≡lc AuthType)∨0∊⍴AuthType
                   Auth←Base64Encode ¯1↓∊(,⊆Auth),¨':'
+                  AuthType←'basic'
               :EndIf
               hdrs←'Authorization'(hdrs setHeader)deb AuthType,' ',⍕Auth
           :EndIf
@@ -470,14 +471,15 @@
           :EndIf
           :If proxied
               :If ~0∊⍴ProxyAuth
-                  :If 'basic'≡lc ProxyAuthType
-                  :AndIf (1<|≡ProxyAuth)∨':'∊ProxyAuth ⍝ (userid password) or userid:password
+                  :If (1<|≡ProxyAuth)∨':'∊ProxyAuth ⍝ (userid password) or userid:password
+                  :AndIf ('basic'≡lc ProxyAuthType)∨0∊⍴ProxyAuthType
                       ProxyAuth←Base64Encode ¯1↓∊(,⊆ProxyAuth),¨':'
+                      ProxyAuthType←'basic'
                   :EndIf
                   proxy.headers←'Proxy-Authorization'(proxy.headers setHeader)deb ProxyAuthType,' ',⍕ProxyAuth
               :EndIf
               :If ~0∊⍴proxy.auth
-                  proxy.headers←'Authorization'(proxy.headers addHeader)proxy.auth
+                  proxy.headers←'Proxy-Authorization'(proxy.headers addHeader)proxy.auth
               :EndIf
           :EndIf
       :EndIf
