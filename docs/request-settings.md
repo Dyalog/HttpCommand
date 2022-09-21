@@ -139,14 +139,20 @@ If the request has content in the request payload, Conga will automatically supp
 ### `Auth`
 <table><tr>
 <td>Description</td>
-<td>This setting is the authentication/authorization string appropriate for the authentication scheme specified in <code>AuthType</code>. Used along with <a href="#authtype">AuthType</a>, is a shortcut for setting the authorization HTTP header for requests that require authentication.  If <code>Auth</code> is non-empty, <code>HttpCommand</code> will create an <code>'authorization'</code> header and and set its value to <code>AuthType,' ',Auth</code>. If you happen set both <code>Auth</code> and an <code>authorization</code> header, <code>Auth</code> takes precedence.
+<td>This setting is the authentication/authorization string appropriate for the authentication scheme specified in <code>AuthType</code>. Used along with <a href="#authtype"><code>AuthType</code></a>, <code>Auth</code> is a shortcut for setting the authorization HTTP header for requests that require authentication.  If <code>Auth</code> is non-empty, <code>HttpCommand</code> will create an <code>'authorization'</code> header and and set its value to <code>AuthType,' ',Auth</code>. If you happen set both <code>Auth</code> and an <code>authorization</code> header, <code>Auth</code> takes precedence.
 </td></tr>
 <tr><td>Default</td><td><code>''</code></td></tr>
 <tr><td>Example(s)</td><td><code>h.Auth←'my-secret-token'</code>
 <br/>
-<code>h.Auth←h.Base64Encode 'userid:password' ⍝ HTTP Basic Authentication</code></td></tr>
+<code>h.Auth←h.Base64Encode 'userid:password' ⍝ HTTP Basic Authentication</code><br/>
+<code>h.Auth←'userid' 'password' ⍝ HTTP Basic Authentication</code></td></tr>
 <tr><td>Details</td>
-<td>For HTTP Basic Authentication, <code>Auth</code> should be set to <code>HttpCommand.Base64Encode 'userid:password'</code>.<br/><br/>Alternatively, if you provide HTTP Basic credentials in the <code>URL</code> as in <code>'https://username:password@someurl.com'</code>, <code>HttpCommand</code> will automatically generate a proper <code>'authorization'</code> header.  
+<td>For HTTP Basic Authentication, <code>Auth</code> can be set to any of<ul><li> <code>HttpCommand.Base64Encode 'userid:password'</code></li>
+<li><code>'userid' 'password'</code></li>
+<li><code>'userid:password'</code></li></ul>
+For the latter two items above:<ul><li>it is permissible to not set <code>AuthType</code> as <code>HttpCommand</code> will infer the authorization scheme is HTTP Basic.</li>
+<li><code>HttpCommand</code> will properly format and <code>Base64Encode</code> the header value.</li></ul>
+Alternatively, if you provide HTTP Basic credentials in the <code>URL</code> as in <code>'https://username:password@someurl.com'</code>, <code>HttpCommand</code> will automatically generate a proper <code>'authorization'</code> header.  
 </td></tr></table>
 
 ### `AuthType`
@@ -156,8 +162,9 @@ If the request has content in the request payload, Conga will automatically supp
 <ul><li><code>'basic'</code> for HTTP Basic Authentication</li><li><code>'bearer'</code> for OAuth 2.0 token authentication</li><li><code>'token'</code> for other token-based authentication schemes such as GitHub's Personal Access Token scheme</li></ul>
 Other values may be used as necessary for your particular HTTP request.</td></tr>
 <tr><td>Default</td><td><code>''</code></td></tr>
-<tr><td>Example(s)</td><td><code>h.AuthType←'bearer'</code><br/>
-<code>h.(AuthType Auth)←'basic' (h.Base64Encode 'userid:password')</code></td></tr></table>
+<tr><td>Example(s)</td><td><code>h.AuthType←'bearer'</code></td></tr>
+<tr><td>Details</td><td>
+If <code>AuthType</code> is not set and <code>Auth</code> is set to either a character vector in the form <code>'userid:password'</code> or a 2-element vector of character vectors as in <code>('userid' 'password')</code> <code>HttpCommand</code> will infer the <code>AuthType</code> to be <code>'basic'</code>.</td></table>
 
 ### `Cookies`
 <table><tr>
