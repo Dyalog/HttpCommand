@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.2' '2022-09-21'
+      r←'HttpCommand' '5.1.3' '2022-09-21'
     ∇
 
     ∇ make
@@ -397,7 +397,7 @@
      ∆FAIL:(rc secureParams)←¯1 msg ⍝ failure
     ∇
 
-    ∇ {r}←certs HttpCmd args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers;cmd;file;protocol;conx;proxied;proxy;cert
+    ∇ {r}←certs HttpCmd args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers;cmd;file;protocol;conx;proxied;proxy;cert;noCT;simpleParms
     ⍝ issue an HTTP command
     ⍝ certs - X509Cert|(PublicCertFile PrivateKeyFile) SSLValidation Priority PublicCertFile PrivateKeyFile
     ⍝ args  - [1] HTTP method
@@ -484,23 +484,37 @@
           :EndIf
       :EndIf
      
-      :If ~0∊⍴parms                  ⍝ if we have any parameters
-          :If (0∊⍴ContentType)∧('∘???∘'≡hdrs getHeader'content-type')∧(⊆cmd)∊'GET' 'HEAD' ⍝ if the command is GET or HEAD and no content-type specified
-              :If {2≠⎕NC'⍵':0 ⋄ 1≥|≡⍵}parms ⍝ simple vector or scalar and not a reference
+      :If ~0∊⍴parms ⍝ do we have any parameters?
+          simpleParms←{2≠⎕NC'⍵':0 ⋄ 1≥|≡⍵}parms ⍝ simple vector or scalar and not a reference
+          noCT←(0∊⍴ContentType)∧('∘???∘'≡hdrs getHeader'content-type') ⍝ no content-type specified
+          :If (⊆cmd)∊'GET' 'HEAD' ⍝ if the command is GET or HEAD
+          :AndIf noCT
+     
+              ⍝ params needs to be URLEncoded and will be appended to the query string
+              :If simpleParms
                   parms←∊⍕parms       ⍝ deal with possible numeric
-                  parms←UrlEncode⍣(~∧/parms∊HttpCommand.ValidFormUrlEncodedChars)⊢parms
-              :Else
+                  parms←UrlEncode⍣(~∧/parms∊HttpCommand.ValidFormUrlEncodedChars)⊢parms ⍝ URLEncode if necessary
+              :Else ⍝ parms is a namespace or a name/value pairs array
                   parms←UrlEncode parms
               :EndIf
+     
               urlparms,←(0∊⍴urlparms)↓'&',parms
               parms←''
-          :Else    ⍝ not a GET or HEAD command
-              ⍝↓↓↓ specify the default content type (if not already specified)
+     
+          :Else ⍝ not a GET or HEAD command or content-type has been specified
               :If ~SuppressHeaders
-                  :If 0∊⍴ContentType
-                      hdrs←'Content-Type'(hdrs addHeader)'application/x-www-form-urlencoded'
-                  :Else
-                      hdrs←'Content-Type'(hdrs setHeader)ContentType
+                  :If noCT ⍝ no content-type specified, try to work out what it should be
+                      :If simpleParms ⍝ if parms is simple
+                          :If (isJSON parms)∨isNum parms ⍝ and looks like JSON or is numeric
+                              hdrs←'Content-Type'(hdrs addHeader)'application/json;charset=utf-8'
+                          :Else
+                              hdrs←'Content-Type'(hdrs addHeader)'application/x-www-form-urlencoded'
+                          :EndIf
+                      :Else ⍝ not simpleParms
+                          hdrs←'Content-Type'(hdrs addHeader)'application/json;charset=utf-8'
+                      :EndIf
+                  :ElseIf ~0∊⍴ContentType ⍝ ContentType has been specified
+                      hdrs←'Content-Type'(hdrs setHeader)ContentType ⍝ it overrides a pre-existing content-type header
                   :EndIf
               :EndIf
      
@@ -854,6 +868,7 @@
     extractPath←{⍵↑⍨1⌈¯1+⊢/⍸'/'=⍵}∘,
     isChar←{1≥|≡⍵:0 2∊⍨10|⎕DR {⊃⍣(0∊⍴⍵)⊢⍵}⍵ ⋄ ∧/∇¨⍵}
     isSimpleChar←{1≥|≡⍵: isChar ⍵ ⋄ 0}
+    isNum←{1 3 5 7∊⍨10|⎕DR ⍵}
     over←{(⍵⍵ ⍺)⍺⍺(⍵⍵ ⍵)}
     isJSON←{~0 2∊⍨10|⎕DR ⍵:0 ⋄ ~(⊃⍵)∊'-{["',⎕D:0 ⋄ {0::0 ⋄1⊣0 ⎕JSON ⍵}⍵} ⍝ test for JSONableness fails on APL that looks like JSON (e.g. '"abc"')
     stopIf←{1∊⍵:-⎕TRAP←0 'C' '⎕←''Stopped for debugging... (Press Ctrl-Enter)''' ⋄ shy←0} ⍝ faster alternative to setting ⎕STOP
