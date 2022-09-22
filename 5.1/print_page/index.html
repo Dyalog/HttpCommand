@@ -1377,7 +1377,11 @@ The result namespace contains other elements which are described in detail on th
     ⍝ process the exception/error
   :EndIf
 :EndFor 
-</code></pre></section><section class="print-page" id="examples"><h2 id="examples-interacting-with-web-services">Interacting with Web Services</h2>
+</code></pre>
+<h2 id="userguide-content-types">Content Types</h2>
+<p>👉 If your HTTP request has a payload and you do not specify the content type, <code>HttpCommand</code> will attempt to determine whether to use a content type of <code>'application/json'</code> or <code>'application/x-www-form-urlencoded'</code>.</p>
+<p>This may be fine for interactively tinkering in the APL session. But when running <code>HttpCommand</code> under program control you should <strong>explicitly specify the content type</strong> for the payload by either setting <code>ContentType</code> or adding a <code>content-type</code> header. </p>
+<p>The exception to this is when using <code>GetJSON</code> which is specifically intended to interact with JSON-based web services and will use a default content type of <code>application/json</code>. </p></section><section class="print-page" id="examples"><h2 id="examples-interacting-with-web-services">Interacting with Web Services</h2>
 <p>A web service will generally have a published API which describes how to interact with the service.  This API will be your guide for how to build requests using <code>HttpCommand</code> to access the web service. In many cases, the API will also describe the format of the data it returns in the <code>content-type</code> header.</p>
 <p>A web service may require authentication in order to gain access to certain resources or perform certain operations. GitHub is a good example of this - it does not require authentication to perform read-only queries on public resources, but authentication is necessary to perform write operations or to access private repositories.</p>
 <p>Let's look at GitHub's <a href="https://docs.github.com/en/rest">REST API</a> as an example. The GitHub API returns its data in JSON format. </p>
@@ -1644,7 +1648,8 @@ query - the query string for the request. If the HTTP method for the request is 
     <tr>
         <td>Description</td>
         <td>The parameters or payload, if any, for the request. <code>Params</code> can be a set of <a href="#request-settings-namevalue-pairs">name/value pairs</a> or a character vector that is properly formatted for the <a href="#request-settings-contenttype"><code>ContentType</code></a> or <a href="#request-settings-command"><code>Command</code></a> of the
-            request. See <a href="#request-settings-params-details">details</a> for more information.</td>
+            request. See details for more information.<br/>
+            </td>
     </tr>
     <tr>
         <td>Default</td>
@@ -1653,49 +1658,31 @@ query - the query string for the request. If the HTTP method for the request is 
     <tr>
         <td>Example(s)</td>
         <td>The following examples are
-            equivalent:<br /><code>h.Params←(('name' 'dyalog') ('age' 39))</code><br /><code>h.Params←'name=dyalog&age=39'</code><br /><code>ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39 ⋄ h.Params←ns</code>
+            equivalent:<br /><code>h.Params←(('name' 'dyalog') ('age' 39))</code><br /><code>ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39 ⋄ h.Params←ns</code>
         </td>
     </tr>
     <tr>
         <td>Details</td>
-        <td>The interpretation of <code>Params</code> is dependent on <code>Command</code> and the content type of the
+        <td>If <code>Params</code> is not empty, its interpretation is dependent on <code>Command</code> and the content type of the
             request. The content type is determined by the <a href="#request-settings-contenttype"><code>ContentType</code></a> setting or
-            the presence of a <code>content-type</code> header.<br /><br /><code>Params</code>, if not empty, is processed
-            as follows:<ul>
-                <li>If <code>Command</code> is neither <code>'GET'</code> nor <code>'HEAD'</code> and no content type has been
-                    specified, <code>HttpCommand</code> will specify the default content type
-                    of <code>'x-www-form-urlencoded'</code>.</li>
-                <li>If the content type of the request is specified, <code>HttpCommand</code> will set the
-                    formatted <code>Params</code> as the payload of the request. <code>Params</code> is formatted based on
-                    the content type:<ul>
-                        <li><code>'x-www-form-urlencoded'</code>: <code>Params</code> will be URLEncoded using <a href="#request-settings-shared-urlencode"><code>UrlEncode</code></a>.</li>
+            the presence of a <code>content-type</code> header.<br /><br />
+            If <code>Command</code> is <code>'GET'</code> or <code>'HEAD'</code>, the request will generally not have a payload in the message body (and hence no specified content type) and <code>Params</code> will be URLEncoded if necessary and appended to the query string of <code>URL</code>.<br/><br/>
+            If <code>Command</code> is neither <code>'GET'</code> nor <code>'HEAD'</code> and no content type has been
+                    specified, <code>HttpCommand</code> will attempt to infer the content type as follows:
+            <ul><li>If <code>Params</code> is a simple character vector and looks like JSON <code>HttpCommand</code> will set the content type as <code>'application/json'</code>; otherwise it will set the content type to <code>`application/x-www-form-urlencoded'</code>. <code>Params</code> will then be processed as described below.</li><li>Otherwise <code>HttpCommand</code> will set the content type to <code>'application/json'</code> and <code>Params</code> will be processed as described below.</li></ul>
+            If the content type is specified, <code>Params</code> is processed based on the content type and inserted as the payload of the request.  If the content type is:<ul>
+                        <li><code>'x-www-form-urlencoded'</code>: <code>Params</code> will be formatted using <a href="#request-settings-shared-urlencode"><code>UrlEncode</code></a> unless it already composed completely of valid URLEncoding characters.</li>
                         <li><code>'application/json'</code>:<ul>
-                                <li>If <code>Params</code> is a character vector that is a valid JSON representation,it is
-                                    left unaltered.</li>
-                                <li>Otherwise <code>Params</code> will be converted to JSON format
-                                    using <code>1 ⎕JSON</code>.</li>
-                                <li>In the case where <code>Params</code> is an APL character vector that is also valid
-                                    JSON, you should JSON encode it prior to setting <code>Params</code>. For example, if
-                                    you have the character vector <code>'[1,2,3]'</code> and you want it treated as a
-                                    string in JSON and not thenumeric array <code>[1,2,3]</code>, you should process it
-                                    yourself using <code>1 ⎕JSON</code>.</li>
+                                <li>If <code>Params</code> is a character vector that is a valid JSON representation, it is left unaltered.</li>
+                                <li>Otherwise <code>Params</code> will be converted to JSON format using <code>1 ⎕JSON</code>.</li>
+                                <li>In the case where <code>Params</code> is an APL character vector that is also valid JSON, you should convert it to JSON prior to setting <code>Params</code>. For example, if you have the character vector <code>'[1,2,3]'</code> and you want it treated as a string in JSON and not the numeric array <code>[1,2,3]</code>, you should process it yourself using <code>1 ⎕JSON</code>.</li>
                             </ul>
                         </li>
-                        <li>For any other content type, it is the responsibility of theuser to
-                            format <code>Params</code> appropriately for the content type.</li>
+                        <li>For any other content type, it is the responsibility of the user to
+                            format <code>Params</code> appropriately for that content type.</li>
                     </ul>
                 </li>
-                <li>If <code>Command</code> is either <code>'GET'</code> or <code>'HEAD'</code> (and no content type has been
-                    specified), <code>HttpCommand</code> will append the formatted <code>Params</code> to the query string
-                    of <code>URL</code>. In this case, <code>Params</code> is formatted as follows:<ul>
-                        <li>If <code>Params</code> is a simple array:<ul>
-                                <li>If <code>P←(∊⍕Params)</code> consists entirely of valid URLEncoded characters, <code>P</code> is
-                                    appended to the query string. (see <a href="#request-settings-shared-ValidFormUrlEncodedChars"><code>ValidFormUrlEncodedChars</code></a>)</li>
-                                <li>Otherwise <code>HttpCommand</code> will URLEncode <code>P</code> and append the result
-                                    to the query string.</li>
-                            </ul>
-                        </li>
-                    </ul>
+                           </ul>
                 </li>
             </ul>
         </td>
@@ -3302,7 +3289,8 @@ What went wrong? We didn't specify the scheme for dyalog.com. Let's try again...
       h.Run
 [rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 23043]
 </code></pre>
-<p>With the proper scheme specified, the request succeeds.</p></section><section class="print-page" id="integrating"><p>There are two primary aspects that need to be considered when integrating <code>HttpCommand</code> into your application.</p>
+<p>With the proper scheme specified, the request succeeds.</p></section><section class="print-page" id="integrating"><h3 id="integrating-considerations">Considerations</h3>
+<p>Two aspects that need to be considered when integrating <code>HttpCommand</code> into your application.</p>
 <ul>
 <li>Are there other components in your application that also use Conga?</li>
 <li>How will your application be deployed? </li>
@@ -3340,7 +3328,22 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</p></section><section class="print-page" id="release-notes"><h2 id="release-notes-version-50">Version 5.0</h2>
+SOFTWARE.</p></section><section class="print-page" id="release-notes"><h2 id="release-notes-version-51">Version 5.1</h2>
+<ul>
+<li>Added proxy server support. See <a href="#proxy-settings">Proxy-related Settings</a> and <a href="#proxy">Using a Proxy Server</a>.</li>
+<li>
+<p>Changed how <code>HttpCommand</code> attempts to determine payload Content-Type if the user has not specified it. <br/>Prior behavior was to always treat it as <code>x-www-form-urlencoded</code>. <br/>Now, <code>HttpCommand</code> will use a Content-Type of <code>application/json;charset=utf-8</code> if the payload either:</p>
+<ul>
+<li>is simple and looks like JSON</li>
+<li>is a set of <a href="#request-settings-namevalue-pairs">name/value pairs</a></li>
+</ul>
+<p>To avoid having <code>HttpCommand</code> "guess" improperly, set <a href="#request-settings-contenttype"><code>Content-Type</code></a> explicitly.</p>
+</li>
+<li>
+<p>If <a href="#request-settings-auth"><code>Auth</code></a> is either a vector in form <code>'userid:password'</code> or a 2-element vector <code>('userid' 'password')</code> and <a href="#request-settings-authtype"><code>AuthType</code></a> is either unspecified or <code>'basic'</code>, <code>HttpCommand</code> will properly <code>Base64Encode</code> the credentials for HTTP Basic authentication.</p>
+</li>
+</ul>
+<h2 id="release-notes-version-50">Version 5.0</h2>
 <ul>
 <li>The major version bump from 4 to 5 was due to:<ul>
 <li>swapping the meaning for the <code>Timeout</code> and <code>WaitTime</code> settings. Previously <code>Timeout</code> was used to indicate how long Conga's <code>Wait</code> function would wait for a response and <code>WaitTime</code> was how long <code>HttpCommand</code> would wait for a complete response before timing out.</li>

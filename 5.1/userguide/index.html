@@ -326,6 +326,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#content-types" class="md-nav__link">
+    Content Types
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -890,6 +897,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#content-types" class="md-nav__link">
+    Content Types
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -953,6 +967,10 @@ The result namespace contains other elements which are described in detail on th
   :EndIf
 :EndFor 
 </code></pre>
+<h2 id="content-types">Content Types</h2>
+<p>👉 If your HTTP request has a payload and you do not specify the content type, <code>HttpCommand</code> will attempt to determine whether to use a content type of <code>'application/json'</code> or <code>'application/x-www-form-urlencoded'</code>.</p>
+<p>This may be fine for interactively tinkering in the APL session. But when running <code>HttpCommand</code> under program control you should <strong>explicitly specify the content type</strong> for the payload by either setting <code>ContentType</code> or adding a <code>content-type</code> header. </p>
+<p>The exception to this is when using <code>GetJSON</code> which is specifically intended to interact with JSON-based web services and will use a default content type of <code>application/json</code>. </p>
 
               
             </article>
