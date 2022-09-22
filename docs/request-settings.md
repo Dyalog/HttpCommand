@@ -44,7 +44,8 @@ query - the query string for the request. If the HTTP method for the request is 
         <td>The parameters or payload, if any, for the request. <code>Params</code> can be a set of <a
                 href="#namevalue-pairs">name/value pairs</a> or a character vector that is properly formatted for the <a
                 href="#contenttype"><code>ContentType</code></a> or <a href="#command"><code>Command</code></a> of the
-            request. See <a href="#params-details">details</a> for more information.</td>
+            request. See details for more information.<br/>
+            </td>
     </tr>
     <tr>
         <td>Default</td>
@@ -53,51 +54,32 @@ query - the query string for the request. If the HTTP method for the request is 
     <tr>
         <td>Example(s)</td>
         <td>The following examples are
-            equivalent:<br /><code>h.Params←(('name' 'dyalog') ('age' 39))</code><br /><code>h.Params←'name=dyalog&age=39'</code><br /><code>ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39 ⋄ h.Params←ns</code>
+            equivalent:<br /><code>h.Params←(('name' 'dyalog') ('age' 39))</code><br /><code>ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39 ⋄ h.Params←ns</code>
         </td>
     </tr>
     <tr>
         <td>Details</td>
-        <td>The interpretation of <code>Params</code> is dependent on <code>Command</code> and the content type of the
+        <td>If <code>Params</code> is not empty, its interpretation is dependent on <code>Command</code> and the content type of the
             request. The content type is determined by the <a href="#contenttype"><code>ContentType</code></a> setting or
-            the presence of a <code>content-type</code> header.<br /><br /><code>Params</code>, if not empty, is processed
-            as follows:<ul>
-                <li>If <code>Command</code> is neither <code>'GET'</code> nor <code>'HEAD'</code> and no content type has been
-                    specified, <code>HttpCommand</code> will specify the default content type
-                    of <code>'x-www-form-urlencoded'</code>.</li>
-                <li>If the content type of the request is specified, <code>HttpCommand</code> will set the
-                    formatted <code>Params</code> as the payload of the request. <code>Params</code> is formatted based on
-                    the content type:<ul>
-                        <li><code>'x-www-form-urlencoded'</code>: <code>Params</code> will be URLEncoded using <a
-                                href="shared#urlencode"><code>UrlEncode</code></a>.</li>
+            the presence of a <code>content-type</code> header.<br /><br />
+            If <code>Command</code> is <code>'GET'</code> or <code>'HEAD'</code>, the request will generally not have a payload in the message body (and hence no specified content type) and <code>Params</code> will be URLEncoded if necessary and appended to the query string of <code>URL</code>.<br/><br/>
+            If <code>Command</code> is neither <code>'GET'</code> nor <code>'HEAD'</code> and no content type has been
+                    specified, <code>HttpCommand</code> will attempt to infer the content type as follows:
+            <ul><li>If <code>Params</code> is a simple character vector and looks like JSON <code>HttpCommand</code> will set the content type as <code>'application/json'</code>; otherwise it will set the content type to <code>`application/x-www-form-urlencoded'</code>. <code>Params</code> will then be processed as described below.</li><li>Otherwise <code>HttpCommand</code> will set the content type to <code>'application/json'</code> and <code>Params</code> will be processed as described below.</li></ul>
+            If the content type is specified, <code>Params</code> is processed based on the content type and inserted as the payload of the request.  If the content type is:<ul>
+                        <li><code>'x-www-form-urlencoded'</code>: <code>Params</code> will be formatted using <a
+                                href="shared#urlencode"><code>UrlEncode</code></a> unless it already composed completely of valid URLEncoding characters.</li>
                         <li><code>'application/json'</code>:<ul>
-                                <li>If <code>Params</code> is a character vector that is a valid JSON representation,it is
-                                    left unaltered.</li>
-                                <li>Otherwise <code>Params</code> will be converted to JSON format
-                                    using <code>1 ⎕JSON</code>.</li>
-                                <li>In the case where <code>Params</code> is an APL character vector that is also valid
-                                    JSON, you should JSON encode it prior to setting <code>Params</code>. For example, if
-                                    you have the character vector <code>'[1,2,3]'</code> and you want it treated as a
-                                    string in JSON and not thenumeric array <code>[1,2,3]</code>, you should process it
-                                    yourself using <code>1 ⎕JSON</code>.</li>
+                                <li>If <code>Params</code> is a character vector that is a valid JSON representation, it is left unaltered.</li>
+                                <li>Otherwise <code>Params</code> will be converted to JSON format using <code>1 ⎕JSON</code>.</li>
+                                <li>In the case where <code>Params</code> is an APL character vector that is also valid JSON, you should convert it to JSON prior to setting <code>Params</code>. For example, if you have the character vector <code>'[1,2,3]'</code> and you want it treated as a string in JSON and not the numeric array <code>[1,2,3]</code>, you should process it yourself using <code>1 ⎕JSON</code>.</li>
                             </ul>
                         </li>
-                        <li>For any other content type, it is the responsibility of theuser to
-                            format <code>Params</code> appropriately for the content type.</li>
+                        <li>For any other content type, it is the responsibility of the user to
+                            format <code>Params</code> appropriately for that content type.</li>
                     </ul>
                 </li>
-                <li>If <code>Command</code> is either <code>'GET'</code> or <code>'HEAD'</code> (and no content type has been
-                    specified), <code>HttpCommand</code> will append the formatted <code>Params</code> to the query string
-                    of <code>URL</code>. In this case, <code>Params</code> is formatted as follows:<ul>
-                        <li>If <code>Params</code> is a simple array:<ul>
-                                <li>If <code>P←(∊⍕Params)</code> consists entirely of valid URLEncoded characters, <code>P</code> is
-                                    appended to the query string. (see <a
-                                        href="shared#ValidFormUrlEncodedChars"><code>ValidFormUrlEncodedChars</code></a>)</li>
-                                <li>Otherwise <code>HttpCommand</code> will URLEncode <code>P</code> and append the result
-                                    to the query string.</li>
-                            </ul>
-                        </li>
-                    </ul>
+                           </ul>
                 </li>
             </ul>
         </td>

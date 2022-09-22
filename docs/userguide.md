@@ -47,3 +47,9 @@ If you expect to make several `HttpCommand` calls, you may want to create an ins
   :EndIf
 :EndFor 
 ```
+## Content Types
+👉 If your HTTP request has a payload and you do not specify the content type, `HttpCommand` will attempt to determine whether to use a content type of `'application/json'` or `'application/x-www-form-urlencoded'`.
+
+This may be fine for interactively tinkering in the APL session. But when running `HttpCommand` under program control you should **explicitly specify the content type** for the payload by either setting `ContentType` or adding a `content-type` header. 
+
+The exception to this is when using `GetJSON` which is specifically intended to interact with JSON-based web services and will use a default content type of `application/json`. 

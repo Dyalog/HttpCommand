@@ -1,4 +1,6 @@
-There are two primary aspects that need to be considered when integrating `HttpCommand` into your application.
+### Considerations
+
+Two aspects that need to be considered when integrating `HttpCommand` into your application.
 
 * Are there other components in your application that also use Conga?
 * How will your application be deployed? 
