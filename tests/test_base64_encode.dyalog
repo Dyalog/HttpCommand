@@ -1,5 +1,7 @@
- {r}←test_basic64_encode dummy;result;t
+ {r}←test_basic64_encode dummy;t
  t←#.httpcommand_test
  'base64'⎕cy'dfns'
- result←#.HttpCommand.Get t._httpbin,'base64/',base64 ⎕ucs 'io delenda est'
- r←0 200 'io delenda est' t.check result.(rc HttpStatus Data)
+ r←{
+  result ← #.HttpCommand.Get t._httpbin,'base64/',base64 ⎕ucs ⍵
+  (0 200 ⍵) t.check result.(rc HttpStatus Data)
+ }'Hello, World!'
