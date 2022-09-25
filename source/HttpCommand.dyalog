@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.3' '2022-09-21'
+      r←'HttpCommand' '5.1.4' '2022-09-24'
     ∇
 
     ∇ make
@@ -1275,41 +1275,41 @@
       r←'See https://dyalog.github.io/HttpCommand/'
     ∇
 
-    ∇ r←Upgrade;releases;latest;url;z;newer;ns;code;vers
+    ∇ (rc msg)←Upgrade;latest;url;z;newer;ns;code;vers
     ⍝ loads the latest released version from GitHub
       :Access public shared
+      (rc msg)←¯1 'Default message'
       :Trap Debug↓0
-          releases←(GetJSON'get' 'https://api.github.com/repos/Dyalog/HttpCommand/releases').Data
-          latest←(⊃⍒releases.published_at)⊃releases
-          url←latest.((assets.name⍳⊂'HttpCommand.dyalog')⊃assets.browser_download_url)
-          z←Get url
-          :If z.rc≠0
-              r←z.(rc msg)
-          :ElseIf z.HttpStatus≠200
-              r←¯1(⍕z)
-          :Else
-              newer←{
-                  0∊⍴⍺:0      ⍝ same version
-                  (⊃⍺)>⊃⍵:1   ⍝ newer version
-                  (⊃⍺)=⊃⍵:(1↓⍺)∇ 1↓⍵
-                  ¯1          ⍝ older version
-              }
-              {}LDRC.Close'.' ⍝ close Conga
-              LDRC←''         ⍝ reset local reference so that Conga gets reloaded
-              :Trap 0
-                  ns←⎕NS''
-                  code←{⍵⊆⍨~⍵∊⎕UCS 13 10 65279}'UTF-8'⎕UCS ⎕UCS z.Data
-                  vers←(0 ns.⎕FIX code).Version Version
-                  :If 1=⊃newer/{2⊃'.'⎕VFI 2⊃⍵}¨vers
-                      ##.⎕FIX code
-                      r←1(deb⍕,'Upgraded to' 'from',⍪vers)
-                  :Else
-                      r←0(deb⍕'Already using the most current version: ',2⊃vers)
-                  :EndIf
-              :Else
-                  r←¯1('Could not ⎕FIX new HttpCommand: ',2↓∊': '∘,¨⎕DMX.(EM Message))
-              :EndTrap
+          latest←GetJSON'get' 'https://api.github.com/repos/Dyalog/HttpCommand/releases/latest'
+          :If 0 200≢latest.(rc HttpStatus)
+              →0⊣msg←'Unable to retrieve latest HttpCommand release: ',⍕latest
           :EndIf
+          url←latest.Data.(assets.browser_download_url⊃⍨assets.name⍳⊂'HttpCommand.dyalog')
+          z←Get url
+          :If z.(rc HttpStatus)≢0 200
+              →0⊣msg←'Unable to retrieve latest HttpCommand definition: ',⍕z
+          :EndIf
+          newer←{
+              0∊⍴⍺:0      ⍝ same version
+              (⊃⍺)>⊃⍵:1   ⍝ newer version
+              (⊃⍺)=⊃⍵:(1↓⍺)∇ 1↓⍵
+              ¯1          ⍝ older version
+          }
+          {}LDRC.Close'.' ⍝ close Conga
+          LDRC←''         ⍝ reset local reference so that Conga gets reloaded
+          :Trap Debug↓0
+              ns←⎕NS''
+              code←{⍵⊆⍨~⍵∊⎕UCS 13 10 65279}'UTF-8'⎕UCS ⎕UCS z.Data
+              vers←(0 ns.⎕FIX code).Version Version
+              :If 1=⊃newer/{2⊃'.'⎕VFI 2⊃⍵}¨vers
+                  ##.⎕FIX code
+                  (rc msg)←1(deb⍕,'Upgraded to' 'from',⍪vers)
+              :Else
+                  (rc msg)←0(deb⍕'Already using the most current version: ',2⊃vers)
+              :EndIf
+          :Else
+              msg←'Could not ⎕FIX new HttpCommand: ',2↓∊': '∘,¨⎕DMX.(EM Message)
+          :EndTrap
       :Else
           r←¯1('Unexpected ',⊃{⍺,' at ',⍵}/2↑⎕DMX.DM)
       :EndTrap
