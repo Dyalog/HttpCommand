@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.4' '2022-09-24'
+      r←'HttpCommand' '5.1.5' '2022-09-26'
     ∇
 
     ∇ make
@@ -681,7 +681,7 @@
                               r.(HttpVersion HttpStatus HttpMessage Headers)←4↑dat
                               r.HttpStatus←toInt r.HttpStatus
                               datalen←⊃toInt{0∊⍴⍵:'¯1' ⋄ ⍵}r.GetHeader'Content-Length' ⍝ ¯1 if no content length not specified
-                              done←(cmd≡'HEAD')∨0=datalen
+                              done←(cmd≡'HEAD')∨(0=datalen)∨204=r.HttpStatus
                               →∆END⍴⍨forceClose←r CheckPayloadSize datalen             ⍝ we have a payload size limit
                           :EndIf
                       :CaseList 'HTTPBody' 'BlkLast' ⍝ BlkLast included for pre-Conga v3.4 compatibility for RFC7230 (Sec 3.3.3 item 7)
