@@ -3,10 +3,6 @@ t←#.httpcommand_test
 url ← 'uuid'
 c←#.HttpCommand.New 'get' (t._httpbin,url)
 
-:If ⎕nexists '/tmp/',url
-    ⎕ndelete '/tmp/',url
-:EndIf
-
 c.OutFile←'/tmp/' 0
 result←c.Run
 
@@ -27,4 +23,8 @@ result←c.Run
 r⍪←0 200 t.check result.(rc HttpStatus)
 r⍪←((s+result.BytesWritten)≠⍴⊃⎕nget '/tmp/',url) / '(OutFile 2) failed: /tmp/',url,' wasn''t appended to itself.'
 
-⎕ndelete '/tmp/',url
+:If ⎕nexists '/tmp/',url
+ r⍪←(1≠⎕ndelete '/tmp/',url) / '/tmp/',url,' was not correctly deleted.' 
+:Else
+ r⍪←'/tmp/',url,' was not correctly deleted.' 
+:EndIf
