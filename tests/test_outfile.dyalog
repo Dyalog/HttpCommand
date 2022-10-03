@@ -1,4 +1,4 @@
-{r}←test_outfile dummy;t;result;url;s
+{r}←test_outfile dummy;t;c;result;url;s
 ⍝ hash: f424ee8
 
 t←#.httpcommand_test
