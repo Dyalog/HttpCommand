@@ -1071,7 +1071,7 @@
 <td><code>h.MaxPayloadSize←100000 ⍝ set a 100,000 byte limit</code></td></tr>
 <tr><td>Details</td>
 <td>If <code>MaxPayloadSize</code> is set to a value <code>≥0</code> and the response contains a payload, <code>HttpCommand</code> checks the payload size as follows:
-<ul><li>If the response contains a <code>content-length</code> header, its value is compared to <code>MaxPayloadSize</code>. If exceeded, <code>HttpCommand</code> will return with a return code of <code>¯5</code> and no payload.</li><li>Otherwise, the response payload is sent in chunks and <code>HttpCommand</code> will accumulate each chunk and compare the total payload size to <code>MaxPayloadSize</code>. If exceeded, <code>HttpCommand</code> will return with a return code of <code>¯5</code> and whatever payload has been accumulated.</li></ul>In either case, if <code>MaxPayloadSize</code> is exceeded, the client connection will be closed.</td></tr>
+<ul><li>If the response contains a <code>content-length</code> header, its value is compared to <code>MaxPayloadSize</code>. If exceeded, <code>HttpCommand</code> will return with a return code of <code>¯1</code> and no payload.</li><li>Otherwise, the response payload is sent in chunks and <code>HttpCommand</code> will accumulate each chunk and compare the total payload size to <code>MaxPayloadSize</code>. If exceeded, <code>HttpCommand</code> will return with a return code of <code>¯1</code> and whatever payload has been accumulated.</li></ul>In either case, if <code>MaxPayloadSize</code> is exceeded, the client connection will be closed.</td></tr>
 </table>
 
 <h3 id="maxredirections"><code>MaxRedirections</code></h3>
