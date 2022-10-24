@@ -1,4 +1,5 @@
-﻿ r←teardown dummy
+﻿r←teardown dummy
 ⍝ teardown DRC and Conga
- r←''
+r←''
 {}#.⎕EX'DRC' 'Conga' 'httpcommand_test' 'HttpCommand'
+⎕tkill⌈/⎕tnums
