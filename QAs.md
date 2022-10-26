@@ -10,3 +10,8 @@
 
 - [ ] [RequestOnly](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#requestonly)
 
+- [x] [SuppressHeaders](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#suppressheaders)
+  - /tests/test_suppressheaders.dyalog
+
+- [x] [Timeout](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#timeout)
+  - /tests/_test_timeout.dyalog
