@@ -37,7 +37,7 @@ A setting of <code>¯1</code> means there is no limit to the number of redirecti
 <td><code>h.MaxRedirections←0 ⍝ do not follow any redirections</code>
 </td></tr>
 <tr><td>Details</td>
-<td>If the response HTTP status indicates a redirection (3XX) to another URL, <code>HttpCommand</code> will retain information about the current request in the <a href="/result-response/#redirections"><code>Redirections</code></a> element of the result namespace and issue a new request to the new URL. <code>HttpCommand</code> will do this up to <code>MaxRedirections</code> times.<br/><br/> 
+<td>If the response HTTP status indicates a redirection (3XX) to another URL, <code>HttpCommand</code> will retain information about the current request in the <a href="../result-response/#redirections"><code>Redirections</code></a> element of the result namespace and issue a new request to the new URL. <code>HttpCommand</code> will do this up to <code>MaxRedirections</code> times.<br/><br/> 
 </td></tr></table>
 
 ### `Outfile`
