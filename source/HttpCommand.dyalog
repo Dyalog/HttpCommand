@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.5' '2022-09-26'
+      r←'HttpCommand' '5.1.6' '2022-10-30'
     ∇
 
     ∇ make
@@ -128,7 +128,7 @@
           rc←'rc: ',⍕r.rc
           msg←' | msg: ',⍕r.msg
           stat←' | HTTP Status: ',(⍕r.HttpStatus),' "',r.HttpMessage,'"'
-          data←' | ',{¯1≠r.BytesWritten:(⍕r.BytesWritten),' bytes written to ',r.OutFile ⋄ ⍬≡⍵:'⍴Data: ⍬' ⋄ '⍴Data: ',⍕⍵}⍴r.Data
+          data←' | ',{¯1≠r.BytesWritten:(⍕r.BytesWritten),' bytes written to ',r.OutFile ⋄ '≢Data: ',(⍕≢⍵),(9.1=nameClass ⍵)/' (namespace)'}r.Data
           r.⎕DF 1⌽'][',rc,msg,stat,data
       :EndIf
     ∇
@@ -684,7 +684,7 @@
                               done←(cmd≡'HEAD')∨(0=datalen)∨204=r.HttpStatus
                               →∆END⍴⍨forceClose←r CheckPayloadSize datalen             ⍝ we have a payload size limit
                           :EndIf
-                      :CaseList 'HTTPBody' 'BlkLast' ⍝ BlkLast included for pre-Conga v3.4 compatibility for RFC7230 (Sec 3.3.3 item 7)
+                      :CaseList 'HTTPBody' 'BlockLast' ⍝ BlkLast included for pre-Conga v3.4 compatibility for RFC7230 (Sec 3.3.3 item 7)
                           →∆END⍴⍨forceClose←r CheckPayloadSize≢dat
                           :If toFile
                               dat ⎕NAPPEND outTn
@@ -1264,7 +1264,7 @@
     ∇ w←SafeJSON w;i;c;⎕IO
     ⍝ Convert Unicode chars to \uXXXX
       ⎕IO←0
-      →0⍴⍨0∊i←⍸127<c←⎕UCS w
+      →0⍴⍨0∊⍴i←⍸127<c←⎕UCS w
       w[i]←{⊂'\u','0123456789ABCDEF'[¯4↑16⊥⍣¯1⊢⍵]}¨c[i]
       w←∊w
     ∇
