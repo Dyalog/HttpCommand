@@ -2,7 +2,7 @@
     api: "HttpCommand",
     assets: "",
     description: "Utility to execute HTTP requests",
-    documentation: "https://dyalog.github.io/HttpCommand"
+    documentation: "https://dyalog.github.io/HttpCommand",
     group: "dyalog",
     info_url: "https://github.com/Dyalog/HttpCommand",
     io: 1,
@@ -10,5 +10,5 @@
     name: "HttpCommand",
     source: "source/HttpCommand.dyalog",
     tags: "mac-os,windows,linux,http,dyalog",
-    version: "5.1.6", 
+    version: "5.1.7", 
 }

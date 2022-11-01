@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.6' '2022-10-30'
+      r←'HttpCommand' '5.1.7' '2022-11-01'
     ∇
 
     ∇ make
@@ -397,7 +397,7 @@
      ∆FAIL:(rc secureParams)←¯1 msg ⍝ failure
     ∇
 
-    ∇ {r}←certs HttpCmd args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers;cmd;file;protocol;conx;proxied;proxy;cert;noCT;simpleParms
+    ∇ {r}←certs HttpCmd args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers;cmd;file;protocol;conx;proxied;proxy;cert;noCT;simpleParms;noContentLength;connectionClose
     ⍝ issue an HTTP command
     ⍝ certs - X509Cert|(PublicCertFile PrivateKeyFile) SSLValidation Priority PublicCertFile PrivateKeyFile
     ⍝ args  - [1] HTTP method
@@ -667,7 +667,7 @@
      
      ∆LISTEN:
           forceClose←~KeepAlive
-          (timedOut done data progress)←0 0 ⍬ 0
+          (timedOut done data progress noContentLength connectionClose)←0 0 ⍬ 0 0 0
      
           :Trap 1000 ⍝ in case break is pressed while listening
               :While ~done
@@ -681,17 +681,20 @@
                               r.(HttpVersion HttpStatus HttpMessage Headers)←4↑dat
                               r.HttpStatus←toInt r.HttpStatus
                               datalen←⊃toInt{0∊⍴⍵:'¯1' ⋄ ⍵}r.GetHeader'Content-Length' ⍝ ¯1 if no content length not specified
+                              connectionClose←'close'≡lc r.GetHeader'Connection'
+                              noContentLength←datalen=¯1
                               done←(cmd≡'HEAD')∨(0=datalen)∨204=r.HttpStatus
                               →∆END⍴⍨forceClose←r CheckPayloadSize datalen             ⍝ we have a payload size limit
                           :EndIf
-                      :CaseList 'HTTPBody' 'BlockLast' ⍝ BlkLast included for pre-Conga v3.4 compatibility for RFC7230 (Sec 3.3.3 item 7)
-                          →∆END⍴⍨forceClose←r CheckPayloadSize≢dat
+                      :Case 'HTTPBody'
+                          →∆END⍴⍨forceClose←r CheckPayloadSize(≢data)+≢dat
                           :If toFile
+                              →∆END⍴⍨forceClose←r CheckPayloadSize(⎕NSIZE outTn)+≢dat
                               dat ⎕NAPPEND outTn
                           :Else
-                              data←dat
+                              data,←dat
                           :EndIf
-                          done←1
+                          done←~noContentLength ⍝ if not content-length specified and not chunked - keep listening
                       :Case 'HTTPChunk'
                           :If 1=≡dat
                               →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP chunk' ⍝ HTTP chunk parsing failed?
@@ -716,8 +719,21 @@
                       :Case 'HTTPError'
                           data,←dat
                           r.Data←data
-                          r.msg←'Response payload not completely received'
+                          :If noContentLength∧connectionClose
+                              r.(rc msg)←0 ''
+                          :Else
+                              rc.msg←'Response payload not completely received'
+                          :EndIf
                           →∆END
+                      :Case 'BlockLast' ⍝ BlockLast included for pre-Conga v3.4 compatibility for RFC7230 (Sec 3.3.3 item 7)
+                          →∆END⍴⍨forceClose←r CheckPayloadSize(≢data)+≢dat
+                          :If toFile
+                              →∆END⍴⍨forceClose←r CheckPayloadSize(⎕NSIZE outTn)+≢dat
+                              dat ⎕NAPPEND outTn
+                          :Else
+                              data,←dat
+                          :EndIf
+                          done←1
                       :Case 'Timeout'
                           timedOut←⊃(done donetime progress)←Client checkTimeOut donetime progress
                       :Case 'Error'
@@ -754,6 +770,8 @@
               r.(rc msg)←100 'Request timed out before server responded'
               →∆END
           :EndIf
+     
+          forceClose∨←connectionClose ⍝ if there's a 'Connection: close' header
      
           :If 0=err
               :If ~toFile
