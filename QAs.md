@@ -23,7 +23,7 @@
   - /tests/test_translate_json.dyalog
   - /tests/test_translate_xml.dyalog
 
-## [Instance Settings](https://dyalog.github.io/HttpCommand/5.1/conga-settings/)
+## [Conga-related Settings](https://dyalog.github.io/HttpCommand/5.1/conga-settings/)
 
 - [X] [BufferSize](https://dyalog.github.io/HttpCommand/5.1/conga-settings/#buffersize)
   - /tests/test_buffersize.dyalog
