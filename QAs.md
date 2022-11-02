@@ -23,7 +23,21 @@
   - /tests/test_translate_json.dyalog
   - /tests/test_translate_xml.dyalog
 
-## [Request-related settings](https://dyalog.github.io/HttpCommand/5.1/request-settings/)
+## [Instance Settings](https://dyalog.github.io/HttpCommand/5.1/conga-settings/)
+
+- [X] [BufferSize](https://dyalog.github.io/HttpCommand/5.1/conga-settings/#buffersize)
+  - /tests/test_buffersize.dyalog
+
+
+
+## [Request-related Settings](https://dyalog.github.io/HttpCommand/5.1/request-settings/)
+
+- [?] [Command](https://dyalog.github.io/HttpCommand/5.1/request-settings/#command)
+  - /tests/test_post.dyalog
+  - /tests/test_get.dyalog
+
+- [?] [Params](https://dyalog.github.io/HttpCommand/5.1/request-settings/#params)
+  - /tests/test_post.dyalog
 
 - [?] [Auth](https://dyalog.github.io/HttpCommand/5.1/request-settings/#auth)
   - /tests/test_basic_auth.dyalog
