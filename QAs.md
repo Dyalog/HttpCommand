@@ -1,25 +1,26 @@
 ## [Operational Settings](https://dyalog.github.io/HttpCommand/5.1/operational-settings/)
 
-- [ ] [KeepAlive](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#keepalive)
+- [X] [KeepAlive](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#keepalive)
+  - /tests/test_keepalive.dyalog
 
-- [x] [MaxPayloadSize](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#maxpayloadsize) 
+- [X] [MaxPayloadSize](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#maxpayloadsize) 
   - /tests/test_maxpayloadsize.dyalog
 
-- [x] [MaxRedirections](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#maxredirections)
+- [X] [MaxRedirections](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#maxredirections)
   - /tests/test_maxredirections.dyalog
 
-- [x] [OutFile](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#outfile)
+- [X] [OutFile](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#outfile)
   - /tests/test_outfile.dyalog
 
 - [ ] [RequestOnly](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#requestonly)
 
-- [x] [SuppressHeaders](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#suppressheaders)
+- [X] [SuppressHeaders](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#suppressheaders)
   - /tests/test_suppressheaders.dyalog
 
-- [x] [Timeout](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#timeout)
+- [X] [Timeout](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#timeout)
   - /tests/_test_timeout.dyalog
 
-- [x] [TranslateData](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#translatedata)
+- [X] [TranslateData](https://dyalog.github.io/HttpCommand/5.1/operational-settings/#translatedata)
   - /tests/test_translate_json.dyalog
   - /tests/test_translate_xml.dyalog
 
@@ -28,13 +29,38 @@
 - [X] [BufferSize](https://dyalog.github.io/HttpCommand/5.1/conga-settings/#buffersize)
   - /tests/test_buffersize.dyalog
 
+- [ ] [WaitTime](https://dyalog.github.io/HttpCommand/5.1/conga-settings/#waittime)
 
+- [ ] [Cert](https://dyalog.github.io/HttpCommand/5.1/conga-settings/#cert)
+
+- [ ] [PublicCert](https://dyalog.github.io/HttpCommand/5.1/conga-settings/#publiccertfile)
+
+- [ ] [PrivateKeyFile](https://dyalog.github.io/HttpCommand/5.1/conga-settings/#privatekeyfile)
+
+- [ ] [SSLFlags](https://dyalog.github.io/HttpCommand/5.1/conga-settings/#sslflags)
+
+- [ ] [Priority](https://dyalog.github.io/HttpCommand/5.1/conga-settings/#priority)
+
+- [ ] [CongaPath](https://dyalog.github.io/HttpCommand/5.1/conga-settings/#congapath)
+
+- [ ] [CongaRef](https://dyalog.github.io/HttpCommand/5.1/conga-settings/#congaref)
+
+- [ ] [LDRC](https://dyalog.github.io/HttpCommand/5.1/conga-settings/#ldrc)
+
+- [ ] [CongaVersion](https://dyalog.github.io/HttpCommand/5.1/conga-settings/#congaversion)
 
 ## [Request-related Settings](https://dyalog.github.io/HttpCommand/5.1/request-settings/)
 
 - [?] [Command](https://dyalog.github.io/HttpCommand/5.1/request-settings/#command)
   - /tests/test_post.dyalog
   - /tests/test_get.dyalog
+
+- [?] [URL](https://dyalog.github.io/HttpCommand/5.1/request-settings/#url)
+  - /tests/test_get_url.dyalog
+
+- [ ] [Headers](https://dyalog.github.io/HttpCommand/5.1/request-settings/#headers)
+
+- [?] [ContentType](https://dyalog.github.io/HttpCommand/5.1/request-settings/#contenttype)
 
 - [?] [Params](https://dyalog.github.io/HttpCommand/5.1/request-settings/#params)
   - /tests/test_post.dyalog
