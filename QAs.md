@@ -65,10 +65,10 @@
 - [?] [Params](https://dyalog.github.io/HttpCommand/5.1/request-settings/#params)
   - /tests/test_post.dyalog
 
-- [?] [Auth](https://dyalog.github.io/HttpCommand/5.1/request-settings/#auth)
+- [X] [Auth](https://dyalog.github.io/HttpCommand/5.1/request-settings/#auth)
   - /tests/test_basic_auth.dyalog
 
-- [?] [AuthType](https://dyalog.github.io/HttpCommand/5.1/request-settings/#authtype)
+- [X] [AuthType](https://dyalog.github.io/HttpCommand/5.1/request-settings/#authtype)
   - /tests/test_basic_auth.dyalog
 
 ## Proxy-related Settings
