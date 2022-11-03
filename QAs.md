@@ -71,6 +71,8 @@
 - [?] [AuthType](https://dyalog.github.io/HttpCommand/5.1/request-settings/#authtype)
   - /tests/test_basic_auth.dyalog
 
+## Proxy-related Settings
+
 # All config options
 
 Auth, AuthType, BufferSize, Cert, Command, CongaPath, CongaRef, CongaVersion, ContentType, Cookies, Debug, Headers, KeepAlive, LDRC, MaxPayloadSize, MaxRedirections, OutFile, Params, Priority, PrivateKeyFile, PublicCertFile, RequestOnly, SSLFlags, SuppressHeaders, Timeout, TranslateData, URL, WaitTime
