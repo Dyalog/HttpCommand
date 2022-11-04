@@ -1,5 +1,5 @@
-{r}←test_set_cookies dummy;c;result
-c ← #.HttpCommand.New 'get' 'http://localhost:8090/set_cookies'
+{r}←test_set_cookies_max_age dummy;c;result
+c ← #.HttpCommand.New 'get' 'http://localhost:8090/set_cookies/max_age'
 {}c.Run
 {}c.Run
 {}c.Run

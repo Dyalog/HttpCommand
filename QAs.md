@@ -71,6 +71,10 @@
 - [X] [AuthType](https://dyalog.github.io/HttpCommand/5.1/request-settings/#authtype)
   - /tests/test_basic_auth.dyalog
 
+- [X] [Cookies](https://dyalog.github.io/HttpCommand/5.1/request-settings/#cookies)
+  - /tests/test_set_cookies_max_age.dyalog
+  - /tests/test_set_cookies_path.dyalog
+
 ## Proxy-related Settings
 
 # All config options
