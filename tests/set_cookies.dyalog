@@ -8,7 +8,7 @@ r ← {⍵[8↑?⍨≢⍵]}
 :NameSpace Date
 
   months ← 'Jan' 'Feb' 'Mar' 'Apr' 'May' 'Jun' 'Jul' 'Aug' 'Sep' 'Oct' 'Nov' 'Dec'
-  days   ← 'Mon' 'Tue' 'Wed' 'Thu' 'Fri' 'Sat' 'Sun'
+  days   ← 'Tue' 'Wed' 'Thu' 'Fri' 'Sat' 'Sun' 'Mon'
 
   f ← ¯2↑'0',⍕
   join ← {⊃,/1↓,⍺,⍪⍵}
