@@ -84,7 +84,7 @@
     ⍝ initialize the namespace result
       :Access shared
       ns.(Command URL rc msg HttpVersion HttpStatus HttpMessage Headers Data PeerCert Redirections Cookies OutFile Elapsed BytesWritten)←'' '' ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')⍬'' 0 ¯1
-      ns.GetHeader←{⍺←Headers ⋄ ⍺{1<|≡⍵:⍺∘∇¨⍵ ⋄ (⍺[;2],⊂'')⊃⍨⍺[;1](⍳{(⍵⍵ ⍺)⍺⍺(⍵⍵ ⍵)}(1∘(819⌶)))⊆,⍵}⍵} ⍝ return header value or '' if not found
+      ns.GetHeader←{⎕IO←⎕ML←1 ⋄ ⍺←Headers ⋄ ⍺{1<|≡⍵:⍺∘∇¨⍵ ⋄ (⍺[;2],⊂'')⊃⍨⍺[;1](⍳{(⍵⍵ ⍺)⍺⍺(⍵⍵ ⍵)}(1∘(819⌶)))⊆,⍵}⍵} ⍝ return header value or '' if not found
     ∇
 
     ∇ Goodbye
@@ -337,7 +337,7 @@
               :EndIf
           :EndTrap
       :Case 9.2 ⍝ instance?  e.g. CongaRef←Conga.Init ''
-          :If 3=CongaRef.⎕NC'Clt' ⍝ if it looks like a valid Conga reference
+          :If 3=⌊|CongaRef.⎕NC⊂'Clt' ⍝ if it looks like a valid Conga reference
               LDRC←CongaRef ⍝ an instance is already initialized
           :EndIf
       :Case 2.1 ⍝ variable?  e.g. CongaRef←'#.Conga'
