@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.7' '2022-11-01'
+      r←'HttpCommand' '5.1.8' '2022-11-15'
     ∇
 
     ∇ make
