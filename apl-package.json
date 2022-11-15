@@ -9,6 +9,6 @@
     ml: 1,
     name: "HttpCommand",
     source: "source/HttpCommand.dyalog",
-    tags: "mac-os,windows,linux,http,dyalog",
-    version: "5.1.7", 
+    tags: "mac-os,windows,linux,http,dyalog,pi",
+    version: "5.1.8", 
 }
