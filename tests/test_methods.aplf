@@ -1,0 +1,8 @@
+r←test_methods _;c;methods
+c←#.HttpCommand.New 'httpbin.org/'
+methods ← ((~∊∘', ')⊆⊢)(#.HttpCommand.New 'options' c.URL).Run.GetHeader 'Access-Control-Allow-Methods'
+{
+    c.Command ← ⍵
+    c.URL ← #.url,⍵
+    (c.Run.(rc HttpStatus) ≡ 0 200) ∧ ∨/,(1 ⎕C ⍵)⍷ c.Show
+}¨methods

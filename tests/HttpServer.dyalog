@@ -14,6 +14,7 @@
     :Field Public Shared Debug←0                               ⍝ 0 = all errors are trapped, 1 = stop on an error, 2 = stop on intentional error before processing request
     :Field Public ErrorInfoLevel←1                             ⍝ level of information to provide if an APL error occurs, 0=none, 1=⎕EM, 2=⎕SI
     :Field Public Folder←''                                    ⍝ folder that user supplied if CodeLocation is a folder
+    :Field Public LoadableFiles←'*.apl?,*.dyalog'              ⍝ file patterns that can be loaded if loading from folder
     :Field Public Hostname←''                                  ⍝ external-facing host name
     :Field Public HTTPAuthentication←'basic'                   ⍝ valid settings are currently 'basic' or ''
     :Field Public KeepAlive←0                                  ⍝ ms to keep a connection alive
