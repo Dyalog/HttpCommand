@@ -1,4 +1,0 @@
-﻿r←teardown _
-r←0
-#.⎕EX 'DRC' 'Conga' 'HttpCommand'
-⎕tkill⌈/⎕tnums
