@@ -10,11 +10,11 @@ Decode a Base64-encoded string or single-byte integer vector.
 <tr><td>Syntax</td>
 <td><code>out←{cpo} HttpCommand.Base64Decode b64</code></td></tr>
 <tr><td><code>b64</code></td>
-<td>Either a single-byte integer or character vector to be decoded</td></tr>
+<td>A character vector of Base64-encoded data.</td></tr>
 <tr><td><code>cpo</code></td>
-<td>(optional) If set to 0 or not supplied, Base64Decode will perform UTF-8 conversion on the result. If set to 1, no conversion will be performed. In almost all cases, you can ignore (and not supply) this argument.</td></tr>
+<td>(optional) cpo stands for "code points only".  It can be any value, its mere existence is all that is necessary. You would use it in the case where you do not want <code>Base64Decode</code> to perform a UTF-8 conversion on the result. In almost all use cases, you can ignore this argument.</td></tr>
 <tr><td><code>out</code></td>
-<td>A character vector representing the decodes base-64 right argument.</td></tr>
+<td>A character vector representing the decoded base-64 right argument.</td></tr>
 <tr><td>Example(s)</td>
 <td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Base64Decode 'RHlhbG9nIOKNuuKNtOKMig=='</code><br>
 <code>Dyalog ⍺⍴⌊</code></td></tr>
@@ -26,14 +26,14 @@ Base64 encode a string or integer vector.
 <tr><td>Syntax</td>
 <td><code>b64←{cpo} HttpCommand.Base64Encode in</code></td></tr>
 <tr><td><code>in</code></td>
-<td>Either an integer or character vector to be encoded</td></tr>
+<td>Either an integer vector with values in the range 0-255 or a character vector to be encoded</td></tr>
 <tr><td><code>cpo</code></td>
-<td>(optional) If set to 0 or not supplied, Base64Encode will first perform UTF-8 conversion on a character argument. If set to 1, no conversion will be performed. In almost all cases, you can ignore (and not supply) this argument.</td></tr>
+<td>(optional) cpo stands for "code points only". If not supplied, <code>Base64Encode</code> will first perform UTF-8 conversion on a character argument. If any value for <code>cpo</code> is supplied, no conversion will be performed. If <code>in</code> is integer, no conversion is performed. The only use case for this argument is when you have already UTF-8 converted the <code>in</code> and you don't want <code>Base64Encode</code> to perform a second conversion.</td></tr>
 <tr><td><code>b64</code></td>
 <td>A character vector representing the base-64 encoding of the right argument.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Base64Decode 'RHlhbG9nIOKNuuKNtOKMig=='</code><br>
-<code>Dyalog ⍺⍴⌊</code></td></tr>
+<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Base64Encode 'Dyalog ⍺⍴⌊'</code><br>
+<code>RHlhbG9nIOKNuuKNtOKMig==</code></td></tr>
 </table>
 
 ## URL Encoding
