@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.8' '2022-11-15'
+      r←'HttpCommand' '5.1.9' '2022-11-22'
     ∇
 
     ∇ make
@@ -559,7 +559,7 @@
                       →∆END⊣r.msg←'No file name specified in OutFile or URL'
                   :EndIf
               :EndIf
-              :If ⎕NEXISTS outFile
+              :If ⎕NEXISTS outFile←∊outFile
                   :If (0=replace)∧0≠2 ⎕NINFO outFile
                       →∆END⊣r.msg←'Output file "',outFile,'" is not empty'
                   :Else

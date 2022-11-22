@@ -57,7 +57,10 @@ If a folder is specified, the file name will be the same as the resource specifi
 <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.URL←'https://www.dyalog.com/uploads/files/student_competition/2022_problems_phase2.pdf'</code><br/>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←'/tmp/'</code><br/>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
-<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | 399766 bytes written to c:/tmp/2022_problems_phase2.pdf]</code><br/>
+<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | 399766 bytes written to c:/tmp/2022_problems_phase2.pdf]</code><br/><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←'/tmp/problems.pdf' 1</code><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
+<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | 399766 bytes written to c:/tmp/problems.pdf]</code><br/>
 </td></tr>
 <tr><td>Details</td>
 <td>Output to file is subject to <code>MaxPayloadSize</code>.</td></tr></table>
