@@ -13,7 +13,13 @@
     check←{⍺≡⍵:'' ⋄ (2⊃⎕SI),': Expected [',(1↓,cr,⍕⍺),'] got [',(1↓,cr,⍕⍵),']'}
 
     _true←⊂'true'
-    
+
+    port ← 8090
+
+    ∇ r←localhost
+      r←'http://localhost:',(⍕port),'/'
+    ∇
+
     ⍝ Methods to parse instance.Show
     split ← {((~∊∘⍺)⊆⊢)⍵}
     lines ← nl cr∘split

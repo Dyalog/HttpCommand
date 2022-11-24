@@ -1,7 +1,6 @@
-r←test_timeout dummy;t;result;port;url;c
+r←test_timeout dummy;t;result;c
 t←#.httpcommand_test
-url←'http://localhost:8090'
-c←#.HttpCommand.New'get'(url,'/timeout_test')
+c←#.HttpCommand.New 'get' (t.localhost,'timeout_test')
 c.Timeout←1
 r←100 t.check(c.Run).rc
 c.Timeout←10

@@ -1,5 +1,6 @@
-{r}←test_set_cookies_expires dummy;c;result
-c←#.HttpCommand.New'get' 'http://localhost:8090/set_cookies/expires'
+{r}←test_set_cookies_expires dummy;c;t;result
+t←#.httpcommand_test
+c←#.HttpCommand.New 'get' (t.localhost,'set_cookies/expires')
 {}c.Run
 {}c.Run
 r←'Cookies not set'/⍨2≢≢c.Cookies.Value
