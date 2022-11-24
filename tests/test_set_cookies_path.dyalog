@@ -1,11 +1,13 @@
-{r}←test_set_cookies_path dummy;c;t;result
+r←test_set_cookies_path dummy;c;result
+r←''
 t←#.httpcommand_test
-c←#.HttpCommand.New 'get' (t.localhost,'set_cookies/path')
+c←#.HttpCommand.New 'get' 'http://localhost:8090/set_cookies/path'
 result←c.Run
 :If 0∊⍴result.Cookies
-    r←'No cookie namespace when one was expected.'
+    r←'Cookies were left unset.'
 :Else
-    c.URL ← t.localhost,'set_cookies/ping'
-    result←c.Run
-    r←'Set-Cookie "Path" was not obeyed.'/⍨9∊⎕NC'result.Cookies'
+    c.URL←'http://localhost:8090/set_cookies/ping'
+    :If ~ 0∊⍴ t.getCookies c.Show
+        r←'Set-Cookie "Path" was not obeyed.'
+    :EndIf
 :EndIf

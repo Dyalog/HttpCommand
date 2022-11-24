@@ -1,9 +1,14 @@
-{r}←test_set_cookies_expires dummy;c;t;result
-t←#.httpcommand_test
+r←test_set_cookies_expires dummy;c;result   
+r←''
+t←#.httpcommand_test 
 c←#.HttpCommand.New 'get' (t.localhost,'set_cookies/expires')
 {}c.Run
-{}c.Run
-r←'Cookies not set'/⍨2≢≢c.Cookies.Value
-⎕DL 3
-{}c.Run
-r⍪←'Cookies did not expire'/⍨1≢≢c.Cookies.Value
+:If 0∊⍴ t.getCookies c.Show
+    r←'Cookies were left unset.'
+:EndIf
+
+⎕DL 3.5                                                            
+
+:If ~ 0∊⍴ t.getCookies c.Show
+ r←'Cookies did not expire.'
+:EndIf

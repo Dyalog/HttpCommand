@@ -31,8 +31,8 @@
 
       max_age←{
           ⍵.Response.Payload←⎕A
-     
-          'Set-Cookie'⍵.SetHeader('key',r c),'=',(r c),'; Max-Age=5; ','; Expires=',Date.New 7
+          ⍝ Expires attribute should always be over-ridden
+          'Set-Cookie'⍵.SetHeader('key',r c),'=',(r c),'; Max-Age=3; ','; Expires=',Date.New 5 
       }
 
       expires←{
