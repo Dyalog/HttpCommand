@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.9' '2022-11-22'
+      r←'HttpCommand' '5.1.10' '2022-11-29'
     ∇
 
     ∇ make
@@ -721,10 +721,11 @@
                           r.Data←data
                           :If noContentLength∧connectionClose
                               r.(rc msg)←0 ''
+                              done←1
                           :Else
                               rc.msg←'Response payload not completely received'
+                              →∆END
                           :EndIf
-                          →∆END
                       :Case 'BlockLast' ⍝ BlockLast included for pre-Conga v3.4 compatibility for RFC7230 (Sec 3.3.3 item 7)
                           →∆END⍴⍨forceClose←r CheckPayloadSize(≢data)+≢dat
                           :If toFile
