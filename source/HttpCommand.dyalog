@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.10' '2022-11-29'
+      r←'HttpCommand' '5.1.11' '2022-12-15'
     ∇
 
     ∇ make
@@ -829,6 +829,11 @@
               :EndIf
           :EndIf
       :Else
+          :If 1081=⊃rc ⍝ 1081 could be due to an error in Conga that fails on long URLs, so try sending request as a character vector
+              :If 0=⊃rc←LDRC.Send Client(cmd,' ',(path,(0∊⍴urlparms)↓'?',urlparms),' HTTP/1.1',(⎕UCS 13 10),(∊': '(⎕UCS 13 10),⍨¨⍤1⊢hdrs),(⎕UCS 13 10),parms)
+                  →∆LISTEN
+              :EndIf
+          :EndIf
           r.msg←'Conga error while attempting to send request: ',,⍕1↓rc
       :EndIf
       r.rc←1⊃rc ⍝ set the return code to the Conga return code
