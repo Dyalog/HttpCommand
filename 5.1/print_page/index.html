@@ -1410,8 +1410,8 @@ application/json; charset=utf-8
 <p>Some web services allow you to use HTTP Basic authentication using userid and password credentials. <strong>Any request that includes authentication data should be sent using HTTPS if possible</strong>. <code>HttpCommand</code> allows you to specify these credentials in a few ways:</p>
 <ul>
 <li>in the <code>URL</code> by including <code>userid:password@</code> before the domain name</li>
-<li>by setting <code>AuthType</code> to <code>'basic'</code> and </br><code>Auth</code> to <code>HttpCommand.Base64Encode 'userid:password'</code></li>
-<li>by including an "Authorization" header in the format</br><code>'basic ',HttpCommand.Base64Encode 'userid:password'</code></li>
+<li>by setting <code>AuthType</code> to <code>'Basic'</code> and </br><code>Auth</code> to <code>HttpCommand.Base64Encode 'userid:password'</code></li>
+<li>by including an "Authorization" header in the format</br><code>'Basic ',HttpCommand.Base64Encode 'userid:password'</code></li>
 </ul>
 <p>The following examples use the "basic-auth" endpoint of the website <a href="http://httpbin.org">http://httpbin.org</a>. httpbin.org provides many useful endpoints for testing HTTP requests. In this case, the userid and password are concatenated to the URL so the endpoint can validate the credentials.</p>
 <p>First, let's try using credentials in the URL...</p>
@@ -1437,7 +1437,7 @@ https://userid:password@httpbin.org/basic-auth/userid/password
 <p>Now, let's try setting the "Authorization" header...</p>
 <pre><code>      ⊢credentials ← HttpCommand.Base64Encode u,':',p
 dXNlcmlkOnBhc3N3b3Jk
-      hdrs ← 'Authorization' ('basic ',credentials)
+      hdrs ← 'Authorization' ('Basic ',credentials)
       url ← 'https://',endpoint
       HttpCommand.Get url '' hdrs
 [rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 49]
@@ -1445,7 +1445,7 @@ dXNlcmlkOnBhc3N3b3Jk
 <p>Finally, let's use the <code>AuthType</code> and <code>Auth</code> settings...</p>
 <pre><code>      h ← HttpCommand.New 'get' url ⍝ create an instance
       h.Auth ← credentials
-      h.AuthType ← 'basic'
+      h.AuthType ← 'Basic'
       h.Run
 [rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 49]
 </code></pre>
@@ -1458,7 +1458,7 @@ dXNlcmlkOnBhc3N3b3Jk
 <pre><code class="language-APL">      ⊢HttpCommand.Get 'https://api.github.com/orgs/Dyalog'
 [rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 1101]
 
-      hdr←'authorization' ('token ',token)
+      hdr←'authorization' ('Token ',token)
 
       ⊢HttpCommand.Get 'https://api.github.com/orgs/Dyalog' '' hdr
 [rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 1804]
@@ -1481,7 +1481,7 @@ dXNlcmlkOnBhc3N3b3Jk
 [rc: 0 | msg:  | HTTP Status: 401 &quot;Unauthorized&quot; | ⍴Data: ⍬]
 </code></pre>
 <p>Oops!  We didn't use our token for authentication and so the request was rejected as unauthorized. We also specify the authentication scheme as <code>'token'</code>, which is what the GitHub API uses.</p>
-<pre><code>      args.(AuthType Auth) ← 'token' token
+<pre><code>      args.(AuthType Auth) ← 'Token' token
       ⊢r ← HttpCommand.GetJSON args
 [rc: 0 | msg:  | HTTP Status: 201 &quot;Created&quot; | ⍴Data: ⍬]
 </code></pre>
@@ -1502,7 +1502,7 @@ dXNlcmlkOnBhc3N3b3Jk
 [rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | 179723 bytes written to c:/tmp/test.pdf]
 </code></pre>
 <h2 id="examples-twitter-example">Twitter Example</h2>
-<p>The GitHub examples above used the default <code>AuthType</code> of <code>'token'</code>. <a href="https://developer.twitter.com/en/docs/twitter-api">Twitter's v2 REST API</a> uses OAuth 2.0's <code>'bearer'</code> authentication scheme.  In this example our super secret bearer token is stored in a variable named <code>bearerToken</code>. </p>
+<p>The GitHub examples above used the default <code>AuthType</code> of <code>'Token'</code>. <a href="https://developer.twitter.com/en/docs/twitter-api">Twitter's v2 REST API</a> uses OAuth 2.0's <code>'bearer'</code> authentication scheme.  In this example our super secret bearer token is stored in a variable named <code>bearerToken</code>. </p>
 <pre><code>      apiURL ← 'https://api.twitter.com/2/' ⍝ set the base URL for each request
       c ← HttpCommand.New ''
       c.(AuthType Auth) ← 'bearer' bearerToken
@@ -1744,12 +1744,12 @@ Alternatively, if you provide HTTP Basic credentials in the <code>URL</code> as 
 <table><tr>
 <td>Description</td>
 <td>This setting is used in conjunction with <a href="#request-settings-auth">Auth</a> and is a character vector indicating the authentication scheme. Three common authentication schemes are:
-<ul><li><code>'basic'</code> for HTTP Basic Authentication</li><li><code>'bearer'</code> for OAuth 2.0 token authentication</li><li><code>'token'</code> for other token-based authentication schemes such as GitHub's Personal Access Token scheme</li></ul>
+<ul><li><code>'Basic'</code> for HTTP Basic Authentication</li><li><code>'Bearer'</code> for OAuth 2.0 token authentication</li><li><code>'Token'</code> for other token-based authentication schemes such as GitHub's Personal Access Token scheme</li></ul>
 Other values may be used as necessary for your particular HTTP request.</td></tr>
 <tr><td>Default</td><td><code>''</code></td></tr>
-<tr><td>Example(s)</td><td><code>h.AuthType←'bearer'</code></td></tr>
+<tr><td>Example(s)</td><td><code>h.AuthType←'Bearer'</code></td></tr>
 <tr><td>Details</td><td>
-If <code>AuthType</code> is not set and <code>Auth</code> is set to either a character vector in the form <code>'userid:password'</code> or a 2-element vector of character vectors as in <code>('userid' 'password')</code> <code>HttpCommand</code> will infer the <code>AuthType</code> to be <code>'basic'</code>.</td></table>
+If <code>AuthType</code> is not set and <code>Auth</code> is set to either a character vector in the form <code>'userid:password'</code> or a 2-element vector of character vectors as in <code>('userid' 'password')</code> <code>HttpCommand</code> will infer the <code>AuthType</code> to be <code>'Basic'</code>.<br/><br/><b>Note: </b>While authentication schemes are supposed to be case insensitive, some servers are not so forgiving and require the authentication scheme to be appropriately cased.</table>
 
 <h3 id="request-settings-cookies"><code>Cookies</code></h3>
 <table><tr>
@@ -2109,12 +2109,12 @@ Alternatively, if you provide HTTP Basic credentials in <code>ProxyURL</code> as
 <table><tr>
 <td>Description</td>
 <td>This setting is used in conjunction with <a href="#proxy-settings-proxyauth">ProxyAuth</a> and is a character vector indicating the authentication scheme. Three common authentication schemes are:
-<ul><li><code>'basic'</code> for HTTP Basic Authentication</li><li><code>'bearer'</code> for OAuth 2.0 token authentication</li><li><code>'token'</code> for other token-based authentication schemes such as GitHub's Personal Access Token scheme</li></ul>
+<ul><li><code>'Basic'</code> for HTTP Basic Authentication</li><li><code>'Bearer'</code> for OAuth 2.0 token authentication</li><li><code>'Token'</code> for other token-based authentication schemes such as GitHub's Personal Access Token scheme</li></ul>
 Other values may be used as necessary for your particular HTTP request.</td></tr>
 <tr><td>Default</td><td><code>''</code></td></tr>
-<tr><td>Example(s)</td><td><code>h.ProxyAuthType←'basic'</code></td></tr>
+<tr><td>Example(s)</td><td><code>h.ProxyAuthType←'Basic'</code></td></tr>
 <tr><td>Details</td><td>
-If <code>ProxyAuthType</code> is not set and <code>ProxyAuth</code> is set to either a character vector in the form <code>'userid:password'</code> or a 2-element vector of character vectors as in <code>('userid' 'password')</code> <code>HttpCommand</code> will infer the <code>ProxyAuthType</code> to be <code>'basic'</code>.</td></table></section><h1 class='nav-section-title-end'>Ended: Settings</h1>
+If <code>ProxyAuthType</code> is not set and <code>ProxyAuth</code> is set to either a character vector in the form <code>'userid:password'</code> or a 2-element vector of character vectors as in <code>('userid' 'password')</code> <code>HttpCommand</code> will infer the <code>ProxyAuthType</code> to be <code>'Basic'</code>.</td></table></section><h1 class='nav-section-title-end'>Ended: Settings</h1>
                         <h2 class='nav-section-title' id='section-shared-methods'>
                             Shared Methods <a class='headerlink' href='#section-shared-methods' title='Permanent link'>↵</a>
                         </h2>

@@ -1165,12 +1165,12 @@ Alternatively, if you provide HTTP Basic credentials in the <code>URL</code> as 
 <table><tr>
 <td>Description</td>
 <td>This setting is used in conjunction with <a href="#auth">Auth</a> and is a character vector indicating the authentication scheme. Three common authentication schemes are:
-<ul><li><code>'basic'</code> for HTTP Basic Authentication</li><li><code>'bearer'</code> for OAuth 2.0 token authentication</li><li><code>'token'</code> for other token-based authentication schemes such as GitHub's Personal Access Token scheme</li></ul>
+<ul><li><code>'Basic'</code> for HTTP Basic Authentication</li><li><code>'Bearer'</code> for OAuth 2.0 token authentication</li><li><code>'Token'</code> for other token-based authentication schemes such as GitHub's Personal Access Token scheme</li></ul>
 Other values may be used as necessary for your particular HTTP request.</td></tr>
 <tr><td>Default</td><td><code>''</code></td></tr>
-<tr><td>Example(s)</td><td><code>h.AuthType←'bearer'</code></td></tr>
+<tr><td>Example(s)</td><td><code>h.AuthType←'Bearer'</code></td></tr>
 <tr><td>Details</td><td>
-If <code>AuthType</code> is not set and <code>Auth</code> is set to either a character vector in the form <code>'userid:password'</code> or a 2-element vector of character vectors as in <code>('userid' 'password')</code> <code>HttpCommand</code> will infer the <code>AuthType</code> to be <code>'basic'</code>.</td></table>
+If <code>AuthType</code> is not set and <code>Auth</code> is set to either a character vector in the form <code>'userid:password'</code> or a 2-element vector of character vectors as in <code>('userid' 'password')</code> <code>HttpCommand</code> will infer the <code>AuthType</code> to be <code>'Basic'</code>.<br/><br/><b>Note: </b>While authentication schemes are supposed to be case insensitive, some servers are not so forgiving and require the authentication scheme to be appropriately cased.</table>
 
 <h3 id="cookies"><code>Cookies</code></h3>
 <table><tr>
