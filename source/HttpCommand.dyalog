@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.11' '2022-12-15'
+      r←'HttpCommand' '5.1.12' '2022-12-19'
     ∇
 
     ∇ make
@@ -458,7 +458,7 @@
               :If (1<|≡Auth)∨':'∊Auth ⍝ (userid password) or userid:password
               :AndIf ('basic'≡lc AuthType)∨0∊⍴AuthType
                   Auth←Base64Encode ¯1↓∊(,⊆Auth),¨':'
-                  AuthType←'basic'
+                  AuthType←'Basic'
               :EndIf
               hdrs←'Authorization'(hdrs setHeader)deb AuthType,' ',⍕Auth
           :EndIf
@@ -474,7 +474,7 @@
                   :If (1<|≡ProxyAuth)∨':'∊ProxyAuth ⍝ (userid password) or userid:password
                   :AndIf ('basic'≡lc ProxyAuthType)∨0∊⍴ProxyAuthType
                       ProxyAuth←Base64Encode ¯1↓∊(,⊆ProxyAuth),¨':'
-                      ProxyAuthType←'basic'
+                      ProxyAuthType←'Basic'
                   :EndIf
                   proxy.headers←'Proxy-Authorization'(proxy.headers setHeader)deb ProxyAuthType,' ',⍕ProxyAuth
               :EndIf

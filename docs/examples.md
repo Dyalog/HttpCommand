@@ -34,8 +34,8 @@ The example above uses no authentication and therefore returns only publicly-ava
 Some web services allow you to use HTTP Basic authentication using userid and password credentials. **Any request that includes authentication data should be sent using HTTPS if possible**. `HttpCommand` allows you to specify these credentials in a few ways:
 
 * in the `URL` by including `userid:password@` before the domain name
-* by setting `AuthType` to `'basic'` and </br>`Auth` to `HttpCommand.Base64Encode 'userid:password'`
-* by including an "Authorization" header in the format</br>`'basic ',HttpCommand.Base64Encode 'userid:password'`
+* by setting `AuthType` to `'Basic'` and </br>`Auth` to `HttpCommand.Base64Encode 'userid:password'`
+* by including an "Authorization" header in the format</br>`'Basic ',HttpCommand.Base64Encode 'userid:password'`
 
 The following examples use the "basic-auth" endpoint of the website [http://httpbin.org](http://httpbin.org). httpbin.org provides many useful endpoints for testing HTTP requests. In this case, the userid and password are concatenated to the URL so the endpoint can validate the credentials.
 
@@ -65,7 +65,7 @@ Now, let's try setting the "Authorization" header...
 ```
       ⊢credentials ← HttpCommand.Base64Encode u,':',p
 dXNlcmlkOnBhc3N3b3Jk
-      hdrs ← 'Authorization' ('basic ',credentials)
+      hdrs ← 'Authorization' ('Basic ',credentials)
       url ← 'https://',endpoint
       HttpCommand.Get url '' hdrs
 [rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 49]
@@ -74,7 +74,7 @@ Finally, let's use the `AuthType` and `Auth` settings...
 ```
       h ← HttpCommand.New 'get' url ⍝ create an instance
       h.Auth ← credentials
-      h.AuthType ← 'basic'
+      h.AuthType ← 'Basic'
       h.Run
 [rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 49]
 ```
@@ -92,7 +92,7 @@ First, let's compare the difference between an authorized and a non-authorized r
       ⊢HttpCommand.Get 'https://api.github.com/orgs/Dyalog'
 [rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 1101]
 
-      hdr←'authorization' ('token ',token)
+      hdr←'authorization' ('Token ',token)
 
       ⊢HttpCommand.Get 'https://api.github.com/orgs/Dyalog' '' hdr
 [rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 1804]
@@ -121,7 +121,7 @@ For this example, we'll use a namespace, `args`, to specify all the settings for
 ```
 Oops!  We didn't use our token for authentication and so the request was rejected as unauthorized. We also specify the authentication scheme as `'token'`, which is what the GitHub API uses.
 ```
-      args.(AuthType Auth) ← 'token' token
+      args.(AuthType Auth) ← 'Token' token
       ⊢r ← HttpCommand.GetJSON args
 [rc: 0 | msg:  | HTTP Status: 201 "Created" | ⍴Data: ⍬]
 ```
@@ -144,7 +144,7 @@ If you want to download a file you can simply use `HttpCommand.Get` with the URL
 [rc: 0 | msg:  | HTTP Status: 200 "OK" | 179723 bytes written to c:/tmp/test.pdf]
 ```
 ## Twitter Example
-The GitHub examples above used the default `AuthType` of `'token'`. [Twitter's v2 REST API](https://developer.twitter.com/en/docs/twitter-api) uses OAuth 2.0's `'bearer'` authentication scheme.  In this example our super secret bearer token is stored in a variable named `bearerToken`. 
+The GitHub examples above used the default `AuthType` of `'Token'`. [Twitter's v2 REST API](https://developer.twitter.com/en/docs/twitter-api) uses OAuth 2.0's `'bearer'` authentication scheme.  In this example our super secret bearer token is stored in a variable named `bearerToken`. 
 ```
       apiURL ← 'https://api.twitter.com/2/' ⍝ set the base URL for each request
       c ← HttpCommand.New ''
