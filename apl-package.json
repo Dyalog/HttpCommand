@@ -4,7 +4,6 @@
   description: "Utility to execute HTTP requests",
   documentation: "https://dyalog.github.io/HttpCommand",
   group: "dyalog",
-  info_url: "https://github.com/Dyalog/HttpCommand",
   io: 1,
   lx: "",
   maintainer: "",
@@ -14,7 +13,8 @@
   os_lin: 1,
   os_mac: 1,
   os_win: 1,
+  project_url: "https://github.com/Dyalog/HttpCommand",
   source: "source/HttpCommand.dyalog",
   tags: "mac-os,windows,linux,http,dyalog,pi",
-  version: "5.1.12",
+  version: "5.1.13",
 }

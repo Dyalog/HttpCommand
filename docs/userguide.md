@@ -53,3 +53,6 @@ If you expect to make several `HttpCommand` calls, you may want to create an ins
 This may be fine for interactively tinkering in the APL session. But when running `HttpCommand` under program control you should **explicitly specify the content type** for the payload by either setting `ContentType` or adding a `content-type` header. 
 
 The exception to this is when using `GetJSON` which is specifically intended to interact with JSON-based web services and will use a default content type of `application/json`. 
+
+## Compressing Response Payload ##
+`HttpCommand` can accept and process response payloads that are compressed using either the gzip or deflate compression schemes. To accomplish this, you need to set the `accept-encoding` header to `'gzip, deflate'`.

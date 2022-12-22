@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.12' '2022-12-19'
+      r←'HttpCommand' '5.1.13' '2022-12-22'
     ∇
 
     ∇ make
@@ -786,7 +786,8 @@
                       :Else ⋄ r.msg←'Unhandled content-encoding: ',z
                       :EndSelect
      
-                      :If 0<≢'charset\s*=\s*utf-8'⎕S'&'⍠1⊢lc r.GetHeader'content-type'
+                      :If 0<≢'charset\s*=\s*utf-8'⎕S'&'⍠1⊢ct←lc r.GetHeader'content-type'
+                      :OrIf (∨/'application/json'⍷ct)∧~∨/'charset'⍷ct
                           data←'UTF-8'⎕UCS ⎕UCS data ⍝ Convert from UTF-8
                           data←(65279=⎕UCS⊃data)↓data ⍝ drop off BOM, if any
                       :EndIf
