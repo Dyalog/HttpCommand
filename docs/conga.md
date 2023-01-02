@@ -36,3 +36,11 @@ If you need to use a version of Conga other than the one in the Dyalog installat
 
 * Put the shared libraries and the `conga` workspace in a folder and set `CongaPath` to point to that folder.
 * Put the `Conga` namespace in your workspace (pointing `CongaRef` to it if necesssary) and the shared libraries in a folder set `CongaPath` to point to that folder.
+
+### Timeout and WaitTime
+The operational setting [Timeout](operational-settings.md#timeout) should not be confused with the Conga setting [WaitTime](conga-settings.md#waittime) . Internally, after sending the request to the host, `HttpCommand` sits in a Conga Wait loop, listening for a response. `WaitTime` is the number of milliseconds that Conga will wait before timing out. When this happens, `HttpCommand` checks if the request itself has timed out based on the setting of `Timeout`. If it has, then `HttpCommand` will stop with a return code of 100 indicating the timeout. If the request has not timed out, then `HttpCommand` will perform another 
+iteration of the Conga Wait loop.   
+
+It is generally unnecessary to adjust the `WaitTime` setting. If your request is timing out, increase the `Timeout` setting.
+
+Note that `Timeout` is in seconds and `WaitTime` is in milliseconds. 

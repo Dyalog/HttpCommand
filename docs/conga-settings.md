@@ -22,7 +22,7 @@ In general, you will not need to set any of the Conga-related settings since the
 <tr><td>Example(s)</td>
 <td><code>h.WaitTime←10000 ⍝ wait 10 seconds</code></td></tr>
 <tr><td>Details</td>
-<td>Applies only to the time Conga will wait for a response, not how long <code>HttpCommand</code> will wait which is controlled by the <a href="operational-settings.md#timeout"><code>Timeout</code></a> setting. In general, this setting should be set to an acceptable amount of time for the host to respond to the HTTP request.</td></tr></table>
+<td>This setting applies only to the time Conga will wait internally for a response. There is generally no reason to modify this setting; if your request is timing out, you should set <a href="../../operational-settings#timeout"><code>Timeout</code></a> setting appropriately.  See <a href="../../conga#timeout-and-waittime">Timeout and WaitTime</a> for more information on the relationship between the <code>Timeout</code> and <code>WaitTime</code> settings.</td></tr></table>
 
 ### `Cert`
 <table><tr>

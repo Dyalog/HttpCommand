@@ -13,8 +13,8 @@ nav:
     - Reference:
       - 'Settings':
         - 'Request-related Settings': 'request-settings.md' # complete
-        - 'Conga-related Settings': 'conga-settings.md'     # complete
         - 'Operational Settings': 'operational-settings.md' # complete
+        - 'Conga-related Settings': 'conga-settings.md'     # complete
         - 'Proxy-related Settings': 'proxy-settings.md'     # complete
       - 'Shared Methods':
         - 'Shortcut Methods': 'shortcut-methods.md' # complete

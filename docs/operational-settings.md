@@ -96,13 +96,14 @@ Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON
 ### `Timeout`
 <table><tr>
 <td>Description</td>
-<td>The number of seconds that <code>HttpCommand</code> will count down to wait for a response. If <code>Timeout</code> is positive,  <code>HttpCommand</code> will wait to receive the complete response from the host. If <code>Timeout</code> is negative, the countdown will be reset to <code>|Timeout</code> if Conga has received any data.</td></tr>
+<td>The number of seconds that <code>HttpCommand</code> will count down to wait for a response from the host. If <code>Timeout</code> is positive, <code>HttpCommand</code> will exit with a return code of 100 (Timeout) if it has not received the complete response from the host before the countdown reaches 0. If <code>Timeout</code> is negative, <code>HttpCommand</code> will check if Conga has received any data and if so, will reset the countdown to <code>|Timeout</code>.</td></tr>
 <tr><td>Default</td>
 <td><code>10</code></td></tr>
 <tr><td>Example(s)</td>
 <td>h.Timeout←30</td></tr>
 <tr><td>Details</td>
-<td><code>Timeout</code> should be set to a time value larger than <a href="./conga-settings.md#waittime"><code>WaitTime</code></a>.  Note that <code>Timeout</code> is in seconds and <code>WaitTime</code> is in milliseconds.</td></tr></table>
+<td>This is the setting to adjust (and not <a href="../../conga-settings#waittime"><code>WaitTime</code></a>) if your request is timing out.  See <a href="../../conga#timeout-and-waittime">Timeout and WaitTime</a> for more information on the relationship between the <code>Timeout</code> and <code>WaitTime</code> settings.
+</td></tr></table>
 
 ### `TranslateData`
 <table><tr>
