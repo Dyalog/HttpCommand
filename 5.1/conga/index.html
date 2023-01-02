@@ -390,8 +390,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../conga-settings/" class="md-nav__link">
-        Conga-related Settings
+      <a href="../operational-settings/" class="md-nav__link">
+        Operational Settings
       </a>
     </li>
   
@@ -404,8 +404,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../operational-settings/" class="md-nav__link">
-        Operational Settings
+      <a href="../conga-settings/" class="md-nav__link">
+        Conga-related Settings
       </a>
     </li>
   
@@ -707,6 +707,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#timeout-and-waittime" class="md-nav__link">
+    Timeout and WaitTime
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -890,6 +897,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#timeout-and-waittime" class="md-nav__link">
+    Timeout and WaitTime
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -956,6 +970,11 @@ This can be useful when integrating <code>HttpCommand</code> into an application
 <li>Put the shared libraries and the <code>conga</code> workspace in a folder and set <code>CongaPath</code> to point to that folder.</li>
 <li>Put the <code>Conga</code> namespace in your workspace (pointing <code>CongaRef</code> to it if necesssary) and the shared libraries in a folder set <code>CongaPath</code> to point to that folder.</li>
 </ul>
+<h3 id="timeout-and-waittime">Timeout and WaitTime</h3>
+<p>The operational setting <a href="../operational-settings/#timeout">Timeout</a> should not be confused with the Conga setting <a href="../conga-settings/#waittime">WaitTime</a> . Internally, after sending the request to the host, <code>HttpCommand</code> sits in a Conga Wait loop, listening for a response. <code>WaitTime</code> is the number of milliseconds that Conga will wait before timing out. When this happens, <code>HttpCommand</code> checks if the request itself has timed out based on the setting of <code>Timeout</code>. If it has, then <code>HttpCommand</code> will stop with a return code of 100 indicating the timeout. If the request has not timed out, then <code>HttpCommand</code> will perform another 
+iteration of the Conga Wait loop.   </p>
+<p>It is generally unnecessary to adjust the <code>WaitTime</code> setting. If your request is timing out, increase the <code>Timeout</code> setting.</p>
+<p>Note that <code>Timeout</code> is in seconds and <code>WaitTime</code> is in milliseconds. </p>
 
               
             </article>

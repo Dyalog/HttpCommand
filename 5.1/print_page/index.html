@@ -396,8 +396,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../conga-settings/" class="md-nav__link">
-        Conga-related Settings
+      <a href="../operational-settings/" class="md-nav__link">
+        Operational Settings
       </a>
     </li>
   
@@ -410,8 +410,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../operational-settings/" class="md-nav__link">
-        Operational Settings
+      <a href="../conga-settings/" class="md-nav__link">
+        Conga-related Settings
       </a>
     </li>
   
@@ -1777,7 +1777,160 @@ If <code>AuthType</code> is not set and <code>Auth</code> is set to either a cha
 <li>A vector of 2-element vectors, <code>HttpCommand</code> will treat each sub-vector as a name/value pair.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>(('name' 'dyalog') ('age' 39))</code></li>
 <li>A 2-column matrix where each row represents a name/value pair.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>2 2⍴'name' 'dyalog' 'age' 39</code></li>
 <li>A reference to a namespace, <code>HttpCommand</code> will treat the variables and their values in the namespace as name/value pairs.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39</code><br>Note that the names will be alphabetical in the formatted output.</li>
-</ul></section><section class="print-page" id="conga-settings"><p>In general, you will not need to set any of the Conga-related settings since the <code>HttpCommand</code>'s defaults will suffice for almost all requests. For more information on Conga, please refer to the <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf" target="_blank">Conga User Guide</a>.</p>
+</ul></section><section class="print-page" id="operational-settings"><p>Operational settings affect how <code>HttpCommand</code> behaves.</p>
+<h2 id="operational-settings-instance-settings">Instance settings</h2>
+<h3 id="operational-settings-keepalive"><code>KeepAlive</code></h3>
+<table><tr>
+<td>Description</td>
+<td>A Boolean which indicates whether <code>HttpCommand</code> close the client connection after receiving the response from the host.<ul><li><code>1</code> = keep connection alive</l1><li><code>0</code> = close connection</li></ul></td></tr>
+<tr><td>Default</td>
+<td><code>1</code></td></tr>
+<tr><td>Example(s)</td>
+<td><code>h.KeepAlive←0 ⍝ close the connection</code></td></tr>
+<tr><td>Details</td>
+<td><code>KeepAlive</code> is only applicable when you persist an instance of <code>HttpCommand</code> and has no effect when you use the shortcut methods <code>Get</code>, <code>GetJSON</code>, or <code>Do</code> as these methods destroy the <code>HttpCommand</code> instance they create when they finish execution. HTTP version 1.1 specifies that connections should be kept alive to improve throughput. Nevertheless, a host may close the connection after sending the response or after a period of inactivity from the client (<code>HttpCommand</code>). If the connection is closed, <code>HttpCommand</code> will open a new connection on a subsequent request.</td></tr></table>
+
+<h3 id="operational-settings-maxpayloadsize"><code>MaxPayloadSize</code></h3>
+<table><tr>
+<td>Description</td>
+<td>The maximum response payload size that <code>HttpCommand</code> will accept.<ul><li><code>¯1</code> = no maximum</li><li><code>≥0</code> = maximum size</li></ul></td></tr>
+<tr><td>Default</td>
+<td><code>¯1</code></td></tr>
+<tr><td>Example(s)</td>
+<td><code>h.MaxPayloadSize←100000 ⍝ set a 100,000 byte limit</code></td></tr>
+<tr><td>Details</td>
+<td>If <code>MaxPayloadSize</code> is set to a value <code>≥0</code> and the response contains a payload, <code>HttpCommand</code> checks the payload size as follows:
+<ul><li>If the response contains a <code>content-length</code> header, its value is compared to <code>MaxPayloadSize</code>. If exceeded, <code>HttpCommand</code> will return with a return code of <code>¯1</code> and no payload.</li><li>Otherwise, the response payload is sent in chunks and <code>HttpCommand</code> will accumulate each chunk and compare the total payload size to <code>MaxPayloadSize</code>. If exceeded, <code>HttpCommand</code> will return with a return code of <code>¯1</code> and whatever payload has been accumulated.</li></ul>In either case, if <code>MaxPayloadSize</code> is exceeded, the client connection will be closed.</td></tr>
+</table>
+
+<h3 id="operational-settings-maxredirections"><code>MaxRedirections</code></h3>
+<table><tr>
+<td>Description</td>
+<td>The maximum number of redirections that <code>HttpCommand</code> will follow.<br/>
+A setting of <code>¯1</code> means there is no limit to the number of redirections followed; exposing the possibility of an infinite redirection loop and eventually a <code>WS FULL</code> error. A setting of <code>0</code> means no redirections will be followed.</tr>
+<tr><td>Default</td>
+<td><code>10</code></td></tr>
+<tr><td>Example(s)</td>
+<td><code>h.MaxRedirections←0 ⍝ do not follow any redirections</code>
+</td></tr>
+<tr><td>Details</td>
+<td>If the response HTTP status indicates a redirection (3XX) to another URL, <code>HttpCommand</code> will retain information about the current request in the <a href="#result-response-redirections"><code>Redirections</code></a> element of the result namespace and issue a new request to the new URL. <code>HttpCommand</code> will do this up to <code>MaxRedirections</code> times.<br/><br/> 
+</td></tr></table>
+
+<h3 id="operational-settings-outfile"><code>Outfile</code></h3>
+<table><tr>
+<td>Description</td>
+<td><code>Outfile</code> has up to 2 elements:
+<ul><li><code>[1] </code>The name of the file or folder to which <code>HttpCommand</code> will write the response payload.  
+If a folder is specified, the file name will be the same as the resource specified in <code>URL</code>. </li>
+<li><code>[2] </code>an optional flag indicating:
+<ul><li><code>0 </code>do not write to an existing, non-empty file (the default)</li>
+<li><code>1 </code>replace the contents, if any, if the file exists</li>
+<li><code>2 </code>append to the file, if it exists</li></ul></li></ul></td></tr>
+<tr><td>Default</td>
+<td><code>'' 0</code></td></tr>
+<tr><td>Example(s)</td>
+<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c ← HttpCommand.New '' </code><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.URL←'https://www.dyalog.com/uploads/files/student_competition/2022_problems_phase2.pdf'</code><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←'/tmp/'</code><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
+<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | 399766 bytes written to c:/tmp/2022_problems_phase2.pdf]</code><br/><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←'/tmp/problems.pdf' 1</code><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
+<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | 399766 bytes written to c:/tmp/problems.pdf]</code><br/>
+</td></tr>
+<tr><td>Details</td>
+<td>Output to file is subject to <code>MaxPayloadSize</code>.</td></tr></table>
+
+<h3 id="operational-settings-requestonly"><code>RequestOnly</code></h3>
+<table><tr>
+<td>Description</td>
+<td>If set to 1, <code>HttpCommand</code> will return the character vector HTTP request that would be sent, instead of actually sending the request.</td></tr>
+<tr><td>Default</td>
+<td><code>0</code></td></tr>
+<tr><td>Example(s)</td>
+<td><code>h.RequestOnly←1</code></td></tr>
+<tr><td>Details</td>
+<td>This setting is useful for debugging a request that isn't behaving as you expect.<br/><br/>
+Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON</code>, <code>Do</code>, or <code>New</code> to <code>1</code> will have the same effect as setting <code>RequestOnly</code> as will the instance method <code>Show</code>.</td></tr></table>
+
+<h3 id="operational-settings-suppressheaders"><code>SuppressHeaders</code></h3>
+<table><tr>
+<td>Description</td>
+<td><code>SuppressHeaders</code> is a Boolean setting indicating whether <code>HttpCommand</code> should suppress the generation of its default HTTP headers for the request.<ul><li><code>1</code> - suppress the default headers</li><li><code>0</code> - generate the default headers</td></tr>
+<tr><td>Default</td>
+<td><code>0</code> which means <code>HttpCommand</code> will generate its default headers</td></tr>
+<tr><td>Example(s)</td>
+<td><code>h.SuppressHeaders←1</code></td></tr>
+<tr><td>Details</td>
+<td><code>HttpCommand</code> will only generate headers that you have not specified yourself. <code>HttpCommand</code> generates the following default headers:<ul><li><code>Host</code> - the host name in the URL. This header <b>must</b> be supplied.</li>
+<li><code>User-Agent</code> - <code>Dyalog-HttpCommand/&lt;version&gt;</code></li>
+<li><code>Accept</code> - <code>*/*</code>. By default, <code>HttpCommand</code> will accept any response type</li>
+<li><code>Authorization</code> - set only if you provide HTTP Basic authentication credentials, or set <code>Auth</code> and  <code>AuthType</code.</li>
+<li><code>Cookie</code> - any saved cookies applicable to the request.
+</td></tr></table>
+
+<h3 id="operational-settings-timeout"><code>Timeout</code></h3>
+<table><tr>
+<td>Description</td>
+<td>The number of seconds that <code>HttpCommand</code> will count down to wait for a response from the host. If <code>Timeout</code> is positive, <code>HttpCommand</code> will exit with a return code of 100 (Timeout) if it has not received the complete response from the host before the countdown reaches 0. If <code>Timeout</code> is negative, <code>HttpCommand</code> will check if Conga has received any data and if so, will reset the countdown to <code>|Timeout</code>.</td></tr>
+<tr><td>Default</td>
+<td><code>10</code></td></tr>
+<tr><td>Example(s)</td>
+<td>h.Timeout←30</td></tr>
+<tr><td>Details</td>
+<td>This is the setting to adjust (and not <a href="#..-conga-settings-waittime"><code>WaitTime</code></a>) if your request is timing out.  See <a href="#..-conga-timeout-and-waittime">Timeout and WaitTime</a> for more information on the relationship between the <code>Timeout</code> and <code>WaitTime</code> settings.
+</td></tr></table>
+
+<h3 id="operational-settings-translatedata"><code>TranslateData</code></h3>
+<table><tr>
+<td>Description</td>
+<td>Set this to <code>1</code> to have <code>HttpCommand</code> attempt to convert the response payload for the following content types.
+<ul>
+<li><code>'application/json'</code> - <code>HttpCommand</code> will use <code>⎕JSON</code></li>
+<li><code>'text/xml'</code> or <code>'application/xml'<code> - <code>HttpCommand</code> will use <code>⎕XML</code></li>
+</ul>
+</td></tr>
+<tr><td>Default</td>
+<td><code>0</code></td></tr>
+<tr><td>Example(s)</td>
+<td><code>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'<br/><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.TranslateData←0<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50↑(⎕←c.Run).Data<br/>
+[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 1306]
+{"login":"Dyalog","id":4189495,"node_id":"MDEyOk9y<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.TranslateData←1<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(⎕←c.Run).Data<br/>
+[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: ⍬]<br/>
+#.[JSON object]
+</code>
+</td></tr></table>
+
+<h2 id="operational-settings-shared-settings">Shared Settings</h2>
+<p>Shared settings are set in the <code>HttpCommand</code> class and are used by all instances of <code>HttpCommand</code>.</p>
+<h3 id="operational-settings-debug"><code>Debug</code></h3>
+<table><tr>
+<td>Description</td>
+<td>Set <code>Debug</code> to 1 to turn off <code>HttpCommand</code>'s error trapping. In this case if an error occurs, execution of <code>HttpCommand</code> will be suspended.  Set <code>Debug</code> to 2 to have <code>HttpCommand</code> stop just before sending the request to the host so that you can examine the request and <code>HttpCommand</code>'s current state.  Both of these settings can be useful for debugging. </td></tr>
+<tr><td>Default</td>
+<td><code>0</code></td></tr>
+<tr><td>Example(s)</td>
+<td>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'</code><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←0</code><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Debug←1</code><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
+<code>DOMAIN ERROR: Invalid file or directory name</code><br/>
+<code>HttpCmd[130] outFile←∊1 ⎕NPARTS outFile</code><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∧</code><br/>
+<br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Debug←0</code><br/>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
+<code>[rc: ¯1 | msg: DOMAIN ERROR while trying to initialize output file '0' | HTTP Status:  "" | ⍴Data: 0]</code>
+</td></tr>
+</table></section><section class="print-page" id="conga-settings"><p>In general, you will not need to set any of the Conga-related settings since the <code>HttpCommand</code>'s defaults will suffice for almost all requests. For more information on Conga, please refer to the <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf" target="_blank">Conga User Guide</a>.</p>
 <h2 id="conga-settings-instance-settings">Instance Settings</h2>
 <h3 id="conga-settings-buffersize"><code>BufferSize</code></h3>
 <table><tr>
@@ -1799,7 +1952,7 @@ If <code>AuthType</code> is not set and <code>Auth</code> is set to either a cha
 <tr><td>Example(s)</td>
 <td><code>h.WaitTime←10000 ⍝ wait 10 seconds</code></td></tr>
 <tr><td>Details</td>
-<td>Applies only to the time Conga will wait for a response, not how long <code>HttpCommand</code> will wait which is controlled by the <a href="#conga-settings-operational-settings.md-timeout"><code>Timeout</code></a> setting. In general, this setting should be set to an acceptable amount of time for the host to respond to the HTTP request.</td></tr></table>
+<td>This setting applies only to the time Conga will wait internally for a response. There is generally no reason to modify this setting; if your request is timing out, you should set <a href="#..-operational-settings-timeout"><code>Timeout</code></a> setting appropriately.  See <a href="#..-conga-timeout-and-waittime">Timeout and WaitTime</a> for more information on the relationship between the <code>Timeout</code> and <code>WaitTime</code> settings.</td></tr></table>
 
 <h3 id="conga-settings-cert"><code>Cert</code></h3>
 <table><tr>
@@ -1916,159 +2069,7 @@ This setting is intended to be used when Conga is not located in the Dyalog inst
 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.Get 'dyalog.com' ⍝ run a request</code><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.CongaVersion</code><br/>
 <code>3.4</code></td></tr>
 <tr><td>Details</td>
-<td><code>CongaVersion</code> should be treated as a read-only setting. It provides information which may be helpful for debugging and informational purposes.</td></tr></table></section><section class="print-page" id="operational-settings"><p>Operational settings affect how <code>HttpCommand</code> behaves.</p>
-<h2 id="operational-settings-instance-settings">Instance settings</h2>
-<h3 id="operational-settings-keepalive"><code>KeepAlive</code></h3>
-<table><tr>
-<td>Description</td>
-<td>A Boolean which indicates whether <code>HttpCommand</code> close the client connection after receiving the response from the host.<ul><li><code>1</code> = keep connection alive</l1><li><code>0</code> = close connection</li></ul></td></tr>
-<tr><td>Default</td>
-<td><code>1</code></td></tr>
-<tr><td>Example(s)</td>
-<td><code>h.KeepAlive←0 ⍝ close the connection</code></td></tr>
-<tr><td>Details</td>
-<td><code>KeepAlive</code> is only applicable when you persist an instance of <code>HttpCommand</code> and has no effect when you use the shortcut methods <code>Get</code>, <code>GetJSON</code>, or <code>Do</code> as these methods destroy the <code>HttpCommand</code> instance they create when they finish execution. HTTP version 1.1 specifies that connections should be kept alive to improve throughput. Nevertheless, a host may close the connection after sending the response or after a period of inactivity from the client (<code>HttpCommand</code>). If the connection is closed, <code>HttpCommand</code> will open a new connection on a subsequent request.</td></tr></table>
-
-<h3 id="operational-settings-maxpayloadsize"><code>MaxPayloadSize</code></h3>
-<table><tr>
-<td>Description</td>
-<td>The maximum response payload size that <code>HttpCommand</code> will accept.<ul><li><code>¯1</code> = no maximum</li><li><code>≥0</code> = maximum size</li></ul></td></tr>
-<tr><td>Default</td>
-<td><code>¯1</code></td></tr>
-<tr><td>Example(s)</td>
-<td><code>h.MaxPayloadSize←100000 ⍝ set a 100,000 byte limit</code></td></tr>
-<tr><td>Details</td>
-<td>If <code>MaxPayloadSize</code> is set to a value <code>≥0</code> and the response contains a payload, <code>HttpCommand</code> checks the payload size as follows:
-<ul><li>If the response contains a <code>content-length</code> header, its value is compared to <code>MaxPayloadSize</code>. If exceeded, <code>HttpCommand</code> will return with a return code of <code>¯1</code> and no payload.</li><li>Otherwise, the response payload is sent in chunks and <code>HttpCommand</code> will accumulate each chunk and compare the total payload size to <code>MaxPayloadSize</code>. If exceeded, <code>HttpCommand</code> will return with a return code of <code>¯1</code> and whatever payload has been accumulated.</li></ul>In either case, if <code>MaxPayloadSize</code> is exceeded, the client connection will be closed.</td></tr>
-</table>
-
-<h3 id="operational-settings-maxredirections"><code>MaxRedirections</code></h3>
-<table><tr>
-<td>Description</td>
-<td>The maximum number of redirections that <code>HttpCommand</code> will follow.<br/>
-A setting of <code>¯1</code> means there is no limit to the number of redirections followed; exposing the possibility of an infinite redirection loop and eventually a <code>WS FULL</code> error. A setting of <code>0</code> means no redirections will be followed.</tr>
-<tr><td>Default</td>
-<td><code>10</code></td></tr>
-<tr><td>Example(s)</td>
-<td><code>h.MaxRedirections←0 ⍝ do not follow any redirections</code>
-</td></tr>
-<tr><td>Details</td>
-<td>If the response HTTP status indicates a redirection (3XX) to another URL, <code>HttpCommand</code> will retain information about the current request in the <a href="#result-response-redirections"><code>Redirections</code></a> element of the result namespace and issue a new request to the new URL. <code>HttpCommand</code> will do this up to <code>MaxRedirections</code> times.<br/><br/> 
-</td></tr></table>
-
-<h3 id="operational-settings-outfile"><code>Outfile</code></h3>
-<table><tr>
-<td>Description</td>
-<td><code>Outfile</code> has up to 2 elements:
-<ul><li><code>[1] </code>The name of the file or folder to which <code>HttpCommand</code> will write the response payload.  
-If a folder is specified, the file name will be the same as the resource specified in <code>URL</code>. </li>
-<li><code>[2] </code>an optional flag indicating:
-<ul><li><code>0 </code>do not write to an existing, non-empty file (the default)</li>
-<li><code>1 </code>replace the contents, if any, if the file exists</li>
-<li><code>2 </code>append to the file, if it exists</li></ul></li></ul></td></tr>
-<tr><td>Default</td>
-<td><code>'' 0</code></td></tr>
-<tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c ← HttpCommand.New '' </code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.URL←'https://www.dyalog.com/uploads/files/student_competition/2022_problems_phase2.pdf'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←'/tmp/'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
-<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | 399766 bytes written to c:/tmp/2022_problems_phase2.pdf]</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←'/tmp/problems.pdf' 1</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
-<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | 399766 bytes written to c:/tmp/problems.pdf]</code><br/>
-</td></tr>
-<tr><td>Details</td>
-<td>Output to file is subject to <code>MaxPayloadSize</code>.</td></tr></table>
-
-<h3 id="operational-settings-requestonly"><code>RequestOnly</code></h3>
-<table><tr>
-<td>Description</td>
-<td>If set to 1, <code>HttpCommand</code> will return the character vector HTTP request that would be sent, instead of actually sending the request.</td></tr>
-<tr><td>Default</td>
-<td><code>0</code></td></tr>
-<tr><td>Example(s)</td>
-<td><code>h.RequestOnly←1</code></td></tr>
-<tr><td>Details</td>
-<td>This setting is useful for debugging a request that isn't behaving as you expect.<br/><br/>
-Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON</code>, <code>Do</code>, or <code>New</code> to <code>1</code> will have the same effect as setting <code>RequestOnly</code> as will the instance method <code>Show</code>.</td></tr></table>
-
-<h3 id="operational-settings-suppressheaders"><code>SuppressHeaders</code></h3>
-<table><tr>
-<td>Description</td>
-<td><code>SuppressHeaders</code> is a Boolean setting indicating whether <code>HttpCommand</code> should suppress the generation of its default HTTP headers for the request.<ul><li><code>1</code> - suppress the default headers</li><li><code>0</code> - generate the default headers</td></tr>
-<tr><td>Default</td>
-<td><code>0</code> which means <code>HttpCommand</code> will generate its default headers</td></tr>
-<tr><td>Example(s)</td>
-<td><code>h.SuppressHeaders←1</code></td></tr>
-<tr><td>Details</td>
-<td><code>HttpCommand</code> will only generate headers that you have not specified yourself. <code>HttpCommand</code> generates the following default headers:<ul><li><code>Host</code> - the host name in the URL. This header <b>must</b> be supplied.</li>
-<li><code>User-Agent</code> - <code>Dyalog-HttpCommand/&lt;version&gt;</code></li>
-<li><code>Accept</code> - <code>*/*</code>. By default, <code>HttpCommand</code> will accept any response type</li>
-<li><code>Authorization</code> - set only if you provide HTTP Basic authentication credentials, or set <code>Auth</code> and  <code>AuthType</code.</li>
-<li><code>Cookie</code> - any saved cookies applicable to the request.
-</td></tr></table>
-
-<h3 id="operational-settings-timeout"><code>Timeout</code></h3>
-<table><tr>
-<td>Description</td>
-<td>The number of seconds that <code>HttpCommand</code> will count down to wait for a response. If <code>Timeout</code> is positive,  <code>HttpCommand</code> will wait to receive the complete response from the host. If <code>Timeout</code> is negative, the countdown will be reset to <code>|Timeout</code> if Conga has received any data.</td></tr>
-<tr><td>Default</td>
-<td><code>10</code></td></tr>
-<tr><td>Example(s)</td>
-<td>h.Timeout←30</td></tr>
-<tr><td>Details</td>
-<td><code>Timeout</code> should be set to a time value larger than <a href="#operational-settings-conga-settings.md-waittime"><code>WaitTime</code></a>.  Note that <code>Timeout</code> is in seconds and <code>WaitTime</code> is in milliseconds.</td></tr></table>
-
-<h3 id="operational-settings-translatedata"><code>TranslateData</code></h3>
-<table><tr>
-<td>Description</td>
-<td>Set this to <code>1</code> to have <code>HttpCommand</code> attempt to convert the response payload for the following content types.
-<ul>
-<li><code>'application/json'</code> - <code>HttpCommand</code> will use <code>⎕JSON</code></li>
-<li><code>'text/xml'</code> or <code>'application/xml'<code> - <code>HttpCommand</code> will use <code>⎕XML</code></li>
-</ul>
-</td></tr>
-<tr><td>Default</td>
-<td><code>0</code></td></tr>
-<tr><td>Example(s)</td>
-<td><code>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'<br/><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.TranslateData←0<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50↑(⎕←c.Run).Data<br/>
-[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 1306]
-{"login":"Dyalog","id":4189495,"node_id":"MDEyOk9y<br/>
-<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.TranslateData←1<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(⎕←c.Run).Data<br/>
-[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: ⍬]<br/>
-#.[JSON object]
-</code>
-</td></tr></table>
-
-<h2 id="operational-settings-shared-settings">Shared Settings</h2>
-<p>Shared settings are set in the <code>HttpCommand</code> class and are used by all instances of <code>HttpCommand</code>.</p>
-<h3 id="operational-settings-debug"><code>Debug</code></h3>
-<table><tr>
-<td>Description</td>
-<td>Set <code>Debug</code> to 1 to turn off <code>HttpCommand</code>'s error trapping. In this case if an error occurs, execution of <code>HttpCommand</code> will be suspended.  Set <code>Debug</code> to 2 to have <code>HttpCommand</code> stop just before sending the request to the host so that you can examine the request and <code>HttpCommand</code>'s current state.  Both of these settings can be useful for debugging. </td></tr>
-<tr><td>Default</td>
-<td><code>0</code></td></tr>
-<tr><td>Example(s)</td>
-<td>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←0</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Debug←1</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
-<code>DOMAIN ERROR: Invalid file or directory name</code><br/>
-<code>HttpCmd[130] outFile←∊1 ⎕NPARTS outFile</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∧</code><br/>
-<br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Debug←0</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
-<code>[rc: ¯1 | msg: DOMAIN ERROR while trying to initialize output file '0' | HTTP Status:  "" | ⍴Data: 0]</code>
-</td></tr>
-</table></section><section class="print-page" id="proxy-settings"><p>Proxy-related settings are settings you use to specify attributes in order to use a proxy server for your request. See <a href="#proxy">Using a Proxy Server</a> for more information on how to use a proxy server with <code>HttpCommand</code>.</p>
+<td><code>CongaVersion</code> should be treated as a read-only setting. It provides information which may be helpful for debugging and informational purposes.</td></tr></table></section><section class="print-page" id="proxy-settings"><p>Proxy-related settings are settings you use to specify attributes in order to use a proxy server for your request. See <a href="#proxy">Using a Proxy Server</a> for more information on how to use a proxy server with <code>HttpCommand</code>.</p>
 <h2 id="proxy-settings-settings">Settings</h2>
 <h3 id="proxy-settings-proxyurl"><code>ProxyURL</code></h3>
 <table><tr>
@@ -3209,7 +3210,12 @@ This can be useful when integrating <code>HttpCommand</code> into an application
 <ul>
 <li>Put the shared libraries and the <code>conga</code> workspace in a folder and set <code>CongaPath</code> to point to that folder.</li>
 <li>Put the <code>Conga</code> namespace in your workspace (pointing <code>CongaRef</code> to it if necesssary) and the shared libraries in a folder set <code>CongaPath</code> to point to that folder.</li>
-</ul></section><section class="print-page" id="secure"><h3 id="secure-https">HTTPS</h3>
+</ul>
+<h3 id="conga-timeout-and-waittime">Timeout and WaitTime</h3>
+<p>The operational setting <a href="#operational-settings-timeout">Timeout</a> should not be confused with the Conga setting <a href="#conga-settings-waittime">WaitTime</a> . Internally, after sending the request to the host, <code>HttpCommand</code> sits in a Conga Wait loop, listening for a response. <code>WaitTime</code> is the number of milliseconds that Conga will wait before timing out. When this happens, <code>HttpCommand</code> checks if the request itself has timed out based on the setting of <code>Timeout</code>. If it has, then <code>HttpCommand</code> will stop with a return code of 100 indicating the timeout. If the request has not timed out, then <code>HttpCommand</code> will perform another 
+iteration of the Conga Wait loop.   </p>
+<p>It is generally unnecessary to adjust the <code>WaitTime</code> setting. If your request is timing out, increase the <code>Timeout</code> setting.</p>
+<p>Note that <code>Timeout</code> is in seconds and <code>WaitTime</code> is in milliseconds. </p></section><section class="print-page" id="secure"><h3 id="secure-https">HTTPS</h3>
 <p>In the HTTP world, secure communications is accomplished by using the HTTPS protocol which uses Transport Layer Security (TLS) or Secure Sockets Layer (SSL) to encrypt communications. Both the client (<code>HttpCommand</code>) and the server use certificates for secure communications. The certificates serve a couple of purposes:</p>
 <ul>
 <li>They provide bi-directional encryption of the data sent across the link.</li>

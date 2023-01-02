@@ -392,20 +392,6 @@
               
   
   
-  
-    <li class="md-nav__item">
-      <a href="../conga-settings/" class="md-nav__link">
-        Conga-related Settings
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
     
   
   
@@ -532,6 +518,20 @@
   
 </nav>
       
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conga-settings/" class="md-nav__link">
+        Conga-related Settings
+      </a>
     </li>
   
 
@@ -1144,13 +1144,14 @@ Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON
 <h3 id="timeout"><code>Timeout</code></h3>
 <table><tr>
 <td>Description</td>
-<td>The number of seconds that <code>HttpCommand</code> will count down to wait for a response. If <code>Timeout</code> is positive,  <code>HttpCommand</code> will wait to receive the complete response from the host. If <code>Timeout</code> is negative, the countdown will be reset to <code>|Timeout</code> if Conga has received any data.</td></tr>
+<td>The number of seconds that <code>HttpCommand</code> will count down to wait for a response from the host. If <code>Timeout</code> is positive, <code>HttpCommand</code> will exit with a return code of 100 (Timeout) if it has not received the complete response from the host before the countdown reaches 0. If <code>Timeout</code> is negative, <code>HttpCommand</code> will check if Conga has received any data and if so, will reset the countdown to <code>|Timeout</code>.</td></tr>
 <tr><td>Default</td>
 <td><code>10</code></td></tr>
 <tr><td>Example(s)</td>
 <td>h.Timeout←30</td></tr>
 <tr><td>Details</td>
-<td><code>Timeout</code> should be set to a time value larger than <a href="./conga-settings.md#waittime"><code>WaitTime</code></a>.  Note that <code>Timeout</code> is in seconds and <code>WaitTime</code> is in milliseconds.</td></tr></table>
+<td>This is the setting to adjust (and not <a href="../../conga-settings#waittime"><code>WaitTime</code></a>) if your request is timing out.  See <a href="../../conga#timeout-and-waittime">Timeout and WaitTime</a> for more information on the relationship between the <code>Timeout</code> and <code>WaitTime</code> settings.
+</td></tr></table>
 
 <h3 id="translatedata"><code>TranslateData</code></h3>
 <table><tr>
@@ -1214,7 +1215,7 @@ Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../conga-settings/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Conga-related Settings" rel="prev">
+        <a href="../request-settings/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Request-related Settings" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -1223,20 +1224,20 @@ Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON
               <span class="md-footer__direction">
                 Previous
               </span>
-              Conga-related Settings
+              Request-related Settings
             </div>
           </div>
         </a>
       
       
         
-        <a href="../proxy-settings/" class="md-footer__link md-footer__link--next" aria-label="Next: Proxy-related Settings" rel="next">
+        <a href="../conga-settings/" class="md-footer__link md-footer__link--next" aria-label="Next: Conga-related Settings" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Proxy-related Settings
+              Conga-related Settings
             </div>
           </div>
           <div class="md-footer__button md-icon">
