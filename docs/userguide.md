@@ -54,5 +54,13 @@ This may be fine for interactively tinkering in the APL session. But when runnin
 
 The exception to this is when using `GetJSON` which is specifically intended to interact with JSON-based web services and will use a default content type of `application/json`. 
 
+## `Timeout` and Long-running Requests
+The default `Timeout` setting (10 seconds) is adequate for most requests. There are a couple of patterns of long running requests.  `Timeout` can be set to a positive or negative number.
+
+- Setting `Timeout` to a positive number means that `HttpCommand` will time out after `Timeout` seconds with a return code (`rc`) of 100.  Any partial payload received will returned in `Data` element of the result. 
+- Setting `Timeout` to a negative number means that `HttpCommand` will not time out as long as data is being received.  This is useful in the case where a large payload may be received but you are uncertain of how long it will take to receive. If no data is received within a period of `Timeout` seconds, `HttpCommand` will time out with a return code (`rc`) of 100. Any partial payload received will be returned in the `Data` element of the result. 
+
+Using a negative `Timeout` value is useful in the case where a large payload is being received in chunks but has no benefit if the entire payload is sent in one chunk or if the host takes more than `|Timeout` seconds to begin sending its response. In that case, you'll need to set `|Timeout` to a larger value.
+
 ## Compressing Response Payload ##
 `HttpCommand` can accept and process response payloads that are compressed using either the gzip or deflate compression schemes. To accomplish this, you need to set the `accept-encoding` header to `'gzip, deflate'`.

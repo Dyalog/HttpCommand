@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.13' '2022-12-22'
+      r←'HttpCommand' '5.1.14' '2022-01-04'
     ∇
 
     ∇ make
@@ -769,6 +769,7 @@
           :If timedOut
               forceClose←1
               r.(rc msg)←100 'Request timed out before server responded'
+              r.Data←data ⍝ return any partial payload
               →∆END
           :EndIf
      
@@ -853,13 +854,15 @@
       :EndIf
     ∇
 
-
     ∇ (timedOut donetime progress)←obj checkTimeOut(donetime progress);tmp;snap
     ⍝ check if request has timed out
       →∆EXIT↓⍨timedOut←⎕AI[3]>donetime ⍝ exit unless donetime hasn't passed
       →∆EXIT↓⍨Timeout<0                ⍝ if Timeout<0, reset donetime if there's progress
-      →∆EXIT↓⍨0=⊃tmp←LDRC.Tree obj     ⍝ progress should be in elements [4 5]
-      snap←(⊂∘⍋⌷⊢)↑(↑2 2⊃tmp)[;1]      ⍝ capture current state
+      →∆EXIT↓⍨0=⊃tmp←LDRC.Tree obj     ⍝ look at the current state of the connection
+      snap←2 2⊃tmp                     ⍝ second element shoulf contain the state
+      :If ~0∊⍴snap                     ⍝ if we have any...
+          snap←(⊂∘⍋⌷⊢)↑(↑2 2⊃tmp)[;1]  ⍝ ...progress should be in elements [4 5]
+      :EndIf
       →∆EXIT⍴⍨progress≡snap            ⍝ exit if nothing further received
       (timedOut donetime progress)←0(donetime+WaitTime)snap ⍝ reset ticker
      ∆EXIT:
