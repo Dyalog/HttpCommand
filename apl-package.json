@@ -16,5 +16,5 @@
   project_url: "https://github.com/Dyalog/HttpCommand",
   source: "source/HttpCommand.dyalog",
   tags: "mac-os,windows,linux,http,dyalog,pi",
-  version: "5.1.14",
+  version: "5.1.15",
 }

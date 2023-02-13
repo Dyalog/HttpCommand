@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.14' '2022-01-04'
+      r←'HttpCommand' '5.1.15' '2022-02-13'
     ∇
 
     ∇ make
@@ -191,7 +191,6 @@
               :Trap Debug↓0
                   cmd.Params←JSONexport cmd.Params
               :Else
-                  r←cmd.Result
                   →∆DONE⊣r.(rc msg)←¯1 'Could not convert parameters to JSON format'
               :EndTrap
           :EndIf
@@ -932,12 +931,12 @@
       :Trap 11
           r←SafeJSON 1(3⊃⎕RSI,##).⎕JSON data ⍝ attempt to export
       :Else
-          r←SafeJSON(1(3⊃⎕RSI,##).⎕JSON⍠'HighRank' 'Split')data ⍝ Dyalog v18.0 and later
+          r←SafeJSON 1(3⊃⎕RSI,##).⎕JSON⍠'HighRank' 'Split'⊢data ⍝ Dyalog v18.0 and later
       :EndTrap
     ∇
 
       JSONimport←{
-          0::⍵.(rc msg)←¯2 ⍵'Could not translate JSON payload'
+          0::⍵.(rc msg)←¯2 'Could not translate JSON payload'
           11::⍵.Data←0(3⊃⎕RSI,##).⎕JSON ⍵.Data
           ⍵.Data←0(3⊃⎕RSI,##).⎕JSON⍠'Dialect' 'JSON5'⊢⍵.Data}
 
