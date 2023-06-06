@@ -254,8 +254,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#typical-usage-pattern" class="md-nav__link">
-    Typical Usage Pattern
+  <a href="#typical-usage-patterns" class="md-nav__link">
+    Typical Usage Patterns
   </a>
   
 </li>
@@ -896,8 +896,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#typical-usage-pattern" class="md-nav__link">
-    Typical Usage Pattern
+  <a href="#typical-usage-patterns" class="md-nav__link">
+    Typical Usage Patterns
   </a>
   
 </li>
@@ -955,7 +955,7 @@
 <pre><code class="language-APL">      ]Load HttpCommand
 </code></pre>
 <p>or, under program control, do:</p>
-<pre><code class="language-APL">     ⎕SE.SALT.Load 'HttpCommand' 
+<pre><code class="language-APL">      ⎕SE.SALT.Load 'HttpCommand' 
 </code></pre>
 <p>Beginning with Dyalog v18.2, you can also use the <code>]get</code> user command:</p>
 <pre><code class="language-APL">      ]Get HttpCommand
@@ -964,7 +964,7 @@
 <p>This documentation describes version 5 of <code>HttpCommand</code>.  Dyalog versions 18.2 and 18.0 have earlier versions of <code>HttpCommand</code> pre-installed. To upgrade your in-workspace copy of <code>HttpCommand</code> to version 5, you may have to run <a href="misc-methods/#upgrade"><code>HttpCommand.Upgrade</code></a> once or twice depending on how recent your Dyalog installation is.</p>
 <p>If <code>HttpCommand.Version</code> reports a version earlier than 4.0.14, <code>HttpCommand.Upgrade</code> will upgrade to the latest version 4. Then running <code>HttpCommand.Upgrade</code> once more will upgrade to version 5.</p>
 <p>For example, <code>HttpCommand</code> version 3.4 may be found in Dyalog version 18.0.</p>
-<pre><code>       ]load HttpCommand
+<pre><code>      ]load HttpCommand
 #.HttpCommand
       HttpCommand.Version
  HttpCommand  3.4  2021-05-28 
@@ -975,13 +975,21 @@
       HttpCommand.Upgrade  ⍝ now upgrade to v5
 0  Upgraded to HttpCommand 5.0.7 2022-08-27 from HttpCommand 4.0.14 2022-09-04 
 </code></pre>
-<p><img alt="👉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f449.svg" title=":point_right:" /> It is recommended that you save your own copy of <code>HttpCommand</code> in your application rather than dynamically getting or upgrading it at runtime. </p>
-<h2 id="typical-usage-pattern">Typical Usage Pattern</h2>
+<p><img alt="👉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f449.svg" title=":point_right:" /> It is <strong>strongly recommended</strong> that you save your own copy of <code>HttpCommand</code> in your application rather than dynamically loading or upgrading it at runtime. In particular, it is bad practice to repeated load <code>HttpCommand</code> as this may cause Conga to  reinitialize each time <code>HttpCommand</code> is loaded and may interfere with other components of your application that also use Conga.  </p>
+<p>If <code>HttpCommand</code> is being used within your application (as opposed to ad hoc usage in your APL session) it is recommended that all Conga-using components refer to the same Conga namespace:</p>
+<ul>
+<li>Copy the <code>Conga</code> namespace from the <code>conga</code> workspace.</br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>'Conga' #.⎕CY 'conga'</code></li>
+<li>Set <a href="conga/#overriding-default-locations"><code>HttpCommand.CongaRef</code></a> setting to refer to the <code>Conga</code> namespace.</br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.CongaRef←#.Conga</code>  </li>
+<li>Similarly configure the other Conga-using components to refer to the <code>Conga</code> namespace.</li>
+<li>Now each component can create their own Conga "root" using <code>Conga.Init</code>.<br/><code>HttpCommand</code> does this for you automatically.</li>
+</ul>
+<h2 id="typical-usage-patterns">Typical Usage Patterns</h2>
 <p><code>HttpCommand</code> is implemented as a Dyalog class and its typical usage pattern is:</p>
 <ol>
 <li>Create an instance of the <code>HttpCommand</code> class using the function <code>HttpCommand.New</code><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>instance ← HttpCommand.New ''</code><br/>or by using the <code>⎕NEW</code> system function<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>instance ← ⎕NEW HttpCommand</code></li>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>instance ← HttpCommand.New ''</code></li>
 <li>Set fields (settings) appropriate to describe the request</li>
 <li>Send the request</li>
 <li>Examine the response result</li>
@@ -1013,7 +1021,7 @@
 <li>Two shared library files that are specific to the operating system and implement the low-level communications and security interfaces.</li>
 <li>An APL object that implements a cross-platform interface to the shared libraries.  The object will be either the <code>DRC</code> namespace or an instance of the <code>Conga.LIB</code> class. For the purposes of this document we will refer to this object as the <strong>Conga API</strong>.</li>
 </ul>
-<p>See <a href="conga/">HttpCommand and Conga</a> for more information on how <code>HttpCommand</code> interacts with Conga.  See <a href="integrating/">Intergrating HttpCommand</a> for more information on how to package Conga and <code>HttpCommand</code> in a distributed application. </p>
+<p>See <a href="conga/">HttpCommand and Conga</a> for more information on how <code>HttpCommand</code> interacts with Conga.  See <a href="integrating/">Integrating HttpCommand</a> for more information on how to package Conga and <code>HttpCommand</code> in a distributed application. </p>
 <h2 id="further-reading">Further Reading</h2>
 <ul>
 <li>This documentation does not attempt to be an in-depth examination of either Conga or the HTTP protocol. For more information on Conga, see the <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf">Conga User Guide</a></li>
