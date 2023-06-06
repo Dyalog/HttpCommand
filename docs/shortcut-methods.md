@@ -72,20 +72,22 @@ Intermediate positional parameters that are not used should be set to <code>''</
 <li><code>1</code> - the formatted HTTP request that <code>HttpCommand</code> would send if <code>RequestOnly</code> was <code>0</code>.</td></tr>
 <tr><td>Example(s)</td>
 <td>These examples assume you have a <a href="https://github.com/dyalog/Jarvis"><code>Jarvis</code></a> service running at <code>http://localhost:8080</code> and a endpoint of <code>#.sum ← {+/⍵}</code>.<br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args ← ⎕NS ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.Command ← 'post'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.URL ← 'localhost:8080/sum'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.Params ← ⍳1000</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⊢r ← HttpCommand.GetJSON args</code></br>
-<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: ⍬]</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r.Data</code><br/>
-<code>500500</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Params ← ('per_page' '3')('page' '1')('sort' 'full_name')</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;URL ← 'https://api.github.com/orgs/dyalog/repos'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⊢r ← HttpCommand.GetJSON 'get' URL Params</code></br>
-<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 3]</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r.Data.full_name</code><br/>
-<code>&nbsp;Dyalog/a3s-Linux  Dyalog/APLCourse  Dyalog/aplssh </code><br/><br/>
+<code>      args ← ⎕NS ''
+      args.Command ← 'post'
+      args.URL ← 'localhost:8080/sum'
+      args.Params ← ⍳1000
+      ⊢r ← HttpCommand.GetJSON args
+[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: ⍬]
+      r.Data
+500500
+
+      Params ← ('per_page' '3')('page' '1')('sort' 'full_name')
+      URL ← 'https://api.github.com/orgs/dyalog/repos'
+      ⊢r ← HttpCommand.GetJSON 'get' URL Params
+[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 3]
+
+      r.Data.full_name
+ Dyalog/a3s-Linux  Dyalog/APLCourse  Dyalog/aplssh 
 </td></tr>
 </table>
 
