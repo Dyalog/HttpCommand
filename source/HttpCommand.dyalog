@@ -53,7 +53,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.1.15' '2022-02-13'
+      r←'HttpCommand' '5.1.16' '2023-06-06'
     ∇
 
     ∇ make
@@ -203,7 +203,7 @@
           :If ¯1=r.BytesWritten ⍝ if not writing to file
               :If ∨/'application/json'⍷lc r.Headers getHeader'content-type'
                   JSONimport r
-              :Else ⋄ →∆DONE⊣r.(rc msg)←2 'Response content-type is not application/json'
+              :Else ⋄ →∆DONE⊣r.(rc msg)←¯2 'Response content-type is not application/json'
               :EndIf
           :EndIf
       :EndIf
