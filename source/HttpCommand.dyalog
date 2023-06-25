@@ -1,8 +1,14 @@
 ﻿:Class HttpCommand
 ⍝ General HTTP Commmand utility
-⍝ Documentation is found at https://dyalog.github.io/HttpCommand
+⍝ Documentation is found at https://dyalog.github.io/HttpCommand/
 
     ⎕ML←⎕IO←1
+
+    ∇ r←Version
+    ⍝ Return the current version
+      :Access public shared
+      r←'HttpCommand' '5.2.0' '2023-06-15'
+    ∇
 
 ⍝ Request-related fields
     :field public Command←'get'                    ⍝ HTTP command (method)
@@ -42,6 +48,8 @@
     :field public MaxRedirections←10               ⍝ set to 0 if you don't want to follow any redirected references, ¯1 for unlimited
     :field public KeepAlive←1                      ⍝ default to not close client connection
     :field public TranslateData←0                  ⍝ set to 1 to translate XML or JSON response data
+    :field public UseZip←0                         ⍝ zip request payload (0-no, 1-use gzip, 2-use deflate)
+    :field public ZipLevel←3                       ⍝ default compression level (0-9)
     :field public shared Debug←0                   ⍝ set to 1 to disable trapping, 2 to stop just before creating client
 
     :field public readonly shared ValidFormUrlEncodedChars←'&=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~*+~%'
@@ -49,12 +57,6 @@
     :field Client←''                               ⍝ Conga client ID
     :field ConxProps←''                            ⍝ when a client is made, its connection properties are saved so that if either changes, we close the previous client
     :field origCert←¯1                             ⍝ used to check if Cert changed between calls
-
-    ∇ r←Version
-    ⍝ Return the current version
-      :Access public shared
-      r←'HttpCommand' '5.1.16' '2023-06-06'
-    ∇
 
     ∇ make
     ⍝ No argument constructor
@@ -453,6 +455,7 @@
           hdrs←'Host'(hdrs addHeader)host,((~defaultPort)/':',⍕port)
           hdrs←'User-Agent'(hdrs addHeader)deb'Dyalog-',1↓∊'/',¨2↑Version
           hdrs←'Accept'(hdrs addHeader)'*/*'
+          hdrs←'Accept-Encoding'(hdrs addHeader)'gzip, deflate'
           :If ~0∊⍴Auth
               :If (1<|≡Auth)∨':'∊Auth ⍝ (userid password) or userid:password
               :AndIf ('basic'≡lc AuthType)∨0∊⍴AuthType
@@ -483,12 +486,12 @@
           :EndIf
       :EndIf
      
-      :If ~0∊⍴parms ⍝ do we have any parameters?
+      noCT←(0∊⍴ContentType)∧('∘???∘'≡hdrs getHeader'content-type') ⍝ no content-type specified
+      :If noCT⍲0∊⍴parms ⍝ do we have any parameters or a content-type
           simpleParms←{2≠⎕NC'⍵':0 ⋄ 1≥|≡⍵}parms ⍝ simple vector or scalar and not a reference
-          noCT←(0∊⍴ContentType)∧('∘???∘'≡hdrs getHeader'content-type') ⍝ no content-type specified
+     
           :If (⊆cmd)∊'GET' 'HEAD' ⍝ if the command is GET or HEAD
           :AndIf noCT
-     
               ⍝ params needs to be URLEncoded and will be appended to the query string
               :If simpleParms
                   parms←∊⍕parms       ⍝ deal with possible numeric
@@ -528,10 +531,30 @@
               :Case 'application/json'
                   :If ~isJSON parms ⍝ if it's not already JSON
                       parms←JSONexport parms ⍝ JSONify it
+                  :Else
+                      parms←SafeJSON parms
                   :EndIf
               :Else
                   parms←∊⍕parms
               :EndSelect
+     
+              :Select UseZip
+              :Case 1 ⍝ gzip
+                  :Trap 0
+                      parms←toChar 2⊃3 ZipLevel Zipper sint parms
+                      hdrs←'Content-Encoding'(hdrs setHeader)'gzip'
+                  :Else
+                      r.msg←'gzip encoding on request payload failed'
+                  :EndTrap
+              :Case 2 ⍝ deflate
+                  :Trap 0
+                      parms←toChar 2⊃2 ZipLevel Zipper sint parms
+                      hdrs←'Content-Encoding'(hdrs setHeader)'deflate'
+                  :Else
+                      r.msg←'deflate encoding on request payload failed'
+                  :EndTrap
+              :EndSelect
+     
               :If RequestOnly>SuppressHeaders ⍝ Conga supplies content-length, but for RequestOnly we need to insert it
                   hdrs←'Content-Length'(hdrs addHeader)⍴parms
               :EndIf
@@ -780,18 +803,22 @@
                       :Select z←lc r.GetHeader'content-encoding' ⍝ was the response compressed?
                       :Case '' ⍝ no content-encoding header, do nothing
                       :Case 'deflate'
-                          data←120 ¯100{(2×⍺≡2↑⍵)↓⍺,⍵}83 ⎕DR data ⍝ append 120 156 signature because web servers strip it out due to IE
-                          data←fromutf8 256|¯2(219⌶)data
-                      :Case 'gzip' ⋄ data←fromutf8 256|¯3(219⌶)83 ⎕DR data
-                      :Else ⋄ r.msg←'Unhandled content-encoding: ',z
+                          data←⎕UCS 256|¯2 Zipper 83 ⎕DR data
+                      :Case 'gzip'
+                          data←⎕UCS 256|¯3 Zipper 83 ⎕DR data
+                      :Else
+                          r.msg←'Unhandled content-encoding: ',z
                       :EndSelect
      
                       :If 0<≢'charset\s*=\s*utf-8'⎕S'&'⍠1⊢ct←lc r.GetHeader'content-type'
-                      :OrIf (∨/'application/json'⍷ct)∧~∨/'charset'⍷ct
+                      :OrIf (∨/'application/json'⍷ct)∧~∨/'charset'⍷ct ⍝ application/json defaults to UTF-8
                           data←'UTF-8'⎕UCS ⎕UCS data ⍝ Convert from UTF-8
                           data←(65279=⎕UCS⊃data)↓data ⍝ drop off BOM, if any
                       :EndIf
+                  :Else
+                      r.msg←⎕DMX.EM,' occurred during response payload conversion (Data was not converted)'
                   :EndTrap
+     
                   :If TranslateData=1
                       :If ∨/∊'text/xml' 'application/xml'⍷¨⊂ct←lc r.GetHeader'content-type'
                           r{0::⍺.(rc Data msg)←¯2 ⍵'Could not translate XML payload' ⋄ ⍺.Data←⎕XML ⍵}data
@@ -868,9 +895,10 @@
     ∇
 
     NL←⎕UCS 13 10
+    toChar←{(⎕DR'')⎕DR ⍵}
     fromutf8←{0::(⎕AV,'?')[⎕AVU⍳⍵] ⋄ 'UTF-8'⎕UCS ⍵} ⍝ Turn raw UTF-8 input into text
     utf8←{3=10|⎕DR ⍵: 256|⍵ ⋄ 'UTF-8' ⎕UCS ⍵}
-    sint←{⎕io←0 ⋄ 83=⎕DR ⍵:⍵ ⋄ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 ¯128 ¯127 ¯126 ¯125 ¯124 ¯123 ¯122 ¯121 ¯120 ¯119 ¯118 ¯117 ¯116 ¯115 ¯114 ¯113 ¯112 ¯111 ¯110 ¯109 ¯108 ¯107 ¯106 ¯105 ¯104 ¯103 ¯102 ¯101 ¯100 ¯99 ¯98 ¯97 ¯96 ¯95 ¯94 ¯93 ¯92 ¯91 ¯90 ¯89 ¯88 ¯87 ¯86 ¯85 ¯84 ¯83 ¯82 ¯81 ¯80 ¯79 ¯78 ¯77 ¯76 ¯75 ¯74 ¯73 ¯72 ¯71 ¯70 ¯69 ¯68 ¯67 ¯66 ¯65 ¯64 ¯63 ¯62 ¯61 ¯60 ¯59 ¯58 ¯57 ¯56 ¯55 ¯54 ¯53 ¯52 ¯51 ¯50 ¯49 ¯48 ¯47 ¯46 ¯45 ¯44 ¯43 ¯42 ¯41 ¯40 ¯39 ¯38 ¯37 ¯36 ¯35 ¯34 ¯33 ¯32 ¯31 ¯30 ¯29 ¯28 ¯27 ¯26 ¯25 ¯24 ¯23 ¯22 ¯21 ¯20 ¯19 ¯18 ¯17 ¯16 ¯15 ¯14 ¯13 ¯12 ¯11 ¯10 ¯9 ¯8 ¯7 ¯6 ¯5 ¯4 ¯3 ¯2 ¯1[utf8 ⍵]}
+    sint←{⎕IO←0 ⋄ 83=⎕DR ⍵:⍵ ⋄ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 ¯128 ¯127 ¯126 ¯125 ¯124 ¯123 ¯122 ¯121 ¯120 ¯119 ¯118 ¯117 ¯116 ¯115 ¯114 ¯113 ¯112 ¯111 ¯110 ¯109 ¯108 ¯107 ¯106 ¯105 ¯104 ¯103 ¯102 ¯101 ¯100 ¯99 ¯98 ¯97 ¯96 ¯95 ¯94 ¯93 ¯92 ¯91 ¯90 ¯89 ¯88 ¯87 ¯86 ¯85 ¯84 ¯83 ¯82 ¯81 ¯80 ¯79 ¯78 ¯77 ¯76 ¯75 ¯74 ¯73 ¯72 ¯71 ¯70 ¯69 ¯68 ¯67 ¯66 ¯65 ¯64 ¯63 ¯62 ¯61 ¯60 ¯59 ¯58 ¯57 ¯56 ¯55 ¯54 ¯53 ¯52 ¯51 ¯50 ¯49 ¯48 ¯47 ¯46 ¯45 ¯44 ¯43 ¯42 ¯41 ¯40 ¯39 ¯38 ¯37 ¯36 ¯35 ¯34 ¯33 ¯32 ¯31 ¯30 ¯29 ¯28 ¯27 ¯26 ¯25 ¯24 ¯23 ¯22 ¯21 ¯20 ¯19 ¯18 ¯17 ¯16 ¯15 ¯14 ¯13 ¯12 ¯11 ¯10 ¯9 ¯8 ¯7 ¯6 ¯5 ¯4 ¯3 ¯2 ¯1[utf8 ⍵]}
     lc←(819⌶) ⍝ lower case conversion
     uc←1∘lc   ⍝ upper case conversion
     ci←{(lc ⍺)⍺⍺ lc ⍵} ⍝ case insensitive operator
@@ -901,6 +929,7 @@
     stopIf←{1∊⍵:-⎕TRAP←0 'C' '⎕←''Stopped for debugging... (Press Ctrl-Enter)''' ⋄ shy←0} ⍝ faster alternative to setting ⎕STOP
     seconds←{⍵÷86400} ⍝ convert seconds to fractional day (for cookie max-age)
     atLeast←{a←(≢⍵)↑⍺ ⋄ ⊃((~∧\⍵=a)/a>⍵),1} ⍝ checks if ⍺ is at least version ⍵
+    Zipper←219⌶
 
     ∇ r←makeHeaders w
       r←{
