@@ -53,7 +53,8 @@ If you expect to make several `HttpCommand` calls, you may want to create an ins
 This may be fine for interactively tinkering in the APL session. But when running `HttpCommand` under program control you should **explicitly specify the content type** for the payload by either setting `ContentType` or adding a `content-type` header. 
 
 The exception to this is when using `GetJSON` which is specifically intended to interact with JSON-based web services and will use a default content type of `application/json`. 
-
+### Special Treatment of `application/json` Content Type
+If you specify a content type of `'application/json'`, `HttpCommand` will automatically convert a non-JSON `Params` setting to JSON. In the rare case where `Params` is an APL character vector that is valid JSON, you should convert it yourself using `1 ⎕JSON`.
 ## `Timeout` and Long-running Requests
 The default `Timeout` setting (10 seconds) is adequate for most requests. There are a couple of patterns of long running requests.  `Timeout` can be set to a positive or negative number.
 

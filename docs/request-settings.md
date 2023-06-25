@@ -116,7 +116,10 @@ If the request has content in the request payload, Conga will automatically supp
 <td>This setting is a convenient shortcut for setting the <code>content-type</code> HTTP header of the request. If you happen set both <code>ContentType</code> and a <code>content-type</code> header, <code>ContentType</code> takes precedence.
 </td></tr>
 <tr><td>Default</td><td><code>''</code></td></tr>
-<tr><td>Example(s)</td><td><code>h.ContentType←'application/json; charset=UTF-8'</code></td></tr></table>
+<tr><td>Example(s)</td><td><code>h.ContentType←'application/json; charset=UTF-8'</code></td></tr>
+<tr><td>Details</td>
+<td>See <a href="/userguide/#content-types">Content Types</a> for additional information.</td></tr>
+</table>
 
 ### `Auth`
 <table><tr>
@@ -147,6 +150,30 @@ Other values may be used as necessary for your particular HTTP request.</td></tr
 <tr><td>Example(s)</td><td><code>h.AuthType←'Bearer'</code></td></tr>
 <tr><td>Details</td><td>
 If <code>AuthType</code> is not set and <code>Auth</code> is set to either a character vector in the form <code>'userid:password'</code> or a 2-element vector of character vectors as in <code>('userid' 'password')</code> <code>HttpCommand</code> will infer the <code>AuthType</code> to be <code>'Basic'</code>.<br/><br/><b>Note: </b>While authentication schemes are supposed to be case insensitive, some servers are not so forgiving and require the authentication scheme to be appropriately cased.</table>
+
+### `UseZip`
+<table><tr>
+<td>Description</td>
+<td><code>UseZip</code> controls whether the request payload is zipped. Valid values are:
+<ul><li><code>0</code> = do not zip the request payload.</li>
+<li><code>1</code> = use gzip encoding</li>
+<li><code>2</code> = use deflate encoding</li>
+</ul></td></tr>
+<tr><td>Default</td>
+<td><code>0</code></td></tr>
+<tr><td>Details</td>
+<td>The <a href="#ziplevel">ZipLevel</a> setting controls the level of compression when using gzip or deflate encoding.</td></tr>
+</table>
+
+### `ZipLevel`
+<table><tr>
+<td>Description</td>
+<td><code>ZipLevel</code> controls the level of compression when using gzip or deflate encoding. Valid values are <code>0</code> through <code>9</code>. Higher values use a higher degree of compression but also consume more CPU.</td></tr>
+<tr><td>Default</td>
+<td><code>3</code></td></tr>
+<tr><td>Details</td>
+<td>The <a href="usezip">UseZip</a> setting controls which compression algorithm, if any, is used.</td></tr>
+</table>
 
 ### `Cookies`
 <table><tr>

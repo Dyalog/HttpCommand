@@ -1,3 +1,5 @@
+## Version 5.2
+* Added support to send zipped request payloads. See 
 ## Version 5.1
 * Added proxy server support. See [Proxy-related Settings](./proxy-settings.md) and [Using a Proxy Server](./proxy.md).
 * Changed how `HttpCommand` attempts to determine payload Content-Type if the user has not specified it. <br/>Prior behavior was to always treat it as `x-www-form-urlencoded`. <br/>Now, `HttpCommand` will use a Content-Type of `application/json;charset=utf-8` if the payload either:
