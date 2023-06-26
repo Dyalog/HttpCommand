@@ -1101,13 +1101,13 @@ If a folder is specified, the file name will be the same as the resource specifi
 <tr><td>Default</td>
 <td><code>'' 0</code></td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c ← HttpCommand.New '' </code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.URL←'https://www.dyalog.com/uploads/files/student_competition/2022_problems_phase2.pdf'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←'/tmp/'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
+<td><code>      c ← HttpCommand.New '' </code><br/>
+<code>      c.URL←'https://www.dyalog.com/uploads/files/student_competition/2022_problems_phase2.pdf'</code><br/>
+<code>      c.OutFile←'/tmp/'</code><br/>
+<code>      c.Run</code><br/>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | 399766 bytes written to c:/tmp/2022_problems_phase2.pdf]</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←'/tmp/problems.pdf' 1</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
+<code>      c.OutFile←'/tmp/problems.pdf' 1</code><br/>
+<code>      c.Run</code><br/>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | 399766 bytes written to c:/tmp/problems.pdf]</code><br/>
 </td></tr>
 <tr><td>Details</td>
@@ -1166,14 +1166,14 @@ Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON
 <td><code>0</code></td></tr>
 <tr><td>Example(s)</td>
 <td><code>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'<br/><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.TranslateData←0<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50↑(⎕←c.Run).Data<br/>
+      c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'<br/><br/>
+      c.TranslateData←0<br/>
+      50↑(⎕←c.Run).Data<br/>
 [rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 1306]
 {"login":"Dyalog","id":4189495,"node_id":"MDEyOk9y<br/>
 <br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.TranslateData←1<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(⎕←c.Run).Data<br/>
+      c.TranslateData←1<br/>
+      (⎕←c.Run).Data<br/>
 [rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: ⍬]<br/>
 #.[JSON object]
 </code>
@@ -1189,16 +1189,16 @@ Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON
 <td><code>0</code></td></tr>
 <tr><td>Example(s)</td>
 <td>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←0</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Debug←1</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
+<code>      c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'</code><br/>
+<code>      c.OutFile←0</code><br/>
+<code>      c.Debug←1</code><br/>
+<code>      c.Run</code><br/>
 <code>DOMAIN ERROR: Invalid file or directory name</code><br/>
 <code>HttpCmd[130] outFile←∊1 ⎕NPARTS outFile</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∧</code><br/>
+<code>                        ∧</code><br/>
 <br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Debug←0</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
+<code>      c.Debug←0</code><br/>
+<code>      c.Run</code><br/>
 <code>[rc: ¯1 | msg: DOMAIN ERROR while trying to initialize output file '0' | HTTP Status:  "" | ⍴Data: 0]</code>
 </td></tr>
 </table>

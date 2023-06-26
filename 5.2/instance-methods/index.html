@@ -997,27 +997,27 @@
 <p><code>Run</code> "runs" the HTTP request defined by the instance's settings. <code>Run</code> is called internally by the shared "shortcut" methods <code>Get</code>, <code>GetJSON</code>, and <code>Do</code>. </p>
 <table>
 <tr><td>Syntax</td>
-<td><code>result←instance.Run</code></td><td>&nbsp;</tr>
+<td><code>result←instance.Run</code></td><td> </tr>
 <tr><td><code>result</code></td>
 <td><code>result</code> depends on the <code>RequestOnly</code> setting.<br/><br/>
 If <code>RequestOnly=1</code>, <code>Run</code> will return, if possible, the HTTP request that <i>would</i> be sent if <code>RequestOnly</code> was set to <code>0</code>. If <code>HttpCommand</code> cannot form a proper HTTP request, <code>Run</code> will return a <a href="/result">result namespace</a> with pertinent information.<br/><br/>
 If <code>RequestOnly=0</code>, <code>Run</code> will return a <a href="/result">result namespace</a> containing the result of attempting to build and send the HTTP request specified by the instance's settings. 
 </td></tr>
 <tr><td>Examples</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance←HttpCommand.New ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.RequestOnly←1</code><br/><br/>
+<td><code>      instance←HttpCommand.New ''</code><br/>
+<code>      instance.RequestOnly←1</code><br/><br/>
 There isn't sufficient information for <code>HttpCommand</code> to build a proper HTTP request.<br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⊢result ← instance.Run</code></br>
-<code>[rc: ¯1 | msg: No URL specified | HTTP Status:&nbsp;&nbsp;"" | ⍴Data: 0]</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.URL←'dyalog.com'</code><br/>
+<code>      ⊢result ← instance.Run</code></br>
+<code>[rc: ¯1 | msg: No URL specified | HTTP Status:  "" | ⍴Data: 0]</code><br/><br/>
+<code>      instance.URL←'dyalog.com'</code><br/>
 Now, there's enough information to form a proper HTTP request.<br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⊢result ← instance.Run</code><br/>
+<code>      ⊢result ← instance.Run</code><br/>
 <code>GET / HTTP/1.1<br/>
 Host: dyalog.com<br/>
 User-Agent: Dyalog-HttpCommand/5.0.3<br/>
 Accept: */*<br/><br/></code>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.RequestOnly←0</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⊢result ← instance.Run</code><br/>
+<code>      instance.RequestOnly←0</code><br/>
+<code>      ⊢result ← instance.Run</code><br/>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 23127]</code>
 </table>
 
@@ -1025,10 +1025,10 @@ Accept: */*<br/><br/></code>
 <p>Returns the HTTP request that <code>HttpCommand</code> would send when <code>Run</code> is executed and <code>RequestOnly</code> is <code>0</code>.  <code>Show</code> is equivalent to setting <code>RequestOnly</code> to <code>1</code> and running <code>Run</code>.</p>
 <table>
 <tr><td>Syntax</td>
-<td><code>r←instance.Show</code></td><td>&nbsp;</td></tr>
+<td><code>r←instance.Show</code></td><td> </td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance ← HttpCommand.New 'get' 'dyalog.com'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Show</code><br/>
+<td><code>      instance ← HttpCommand.New 'get' 'dyalog.com'</code><br/>
+<code>      instance.Show</code><br/>
 <code>GET / HTTP/1.1</code><br/><br/>
 <code>Host: dyalog.com</code><br/><br/>
 <code>User-Agent: Dyalog-HttpCommand/5.0.3</code><br/><br/>
@@ -1047,36 +1047,36 @@ Accept: */*<br/><br/></code>
 <code>[;2] </code>contains the corresponding setting values</td></tr>
 <tr><td>Example</td>
 <td>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance←HttpCommand.New 'get' 'dyalog.com'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Config</code><br/>
-<code>&nbsp;Auth</code><br/>
-<code>&nbsp;AuthType</code><br/>
-<code>&nbsp;BufferSize&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;200000</code><br/>
-<code>&nbsp;Cert</code><br/>
-<code>&nbsp;Command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get</code><br/>                    
-<code>&nbsp;CongaPath</code><br/>
-<code>&nbsp;CongaRef</code><br/>
-<code>&nbsp;CongaVersion</code><br/>
-<code>&nbsp;ContentType</code><br/>
-<code>&nbsp;Cookies</code><br/>
-<code>&nbsp;Debug&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</code><br/>
-<code>&nbsp;Headers</code><br/>
-<code>&nbsp;KeepAlive&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1</code><br/>                    
-<code>&nbsp;LDRC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not&nbsp;set</code><br/>                    
-<code>&nbsp;MaxPayloadSize&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;¯1</code><br/>
-<code>&nbsp;MaxRedirections&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10</code><br/>
-<code>&nbsp;OutFile</code><br/>
-<code>&nbsp;Params</code><br/>
-<code>&nbsp;Priority&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NORMAL:!CTYPE-OPENPGP</code><br/>
-<code>&nbsp;PrivateKeyFile</code><br/>
-<code>&nbsp;PublicCertFile</code><br/>
-<code>&nbsp;RequestOnly&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</code><br/>
-<code>&nbsp;SSLFlags&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;32</code><br/>
-<code>&nbsp;SuppressHeaders&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</code><br/>
-<code>&nbsp;Timeout&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10</code><br/>
-<code>&nbsp;TranslateData&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</code><br/>
-<code>&nbsp;URL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dyalog.com</code><br/>
-<code>&nbsp;WaitTime&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5000</code><br/>
+<code>      instance←HttpCommand.New 'get' 'dyalog.com'</code><br/>
+<code>      instance.Config</code><br/>
+<code> Auth</code><br/>
+<code> AuthType</code><br/>
+<code> BufferSize                      200000</code><br/>
+<code> Cert</code><br/>
+<code> Command                            get</code><br/>                    
+<code> CongaPath</code><br/>
+<code> CongaRef</code><br/>
+<code> CongaVersion</code><br/>
+<code> ContentType</code><br/>
+<code> Cookies</code><br/>
+<code> Debug                                0</code><br/>
+<code> Headers</code><br/>
+<code> KeepAlive                            1</code><br/>                    
+<code> LDRC                           not set</code><br/>                    
+<code> MaxPayloadSize                      ¯1</code><br/>
+<code> MaxRedirections                     10</code><br/>
+<code> OutFile</code><br/>
+<code> Params</code><br/>
+<code> Priority         NORMAL:!CTYPE-OPENPGP</code><br/>
+<code> PrivateKeyFile</code><br/>
+<code> PublicCertFile</code><br/>
+<code> RequestOnly                          0</code><br/>
+<code> SSLFlags                            32</code><br/>
+<code> SuppressHeaders                      0</code><br/>
+<code> Timeout                             10</code><br/>
+<code> TranslateData                        0</code><br/>
+<code> URL                         dyalog.com</code><br/>
+<code> WaitTime                          5000</code><br/>
 </td></tr>
 </table>
 
@@ -1090,9 +1090,9 @@ Accept: */*<br/><br/></code>
 <li><code>[2]</code> a message describing what went wrong if the return code is not <code>0</code></li>
 </ul></td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance←HttpCommand.New ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.CongaPath←'/doesnotexist'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Init</code><br/>
+<td><code>      instance←HttpCommand.New ''</code><br/>
+<code>      instance.CongaPath←'/doesnotexist'</code><br/>
+<code>      instance.Init</code><br/>
 <code>¯1  CongaPath "c:/doesnotexist/" does not exist</code>
 </td></tr>
 </table>
@@ -1111,15 +1111,15 @@ Accept: */*<br/><br/></code>
 <tr><td><code>name</code></td>
 <td>the name for the header</td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance←HttpCommand.New ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'My-Header' instance.AddHeader 'Drake Mallard'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Headers</code><br/>
+<td><code>      instance←HttpCommand.New ''</code><br/>
+<code>      'My-Header' instance.AddHeader 'Drake Mallard'</code><br/>
+<code>      instance.Headers</code><br/>
 <code>┌─────────┬─────────────┐</code><br/>
 <code>│My-Header│Drake Mallard│</code><br/>
 <code>└─────────┴─────────────┘</code><br/>
 <code>AddHeader</code> will not replace an existing header with the same case-insensitive name<br/> 
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'my-header' instance.AddHeader 'Daffy Duck'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Headers</code><br/>
+<code>      'my-header' instance.AddHeader 'Daffy Duck'</code><br/>
+<code>      instance.Headers</code><br/>
 <code>┌─────────┬─────────────┐</code><br/>
 <code>│My-Header│Drake Mallard│</code><br/>
 <code>└─────────┴─────────────┘</code><br/>
@@ -1136,14 +1136,14 @@ Accept: */*<br/><br/></code>
 <tr><td><code>name</code></td>
 <td>the name for the header</td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance←HttpCommand.New ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'My-Header' instance.SetHeader 'Drake Mallard'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Headers</code><br/>
+<td><code>      instance←HttpCommand.New ''</code><br/>
+<code>      'My-Header' instance.SetHeader 'Drake Mallard'</code><br/>
+<code>      instance.Headers</code><br/>
 <code>┌─────────┬─────────────┐</code><br/>
 <code>│My-Header│Drake Mallard│</code><br/>
 <code>└─────────┴─────────────┘</code><br/><code>SetHeader</code> will replace an existing header with the same case-insensitive name<br/> 
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'my-header' instance.SetHeader 'Daffy Duck'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Headers</code><br/>
+<code>      'my-header' instance.SetHeader 'Daffy Duck'</code><br/>
+<code>      instance.Headers</code><br/>
 <code>┌─────────┬──────────┐</code><br/>
 <code>│My-Header│Daffy Duck│</code><br/>
 <code>└─────────┴──────────┘</code><br/>
@@ -1159,16 +1159,16 @@ Accept: */*<br/><br/></code>
 <tr><td><code>name</code></td>
 <td>the case-insensitive name of the header to remove</td</tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'My-Header' instance.SetHeader 'Daffy Duck'</code></br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'another' instance.SetHeader 'some value'</code></br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Headers</code><br/>
+<td><code>      'My-Header' instance.SetHeader 'Daffy Duck'</code></br>
+<code>      'another' instance.SetHeader 'some value'</code></br>
+<code>      instance.Headers</code><br/>
 <code>┌─────────┬──────────┐</code><br/>
 <code>│My-Header│Daffy Duck│</code><br/>
 <code>├─────────┼──────────┤</code><br/>
-<code>│another&nbsp;&nbsp;│some value│</code><br/>
+<code>│another  │some value│</code><br/>
 <code>└─────────┴──────────┘</code></br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.RemoveHeader 'my-header'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Headers</code><br/>
+<code>      instance.RemoveHeader 'my-header'</code><br/>
+<code>      instance.Headers</code><br/>
 <code>┌───────┬──────────┐</code><br/>
 <code>│another│some value│</code><br/>
 <code>└───────┴──────────┘</code><br/>

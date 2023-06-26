@@ -1218,9 +1218,9 @@
 <p>If <code>HttpCommand</code> is being used within your application (as opposed to ad hoc usage in your APL session) it is recommended that all Conga-using components refer to the same Conga namespace:</p>
 <ul>
 <li>Copy the <code>Conga</code> namespace from the <code>conga</code> workspace.</br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>'Conga' #.⎕CY 'conga'</code></li>
+          <code>'Conga' #.⎕CY 'conga'</code></li>
 <li>Set <a href="#conga-overriding-default-locations"><code>HttpCommand.CongaRef</code></a> setting to refer to the <code>Conga</code> namespace.</br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.CongaRef←#.Conga</code>  </li>
+          <code>HttpCommand.CongaRef←#.Conga</code>  </li>
 <li>Similarly configure the other Conga-using components to refer to the <code>Conga</code> namespace.</li>
 <li>Now each component can create their own Conga "root" using <code>Conga.Init</code>.<br/><code>HttpCommand</code> does this for you automatically.</li>
 </ul>
@@ -1228,7 +1228,7 @@
 <p><code>HttpCommand</code> is implemented as a Dyalog class and its typical usage pattern is:</p>
 <ol>
 <li>Create an instance of the <code>HttpCommand</code> class using the function <code>HttpCommand.New</code><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>instance ← HttpCommand.New ''</code></li>
+      <code>instance ← HttpCommand.New ''</code></li>
 <li>Set fields (settings) appropriate to describe the request</li>
 <li>Send the request</li>
 <li>Examine the response result</li>
@@ -1802,25 +1802,25 @@ If <code>AuthType</code> is not set and <code>Auth</code> is set to either a cha
 <td>Description</td>
 <td><code>Cookies</code> is a vector of namespaces, each containing a representation of an HTTP cookie. It contains cookies sent by the host that may be used in a series of requests to the same host. This setting should be considered read-only.</td></tr>
 <tr><td>Default</td><td><code>''</code></td></tr>
-<tr><td>Example(s)</td><td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(c ← HttpCommand.New 'get' 'github.com').Run</code><br/>
+<tr><td>Example(s)</td><td><code>      (c ← HttpCommand.New 'get' 'github.com').Run</code><br/>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 299959]
 </code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;≢ c.Cookies</code><br/>
+<code>      ≢ c.Cookies</code><br/>
 <code>3</code><br/>
 
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↑c.Cookies.(Name Host ('DD-MMM-YYYY'(1200⌶)Creation))</code><br/>
-<code>&nbsp;_gh_sess   github.com   05-AUG-2022</code><br/>  
-<code>&nbsp;_octo      github.com   05-AUG-2022</code><br/>  
-<code>&nbsp;logged_in  github.com   05-AUG-2022</code><br/>  
+<code>      ↑c.Cookies.(Name Host ('DD-MMM-YYYY'(1200⌶)Creation))</code><br/>
+<code> _gh_sess   github.com   05-AUG-2022</code><br/>  
+<code> _octo      github.com   05-AUG-2022</code><br/>  
+<code> logged_in  github.com   05-AUG-2022</code><br/>  
 </td></tr></table>
 
 <h2 id="request-settings-namevalue-pairs">Name/Value Pairs</h2>
 <p><code>Params</code>, for an appropriate content type, and <code>Headers</code> can be specified as name/value pairs. <code>HttpCommand</code> gives you some flexibility in how you specify name/value pairs. You may use:</p>
 <ul>
-<li>A vector of depth <code>2</code> or <code>¯2</code> with an even number of elements.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>('name' 'dyalog' 'age' 39)</code></li>
-<li>A vector of 2-element vectors, <code>HttpCommand</code> will treat each sub-vector as a name/value pair.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>(('name' 'dyalog') ('age' 39))</code></li>
-<li>A 2-column matrix where each row represents a name/value pair.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>2 2⍴'name' 'dyalog' 'age' 39</code></li>
-<li>A reference to a namespace, <code>HttpCommand</code> will treat the variables and their values in the namespace as name/value pairs.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39</code><br>Note that the names will be alphabetical in the formatted output.</li>
+<li>A vector of depth <code>2</code> or <code>¯2</code> with an even number of elements.<br>      <code>('name' 'dyalog' 'age' 39)</code></li>
+<li>A vector of 2-element vectors, <code>HttpCommand</code> will treat each sub-vector as a name/value pair.<br>      <code>(('name' 'dyalog') ('age' 39))</code></li>
+<li>A 2-column matrix where each row represents a name/value pair.<br>      <code>2 2⍴'name' 'dyalog' 'age' 39</code></li>
+<li>A reference to a namespace, <code>HttpCommand</code> will treat the variables and their values in the namespace as name/value pairs.<br>      <code>ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39</code><br>Note that the names will be alphabetical in the formatted output.</li>
 </ul></section><section class="print-page" id="operational-settings"><p>Operational settings affect how <code>HttpCommand</code> behaves.</p>
 <h2 id="operational-settings-instance-settings">Instance settings</h2>
 <h3 id="operational-settings-keepalive"><code>KeepAlive</code></h3>
@@ -1874,13 +1874,13 @@ If a folder is specified, the file name will be the same as the resource specifi
 <tr><td>Default</td>
 <td><code>'' 0</code></td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c ← HttpCommand.New '' </code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.URL←'https://www.dyalog.com/uploads/files/student_competition/2022_problems_phase2.pdf'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←'/tmp/'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
+<td><code>      c ← HttpCommand.New '' </code><br/>
+<code>      c.URL←'https://www.dyalog.com/uploads/files/student_competition/2022_problems_phase2.pdf'</code><br/>
+<code>      c.OutFile←'/tmp/'</code><br/>
+<code>      c.Run</code><br/>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | 399766 bytes written to c:/tmp/2022_problems_phase2.pdf]</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←'/tmp/problems.pdf' 1</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
+<code>      c.OutFile←'/tmp/problems.pdf' 1</code><br/>
+<code>      c.Run</code><br/>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | 399766 bytes written to c:/tmp/problems.pdf]</code><br/>
 </td></tr>
 <tr><td>Details</td>
@@ -1939,14 +1939,14 @@ Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON
 <td><code>0</code></td></tr>
 <tr><td>Example(s)</td>
 <td><code>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'<br/><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.TranslateData←0<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50↑(⎕←c.Run).Data<br/>
+      c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'<br/><br/>
+      c.TranslateData←0<br/>
+      50↑(⎕←c.Run).Data<br/>
 [rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 1306]
 {"login":"Dyalog","id":4189495,"node_id":"MDEyOk9y<br/>
 <br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.TranslateData←1<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(⎕←c.Run).Data<br/>
+      c.TranslateData←1<br/>
+      (⎕←c.Run).Data<br/>
 [rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: ⍬]<br/>
 #.[JSON object]
 </code>
@@ -1962,16 +1962,16 @@ Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON
 <td><code>0</code></td></tr>
 <tr><td>Example(s)</td>
 <td>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.OutFile←0</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Debug←1</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
+<code>      c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'</code><br/>
+<code>      c.OutFile←0</code><br/>
+<code>      c.Debug←1</code><br/>
+<code>      c.Run</code><br/>
 <code>DOMAIN ERROR: Invalid file or directory name</code><br/>
 <code>HttpCmd[130] outFile←∊1 ⎕NPARTS outFile</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∧</code><br/>
+<code>                        ∧</code><br/>
 <br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Debug←0</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c.Run</code><br/>
+<code>      c.Debug←0</code><br/>
+<code>      c.Run</code><br/>
 <code>[rc: ¯1 | msg: DOMAIN ERROR while trying to initialize output file '0' | HTTP Status:  "" | ⍴Data: 0]</code>
 </td></tr>
 </table></section><section class="print-page" id="conga-settings"><p>In general, you will not need to set any of the Conga-related settings since the <code>HttpCommand</code>'s defaults will suffice for almost all requests. For more information on Conga, please refer to the <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf" target="_blank">Conga User Guide</a>.</p>
@@ -2098,7 +2098,7 @@ This setting is intended to be used when Conga is not located in the Dyalog inst
 <tr><td>Default</td>
 <td>N/A</td></tr>
 <tr><td>Example(s)</td>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.Get 'dyalog.com' ⍝ run a request</code><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.LDRC.Version</code><br/>
+<td><code>      HttpCommand.Get 'dyalog.com' ⍝ run a request</code><br/><code>      HttpCommand.LDRC.Version</code><br/>
 <code>3 4 1612</td></tr>
 <tr><td>Details</td>
 <td><code>LDRC</code> should be treated as a read-only setting. It provides a means to access the Conga API which may be helpful for debugging and informational purposes.</td></tr></table>
@@ -2110,7 +2110,7 @@ This setting is intended to be used when Conga is not located in the Dyalog inst
 <tr><td>Default</td>
 <td>N/A</td></tr>
 <tr><td>Example(s)</td>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.Get 'dyalog.com' ⍝ run a request</code><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.CongaVersion</code><br/>
+<td><code>      HttpCommand.Get 'dyalog.com' ⍝ run a request</code><br/><code>      HttpCommand.CongaVersion</code><br/>
 <code>3.4</code></td></tr>
 <tr><td>Details</td>
 <td><code>CongaVersion</code> should be treated as a read-only setting. It provides information which may be helpful for debugging and informational purposes.</td></tr></table></section><section class="print-page" id="proxy-settings"><p>Proxy-related settings are settings you use to specify attributes in order to use a proxy server for your request. See <a href="#proxy">Using a Proxy Server</a> for more information on how to use a proxy server with <code>HttpCommand</code>.</p>
@@ -2173,11 +2173,11 @@ If <code>ProxyAuthType</code> is not set and <code>ProxyAuth</code> is set to ei
 <td><code>r ←{RequestOnly} HttpCommand.Get args</code></td></tr>
 <tr><td><code>args</code></td>
 <td>Either<ul><li>a vector of positional settings (only <code>URL</code> is required)<br/>
-<code><a href="#shortcut-methods-request-settings-URL">URL</a>&nbsp;
-<a href="#shortcut-methods-request-settings-Params">Params</a>&nbsp;
-<a href="#shortcut-methods-request-settings-Headers">Headers</a>&nbsp;
-<a href="#shortcut-methods-conga-settings-Cert">Cert</a>&nbsp;
-<a href="#shortcut-methods-conga-settings-SSLFlags">SSLFlags</a>&nbsp;
+<code><a href="#shortcut-methods-request-settings-URL">URL</a> 
+<a href="#shortcut-methods-request-settings-Params">Params</a> 
+<a href="#shortcut-methods-request-settings-Headers">Headers</a> 
+<a href="#shortcut-methods-conga-settings-Cert">Cert</a> 
+<a href="#shortcut-methods-conga-settings-SSLFlags">SSLFlags</a> 
 <a href="#shortcut-methods-conga-settings-Priority">Priority</a>
 </code><br/>
 Intermediate positional parameters that are not used should be set to <code>''</code></li>
@@ -2191,14 +2191,14 @@ Intermediate positional parameters that are not used should be set to <code>''</
 <td>If RequestOnly is<ul><li><code>0</code> - a namespace containing the request response.</li>
 <li><code>1</code> - the formatted HTTP request that <code>HttpCommand</code> would send if <code>RequestOnly</code> was <code>0</code>.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args ← ⎕NS ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.URL ← 'httpbin.org'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Get args</code></br>
+<td><code>      args ← ⎕NS ''</code><br/>
+<code>      args.URL ← 'httpbin.org'</code><br/>
+<code>      args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
+<code>      HttpCommand.Get args</code></br>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 339]</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Get 'httpbin.org/get' (('name' 'Donald')('species' 'duck'))</code><br/>
+<code>      HttpCommand.Get 'httpbin.org/get' (('name' 'Donald')('species' 'duck'))</code><br/>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 339]</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 HttpCommand.Get args</code><br/>
+<code>      1 HttpCommand.Get args</code><br/>
 <code>GET /get?name=Donald&species=duck HTTP/1.1</code><br/><br/>
 <code>Host: httpbin.org</code><br/><br/>
 <code>User-Agent: Dyalog-HttpCommand/5.0.2</code><br/><br/>
@@ -2215,12 +2215,12 @@ Intermediate positional parameters that are not used should be set to <code>''</
 <td><code>r ←{RequestOnly} HttpCommand.GetJSON args</code></td></tr>
 <tr><td><code>args</code></td>
 <td>Either<ul><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required.)<br/>
-<code><a href="#shortcut-methods-request-settings-Command">Command</a>&nbsp;
-<a href="#shortcut-methods-request-settings-URL">URL</a>&nbsp;
-<a href="#shortcut-methods-request-settings-Params">Params</a>&nbsp;
-<a href="#shortcut-methods-request-settings-Headers">Headers</a>&nbsp;
-<a href="#shortcut-methods-conga-settings-Cert">Cert</a>&nbsp;
-<a href="#shortcut-methods-conga-settings-SSLFlags">SSLFlags</a>&nbsp;
+<code><a href="#shortcut-methods-request-settings-Command">Command</a> 
+<a href="#shortcut-methods-request-settings-URL">URL</a> 
+<a href="#shortcut-methods-request-settings-Params">Params</a> 
+<a href="#shortcut-methods-request-settings-Headers">Headers</a> 
+<a href="#shortcut-methods-conga-settings-Cert">Cert</a> 
+<a href="#shortcut-methods-conga-settings-SSLFlags">SSLFlags</a> 
 <a href="#shortcut-methods-conga-settings-Priority">Priority</a>
 </code><br/>
 Intermediate positional parameters that are not used should be set to <code>''</code></li>
@@ -2262,12 +2262,12 @@ Intermediate positional parameters that are not used should be set to <code>''</
 
 <tr><td><code>args</code></td>
 <td>Either<ul><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required)<br/>
-<code><a href="#shortcut-methods-request-settings-Command">Command</a>&nbsp;
-<a href="#shortcut-methods-request-settings-URL">URL</a>&nbsp;
-<a href="#shortcut-methods-request-settings-Params">Params</a>&nbsp;
-<a href="#shortcut-methods-request-settings-Headers">Headers</a>&nbsp;
-<a href="#shortcut-methods-conga-settings-Cert">Cert</a>&nbsp;
-<a href="#shortcut-methods-conga-settings-SSLFlags">SSLFlags</a>&nbsp;
+<code><a href="#shortcut-methods-request-settings-Command">Command</a> 
+<a href="#shortcut-methods-request-settings-URL">URL</a> 
+<a href="#shortcut-methods-request-settings-Params">Params</a> 
+<a href="#shortcut-methods-request-settings-Headers">Headers</a> 
+<a href="#shortcut-methods-conga-settings-Cert">Cert</a> 
+<a href="#shortcut-methods-conga-settings-SSLFlags">SSLFlags</a> 
 <a href="#shortcut-methods-conga-settings-Priority">Priority</a>
 </code><br/>
 Intermediate positional parameters that are not used should be set to <code>''</code></li>
@@ -2284,10 +2284,10 @@ Intermediate positional parameters that are not used should be set to <code>''</
 <li><code>1</code> - the formatted HTTP request that <code>HttpCommand</code> would send if <code>RequestOnly</code> was <code>0</code>.</td></tr>
 
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args ← ⎕NS ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Do args</code></br>
+<td><code>      args ← ⎕NS ''</code><br/>
+<code>      args.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
+<code>      args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
+<code>      HttpCommand.Do args</code></br>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 465]</code><br/><br/>
 </td></tr>
 </table>
@@ -2303,12 +2303,12 @@ Intermediate positional parameters that are not used should be set to <code>''</
 <tr><td><code>args</code></td>
 <td>Either:<ul>
 <li>a vector, possibly empty, of positional settings<br/>
-<code><a href="#shortcut-methods-request-settings-Command">Command</a>&nbsp;
-<a href="#shortcut-methods-request-settings-URL">URL</a>&nbsp;
-<a href="#shortcut-methods-request-settings-Params">Params</a>&nbsp;
-<a href="#shortcut-methods-request-settings-Headers">Headers</a>&nbsp;
-<a href="#shortcut-methods-conga-settings-Cert">Cert</a>&nbsp;
-<a href="#shortcut-methods-conga-settings-SSLFlags">SSLFlags</a>&nbsp;
+<code><a href="#shortcut-methods-request-settings-Command">Command</a> 
+<a href="#shortcut-methods-request-settings-URL">URL</a> 
+<a href="#shortcut-methods-request-settings-Params">Params</a> 
+<a href="#shortcut-methods-request-settings-Headers">Headers</a> 
+<a href="#shortcut-methods-conga-settings-Cert">Cert</a> 
+<a href="#shortcut-methods-conga-settings-SSLFlags">SSLFlags</a> 
 <a href="#shortcut-methods-conga-settings-Priority">Priority</a>
 </code><br/>
 Intermediate positional parameters that are not used should be set to <code>''</code></li>
@@ -2325,27 +2325,27 @@ Intermediate positional parameters that are not used should be set to <code>''</
 
 <tr><td>Example(s)</td>
 <td>Use a namespace for the request settings:<br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args ← ⎕NS ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd ← HttpCommand.New args</code></br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.Run</code></br>
+<code>      args ← ⎕NS ''</code><br/>
+<code>      args.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
+<code>      args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
+<code>      cmd ← HttpCommand.New args</code></br>
+<code>      cmd.Run</code></br>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 465]</code><br/><br/>
 Create an instance of <code>HttpCommand</code> and set the settings directly:<br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd ← HttpCommand.New '' ⍝ synonym for cmd ← ⎕NEW HttpCommand</code></br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.Run</code></br>
+<code>      cmd ← HttpCommand.New '' ⍝ synonym for cmd ← ⎕NEW HttpCommand</code></br>
+<code>      cmd.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
+<code>      cmd.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
+<code>      cmd.Run</code></br>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 465]</code><br/><br/>
 Set RequestOnly, display the request that would be sent, then send it</br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd ← 1 HttpCommand.New 'get' 'dyalog.com'</code></br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.Run</code></br>
+<code>      cmd ← 1 HttpCommand.New 'get' 'dyalog.com'</code></br>
+<code>      cmd.Run</code></br>
 <code>GET / HTTP/1.1</code><br/>
 <code>Host: dyalog.com</code><br/>
 <code>User-Agent: Dyalog-HttpCommand/5.0.4</code><br/>
 <code>Accept: */*</code><br/><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.RequestOnly←0</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.Run</code><br/>
+<code>      cmd.RequestOnly←0</code><br/>
+<code>      cmd.Run</code><br/>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 23127]</code><br/>
 </td></tr>
 </table></section><section class="print-page" id="encode-methods"><h2 id="encode-methods-base64-encoding">Base64 Encoding</h2>
@@ -2366,7 +2366,7 @@ Set RequestOnly, display the request that would be sent, then send it</br>
 <tr><td><code>out</code></td>
 <td>A character vector representing the decoded base-64 right argument.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Base64Decode 'RHlhbG9nIOKNuuKNtOKMig=='</code><br>
+<td><code>      HttpCommand.Base64Decode 'RHlhbG9nIOKNuuKNtOKMig=='</code><br>
 <code>Dyalog ⍺⍴⌊</code></td></tr>
 </table>
 
@@ -2382,7 +2382,7 @@ Set RequestOnly, display the request that would be sent, then send it</br>
 <tr><td><code>b64</code></td>
 <td>A character vector representing the base-64 encoding of the right argument.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Base64Encode 'Dyalog ⍺⍴⌊'</code><br>
+<td><code>      HttpCommand.Base64Encode 'Dyalog ⍺⍴⌊'</code><br>
 <code>RHlhbG9nIOKNuuKNtOKMig==</code></td></tr>
 </table>
 
@@ -2398,11 +2398,11 @@ Set RequestOnly, display the request that would be sent, then send it</br>
 <tr><td><code>out</code></td>
 <td>The URLDecoding of <code>in</code>.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlDecode 'Dyalog%20%E2%8D%BA%E2%8D%B4%E2%8C%8A'</code><br/>
+<td><code>      HttpCommand.UrlDecode 'Dyalog%20%E2%8D%BA%E2%8D%B4%E2%8C%8A'</code><br/>
 <code>Dyalog ⍺⍴⌊</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlDecode 'name=Donald%20Duck'</code><br/>
+<code>      HttpCommand.UrlDecode 'name=Donald%20Duck'</code><br/>
 <code>name=Donald Duck</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlDecode 'first=Donald&last=O%27Mallard'</code><br/>
+<code>      HttpCommand.UrlDecode 'first=Donald&last=O%27Mallard'</code><br/>
 <code>first=Donald&last=O'Mallard</code><br/>
 </td></tr>
 </table>
@@ -2422,11 +2422,11 @@ Set RequestOnly, display the request that would be sent, then send it</br>
 <tr><td><code>out</code></td>
 <td>The URLEncoding of <code>in</code>.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlEncode 'Dyalog ⍺⍴⌊'</code><br/>
+<td><code>      HttpCommand.UrlEncode 'Dyalog ⍺⍴⌊'</code><br/>
 <code>Dyalog%20%E2%8D%BA%E2%8D%B4%E2%8C%8A</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'name' HttpCommand.UrlEncode 'Donald Duck'</code><br/>
+<code>      'name' HttpCommand.UrlEncode 'Donald Duck'</code><br/>
 <code>name=Donald%20Duck</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlEncode ('first' 'Donald') ('last' 'O''Mallard')</code><br/>
+<code>      HttpCommand.UrlEncode ('first' 'Donald') ('last' 'O''Mallard')</code><br/>
 <code>first=Donald&last=O%27Mallard</code><br/>
 </td></tr>
 </table></section><section class="print-page" id="misc-methods"><p>This section describes <code>HttpCommand</code> shared methods that don't conveniently fit into other categories.</p>
@@ -2434,7 +2434,7 @@ Set RequestOnly, display the request that would be sent, then send it</br>
 <p>Returns <code>HttpCommand</code> version information.</p>
 <table>
 <tr><td>Syntax</td>
-<td><code>r←HttpCommand.Version</code></td><td>&nbsp;</tr>
+<td><code>r←HttpCommand.Version</code></td><td> </tr>
 <tr><td>Result</td>
 <td>A 3-element vector of:<ul>
 <li><code>'HttpCommand'</code></li>
@@ -2442,17 +2442,17 @@ Set RequestOnly, display the request that would be sent, then send it</br>
 <li>The version date</li>
 </td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Version</code><br/>
-<code>&nbsp;HttpCommand  5.0.2  2022-08-03</code></td></tr>
+<td><code>      HttpCommand.Version</code><br/>
+<code> HttpCommand  5.0.2  2022-08-03</code></td></tr>
 </table>
 
 <h3 id="misc-methods-documentation"><code>Documentation</code></h3>
 <p>Returns a link to the documentation for <code>HttpCommand</code> that you can click on to navigate to this documentation.</p>
 <table>
 <tr><td>Syntax</td>
-<td><code>r←HttpCommand.Documentation</code></td><td>&nbsp;</td></tr>
+<td><code>r←HttpCommand.Documentation</code></td><td> </td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Documentation</code><br/>
+<td><code>      HttpCommand.Documentation</code><br/>
 <code>See <a href="https://dyalog.github.io/HttpCommand/">https://dyalog.github.io/HttpCommand/</a></code></td></tr>
 </table>
 
@@ -2467,36 +2467,36 @@ Set RequestOnly, display the request that would be sent, then send it</br>
 <li>character vector message describing the result</li>
 </ul></td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Upgrade</code><br/>
+<td><code>      HttpCommand.Upgrade</code><br/>
 <code>
-&nbsp;0&nbsp;&nbsp;Already using the most current version: HttpCommand 5.0.2 2022-08-03</code>
+ 0  Already using the most current version: HttpCommand 5.0.2 2022-08-03</code>
 </td></tr>
 </table></section><h1 class='nav-section-title-end'>Ended: Shared Methods</h1><section class="print-page" id="instance-methods"><p>The methods documented in this section are instance methods and may be called from an instance of <code>HttpCommand</code>. In the documentation below, we will use the name <code>instance</code> to represent an instance of <code>HttpCommand</code>. </p>
 <h3 id="instance-methods-run"><code>Run</code></h3>
 <p><code>Run</code> "runs" the HTTP request defined by the instance's settings. <code>Run</code> is called internally by the shared "shortcut" methods <code>Get</code>, <code>GetJSON</code>, and <code>Do</code>. </p>
 <table>
 <tr><td>Syntax</td>
-<td><code>result←instance.Run</code></td><td>&nbsp;</tr>
+<td><code>result←instance.Run</code></td><td> </tr>
 <tr><td><code>result</code></td>
 <td><code>result</code> depends on the <code>RequestOnly</code> setting.<br/><br/>
 If <code>RequestOnly=1</code>, <code>Run</code> will return, if possible, the HTTP request that <i>would</i> be sent if <code>RequestOnly</code> was set to <code>0</code>. If <code>HttpCommand</code> cannot form a proper HTTP request, <code>Run</code> will return a <a href="#result">result namespace</a> with pertinent information.<br/><br/>
 If <code>RequestOnly=0</code>, <code>Run</code> will return a <a href="#result">result namespace</a> containing the result of attempting to build and send the HTTP request specified by the instance's settings. 
 </td></tr>
 <tr><td>Examples</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance←HttpCommand.New ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.RequestOnly←1</code><br/><br/>
+<td><code>      instance←HttpCommand.New ''</code><br/>
+<code>      instance.RequestOnly←1</code><br/><br/>
 There isn't sufficient information for <code>HttpCommand</code> to build a proper HTTP request.<br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⊢result ← instance.Run</code></br>
-<code>[rc: ¯1 | msg: No URL specified | HTTP Status:&nbsp;&nbsp;"" | ⍴Data: 0]</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.URL←'dyalog.com'</code><br/>
+<code>      ⊢result ← instance.Run</code></br>
+<code>[rc: ¯1 | msg: No URL specified | HTTP Status:  "" | ⍴Data: 0]</code><br/><br/>
+<code>      instance.URL←'dyalog.com'</code><br/>
 Now, there's enough information to form a proper HTTP request.<br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⊢result ← instance.Run</code><br/>
+<code>      ⊢result ← instance.Run</code><br/>
 <code>GET / HTTP/1.1<br/>
 Host: dyalog.com<br/>
 User-Agent: Dyalog-HttpCommand/5.0.3<br/>
 Accept: */*<br/><br/></code>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.RequestOnly←0</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⊢result ← instance.Run</code><br/>
+<code>      instance.RequestOnly←0</code><br/>
+<code>      ⊢result ← instance.Run</code><br/>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 23127]</code>
 </table>
 
@@ -2504,10 +2504,10 @@ Accept: */*<br/><br/></code>
 <p>Returns the HTTP request that <code>HttpCommand</code> would send when <code>Run</code> is executed and <code>RequestOnly</code> is <code>0</code>.  <code>Show</code> is equivalent to setting <code>RequestOnly</code> to <code>1</code> and running <code>Run</code>.</p>
 <table>
 <tr><td>Syntax</td>
-<td><code>r←instance.Show</code></td><td>&nbsp;</td></tr>
+<td><code>r←instance.Show</code></td><td> </td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance ← HttpCommand.New 'get' 'dyalog.com'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Show</code><br/>
+<td><code>      instance ← HttpCommand.New 'get' 'dyalog.com'</code><br/>
+<code>      instance.Show</code><br/>
 <code>GET / HTTP/1.1</code><br/><br/>
 <code>Host: dyalog.com</code><br/><br/>
 <code>User-Agent: Dyalog-HttpCommand/5.0.3</code><br/><br/>
@@ -2526,36 +2526,36 @@ Accept: */*<br/><br/></code>
 <code>[;2] </code>contains the corresponding setting values</td></tr>
 <tr><td>Example</td>
 <td>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance←HttpCommand.New 'get' 'dyalog.com'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Config</code><br/>
-<code>&nbsp;Auth</code><br/>
-<code>&nbsp;AuthType</code><br/>
-<code>&nbsp;BufferSize&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;200000</code><br/>
-<code>&nbsp;Cert</code><br/>
-<code>&nbsp;Command&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get</code><br/>                    
-<code>&nbsp;CongaPath</code><br/>
-<code>&nbsp;CongaRef</code><br/>
-<code>&nbsp;CongaVersion</code><br/>
-<code>&nbsp;ContentType</code><br/>
-<code>&nbsp;Cookies</code><br/>
-<code>&nbsp;Debug&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</code><br/>
-<code>&nbsp;Headers</code><br/>
-<code>&nbsp;KeepAlive&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1</code><br/>                    
-<code>&nbsp;LDRC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;not&nbsp;set</code><br/>                    
-<code>&nbsp;MaxPayloadSize&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;¯1</code><br/>
-<code>&nbsp;MaxRedirections&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10</code><br/>
-<code>&nbsp;OutFile</code><br/>
-<code>&nbsp;Params</code><br/>
-<code>&nbsp;Priority&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NORMAL:!CTYPE-OPENPGP</code><br/>
-<code>&nbsp;PrivateKeyFile</code><br/>
-<code>&nbsp;PublicCertFile</code><br/>
-<code>&nbsp;RequestOnly&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</code><br/>
-<code>&nbsp;SSLFlags&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;32</code><br/>
-<code>&nbsp;SuppressHeaders&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</code><br/>
-<code>&nbsp;Timeout&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10</code><br/>
-<code>&nbsp;TranslateData&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0</code><br/>
-<code>&nbsp;URL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dyalog.com</code><br/>
-<code>&nbsp;WaitTime&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5000</code><br/>
+<code>      instance←HttpCommand.New 'get' 'dyalog.com'</code><br/>
+<code>      instance.Config</code><br/>
+<code> Auth</code><br/>
+<code> AuthType</code><br/>
+<code> BufferSize                      200000</code><br/>
+<code> Cert</code><br/>
+<code> Command                            get</code><br/>                    
+<code> CongaPath</code><br/>
+<code> CongaRef</code><br/>
+<code> CongaVersion</code><br/>
+<code> ContentType</code><br/>
+<code> Cookies</code><br/>
+<code> Debug                                0</code><br/>
+<code> Headers</code><br/>
+<code> KeepAlive                            1</code><br/>                    
+<code> LDRC                           not set</code><br/>                    
+<code> MaxPayloadSize                      ¯1</code><br/>
+<code> MaxRedirections                     10</code><br/>
+<code> OutFile</code><br/>
+<code> Params</code><br/>
+<code> Priority         NORMAL:!CTYPE-OPENPGP</code><br/>
+<code> PrivateKeyFile</code><br/>
+<code> PublicCertFile</code><br/>
+<code> RequestOnly                          0</code><br/>
+<code> SSLFlags                            32</code><br/>
+<code> SuppressHeaders                      0</code><br/>
+<code> Timeout                             10</code><br/>
+<code> TranslateData                        0</code><br/>
+<code> URL                         dyalog.com</code><br/>
+<code> WaitTime                          5000</code><br/>
 </td></tr>
 </table>
 
@@ -2569,9 +2569,9 @@ Accept: */*<br/><br/></code>
 <li><code>[2]</code> a message describing what went wrong if the return code is not <code>0</code></li>
 </ul></td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance←HttpCommand.New ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.CongaPath←'/doesnotexist'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Init</code><br/>
+<td><code>      instance←HttpCommand.New ''</code><br/>
+<code>      instance.CongaPath←'/doesnotexist'</code><br/>
+<code>      instance.Init</code><br/>
 <code>¯1  CongaPath "c:/doesnotexist/" does not exist</code>
 </td></tr>
 </table>
@@ -2590,15 +2590,15 @@ Accept: */*<br/><br/></code>
 <tr><td><code>name</code></td>
 <td>the name for the header</td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance←HttpCommand.New ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'My-Header' instance.AddHeader 'Drake Mallard'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Headers</code><br/>
+<td><code>      instance←HttpCommand.New ''</code><br/>
+<code>      'My-Header' instance.AddHeader 'Drake Mallard'</code><br/>
+<code>      instance.Headers</code><br/>
 <code>┌─────────┬─────────────┐</code><br/>
 <code>│My-Header│Drake Mallard│</code><br/>
 <code>└─────────┴─────────────┘</code><br/>
 <code>AddHeader</code> will not replace an existing header with the same case-insensitive name<br/> 
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'my-header' instance.AddHeader 'Daffy Duck'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Headers</code><br/>
+<code>      'my-header' instance.AddHeader 'Daffy Duck'</code><br/>
+<code>      instance.Headers</code><br/>
 <code>┌─────────┬─────────────┐</code><br/>
 <code>│My-Header│Drake Mallard│</code><br/>
 <code>└─────────┴─────────────┘</code><br/>
@@ -2615,14 +2615,14 @@ Accept: */*<br/><br/></code>
 <tr><td><code>name</code></td>
 <td>the name for the header</td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance←HttpCommand.New ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'My-Header' instance.SetHeader 'Drake Mallard'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Headers</code><br/>
+<td><code>      instance←HttpCommand.New ''</code><br/>
+<code>      'My-Header' instance.SetHeader 'Drake Mallard'</code><br/>
+<code>      instance.Headers</code><br/>
 <code>┌─────────┬─────────────┐</code><br/>
 <code>│My-Header│Drake Mallard│</code><br/>
 <code>└─────────┴─────────────┘</code><br/><code>SetHeader</code> will replace an existing header with the same case-insensitive name<br/> 
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'my-header' instance.SetHeader 'Daffy Duck'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Headers</code><br/>
+<code>      'my-header' instance.SetHeader 'Daffy Duck'</code><br/>
+<code>      instance.Headers</code><br/>
 <code>┌─────────┬──────────┐</code><br/>
 <code>│My-Header│Daffy Duck│</code><br/>
 <code>└─────────┴──────────┘</code><br/>
@@ -2638,16 +2638,16 @@ Accept: */*<br/><br/></code>
 <tr><td><code>name</code></td>
 <td>the case-insensitive name of the header to remove</td</tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'My-Header' instance.SetHeader 'Daffy Duck'</code></br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'another' instance.SetHeader 'some value'</code></br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Headers</code><br/>
+<td><code>      'My-Header' instance.SetHeader 'Daffy Duck'</code></br>
+<code>      'another' instance.SetHeader 'some value'</code></br>
+<code>      instance.Headers</code><br/>
 <code>┌─────────┬──────────┐</code><br/>
 <code>│My-Header│Daffy Duck│</code><br/>
 <code>├─────────┼──────────┤</code><br/>
-<code>│another&nbsp;&nbsp;│some value│</code><br/>
+<code>│another  │some value│</code><br/>
 <code>└─────────┴──────────┘</code></br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.RemoveHeader 'my-header'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;instance.Headers</code><br/>
+<code>      instance.RemoveHeader 'my-header'</code><br/>
+<code>      instance.Headers</code><br/>
 <code>┌───────┬──────────┐</code><br/>
 <code>│another│some value│</code><br/>
 <code>└───────┴──────────┘</code><br/>
@@ -2712,7 +2712,7 @@ Accept: */*<br/><br/></code>
 <p><code>GetHeader</code> is a utility function included in the result namespace that makes it easier to extract response header values. <code>GetHeader</code> accommodates the case-insensitive nature of header names. If the header does not exist, <code>GetHeader</code> returns <code>''</code>.</p>
 <table>
 <tr><td>Syntax</td>
-<td><code>value ← {headers} result.GetHeader name</code></td><td>&nbsp;</tr>
+<td><code>value ← {headers} result.GetHeader name</code></td><td> </tr>
 <tr><td><code>name</code></td>
 <td>A character vector header name, or vector of header names</td></tr>
 <tr><td><code>headers</code></td>
@@ -2720,10 +2720,10 @@ Accept: */*<br/><br/></code>
 <tr><td><code>value</code></td>
 <td>The header value(s) corresponding to the header names specified in <code>name</code>, or the empty vector <code>''</code> for header name(s) that don't exist.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result.GetHeader 'content-type'</code><br/>
+<td><code>      result.GetHeader 'content-type'</code><br/>
 <code>text/html; charset=utf-8</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⍝ Note: there is no 'fred' header</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result.GetHeader 'content-type' 'fred' 'server'</code><br/>
+<code>      ⍝ Note: there is no 'fred' header</code><br/>
+<code>      result.GetHeader 'content-type' 'fred' 'server'</code><br/>
 <code>┌────────────────────────┬┬──────────────────────┐</code><br/>
 <code>│text/html; charset=utf-8││Apache/2.4.18 (Ubuntu)│</code><br/>
 <code>└────────────────────────┴┴──────────────────────┘</code><br/>

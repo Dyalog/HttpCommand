@@ -934,11 +934,11 @@
 <td><code>r ←{RequestOnly} HttpCommand.Get args</code></td></tr>
 <tr><td><code>args</code></td>
 <td>Either<ul><li>a vector of positional settings (only <code>URL</code> is required)<br/>
-<code><a href="./request-settings#URL">URL</a>&nbsp;
-<a href="./request-settings#Params">Params</a>&nbsp;
-<a href="./request-settings#Headers">Headers</a>&nbsp;
-<a href="./conga-settings#Cert">Cert</a>&nbsp;
-<a href="./conga-settings#SSLFlags">SSLFlags</a>&nbsp;
+<code><a href="./request-settings#URL">URL</a> 
+<a href="./request-settings#Params">Params</a> 
+<a href="./request-settings#Headers">Headers</a> 
+<a href="./conga-settings#Cert">Cert</a> 
+<a href="./conga-settings#SSLFlags">SSLFlags</a> 
 <a href="./conga-settings#Priority">Priority</a>
 </code><br/>
 Intermediate positional parameters that are not used should be set to <code>''</code></li>
@@ -952,14 +952,14 @@ Intermediate positional parameters that are not used should be set to <code>''</
 <td>If RequestOnly is<ul><li><code>0</code> - a namespace containing the request response.</li>
 <li><code>1</code> - the formatted HTTP request that <code>HttpCommand</code> would send if <code>RequestOnly</code> was <code>0</code>.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args ← ⎕NS ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.URL ← 'httpbin.org'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Get args</code></br>
+<td><code>      args ← ⎕NS ''</code><br/>
+<code>      args.URL ← 'httpbin.org'</code><br/>
+<code>      args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
+<code>      HttpCommand.Get args</code></br>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 339]</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Get 'httpbin.org/get' (('name' 'Donald')('species' 'duck'))</code><br/>
+<code>      HttpCommand.Get 'httpbin.org/get' (('name' 'Donald')('species' 'duck'))</code><br/>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 339]</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1 HttpCommand.Get args</code><br/>
+<code>      1 HttpCommand.Get args</code><br/>
 <code>GET /get?name=Donald&species=duck HTTP/1.1</code><br/><br/>
 <code>Host: httpbin.org</code><br/><br/>
 <code>User-Agent: Dyalog-HttpCommand/5.0.2</code><br/><br/>
@@ -976,12 +976,12 @@ Intermediate positional parameters that are not used should be set to <code>''</
 <td><code>r ←{RequestOnly} HttpCommand.GetJSON args</code></td></tr>
 <tr><td><code>args</code></td>
 <td>Either<ul><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required.)<br/>
-<code><a href="./request-settings#Command">Command</a>&nbsp;
-<a href="./request-settings#URL">URL</a>&nbsp;
-<a href="./request-settings#Params">Params</a>&nbsp;
-<a href="./request-settings#Headers">Headers</a>&nbsp;
-<a href="./conga-settings#Cert">Cert</a>&nbsp;
-<a href="./conga-settings#SSLFlags">SSLFlags</a>&nbsp;
+<code><a href="./request-settings#Command">Command</a> 
+<a href="./request-settings#URL">URL</a> 
+<a href="./request-settings#Params">Params</a> 
+<a href="./request-settings#Headers">Headers</a> 
+<a href="./conga-settings#Cert">Cert</a> 
+<a href="./conga-settings#SSLFlags">SSLFlags</a> 
 <a href="./conga-settings#Priority">Priority</a>
 </code><br/>
 Intermediate positional parameters that are not used should be set to <code>''</code></li>
@@ -1023,12 +1023,12 @@ Intermediate positional parameters that are not used should be set to <code>''</
 
 <tr><td><code>args</code></td>
 <td>Either<ul><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required)<br/>
-<code><a href="./request-settings#Command">Command</a>&nbsp;
-<a href="./request-settings#URL">URL</a>&nbsp;
-<a href="./request-settings#Params">Params</a>&nbsp;
-<a href="./request-settings#Headers">Headers</a>&nbsp;
-<a href="./conga-settings#Cert">Cert</a>&nbsp;
-<a href="./conga-settings#SSLFlags">SSLFlags</a>&nbsp;
+<code><a href="./request-settings#Command">Command</a> 
+<a href="./request-settings#URL">URL</a> 
+<a href="./request-settings#Params">Params</a> 
+<a href="./request-settings#Headers">Headers</a> 
+<a href="./conga-settings#Cert">Cert</a> 
+<a href="./conga-settings#SSLFlags">SSLFlags</a> 
 <a href="./conga-settings#Priority">Priority</a>
 </code><br/>
 Intermediate positional parameters that are not used should be set to <code>''</code></li>
@@ -1045,10 +1045,10 @@ Intermediate positional parameters that are not used should be set to <code>''</
 <li><code>1</code> - the formatted HTTP request that <code>HttpCommand</code> would send if <code>RequestOnly</code> was <code>0</code>.</td></tr>
 
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args ← ⎕NS ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Do args</code></br>
+<td><code>      args ← ⎕NS ''</code><br/>
+<code>      args.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
+<code>      args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
+<code>      HttpCommand.Do args</code></br>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 465]</code><br/><br/>
 </td></tr>
 </table>
@@ -1064,12 +1064,12 @@ Intermediate positional parameters that are not used should be set to <code>''</
 <tr><td><code>args</code></td>
 <td>Either:<ul>
 <li>a vector, possibly empty, of positional settings<br/>
-<code><a href="./request-settings#Command">Command</a>&nbsp;
-<a href="./request-settings#URL">URL</a>&nbsp;
-<a href="./request-settings#Params">Params</a>&nbsp;
-<a href="./request-settings#Headers">Headers</a>&nbsp;
-<a href="./conga-settings#Cert">Cert</a>&nbsp;
-<a href="./conga-settings#SSLFlags">SSLFlags</a>&nbsp;
+<code><a href="./request-settings#Command">Command</a> 
+<a href="./request-settings#URL">URL</a> 
+<a href="./request-settings#Params">Params</a> 
+<a href="./request-settings#Headers">Headers</a> 
+<a href="./conga-settings#Cert">Cert</a> 
+<a href="./conga-settings#SSLFlags">SSLFlags</a> 
 <a href="./conga-settings#Priority">Priority</a>
 </code><br/>
 Intermediate positional parameters that are not used should be set to <code>''</code></li>
@@ -1086,27 +1086,27 @@ Intermediate positional parameters that are not used should be set to <code>''</
 
 <tr><td>Example(s)</td>
 <td>Use a namespace for the request settings:<br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args ← ⎕NS ''</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd ← HttpCommand.New args</code></br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.Run</code></br>
+<code>      args ← ⎕NS ''</code><br/>
+<code>      args.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
+<code>      args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
+<code>      cmd ← HttpCommand.New args</code></br>
+<code>      cmd.Run</code></br>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 465]</code><br/><br/>
 Create an instance of <code>HttpCommand</code> and set the settings directly:<br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd ← HttpCommand.New '' ⍝ synonym for cmd ← ⎕NEW HttpCommand</code></br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.Run</code></br>
+<code>      cmd ← HttpCommand.New '' ⍝ synonym for cmd ← ⎕NEW HttpCommand</code></br>
+<code>      cmd.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
+<code>      cmd.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
+<code>      cmd.Run</code></br>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 465]</code><br/><br/>
 Set RequestOnly, display the request that would be sent, then send it</br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd ← 1 HttpCommand.New 'get' 'dyalog.com'</code></br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.Run</code></br>
+<code>      cmd ← 1 HttpCommand.New 'get' 'dyalog.com'</code></br>
+<code>      cmd.Run</code></br>
 <code>GET / HTTP/1.1</code><br/>
 <code>Host: dyalog.com</code><br/>
 <code>User-Agent: Dyalog-HttpCommand/5.0.4</code><br/>
 <code>Accept: */*</code><br/><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.RequestOnly←0</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cmd.Run</code><br/>
+<code>      cmd.RequestOnly←0</code><br/>
+<code>      cmd.Run</code><br/>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 23127]</code><br/>
 </td></tr>
 </table>

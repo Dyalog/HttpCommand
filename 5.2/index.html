@@ -979,9 +979,9 @@
 <p>If <code>HttpCommand</code> is being used within your application (as opposed to ad hoc usage in your APL session) it is recommended that all Conga-using components refer to the same Conga namespace:</p>
 <ul>
 <li>Copy the <code>Conga</code> namespace from the <code>conga</code> workspace.</br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>'Conga' #.⎕CY 'conga'</code></li>
+          <code>'Conga' #.⎕CY 'conga'</code></li>
 <li>Set <a href="conga/#overriding-default-locations"><code>HttpCommand.CongaRef</code></a> setting to refer to the <code>Conga</code> namespace.</br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.CongaRef←#.Conga</code>  </li>
+          <code>HttpCommand.CongaRef←#.Conga</code>  </li>
 <li>Similarly configure the other Conga-using components to refer to the <code>Conga</code> namespace.</li>
 <li>Now each component can create their own Conga "root" using <code>Conga.Init</code>.<br/><code>HttpCommand</code> does this for you automatically.</li>
 </ul>
@@ -989,7 +989,7 @@
 <p><code>HttpCommand</code> is implemented as a Dyalog class and its typical usage pattern is:</p>
 <ol>
 <li>Create an instance of the <code>HttpCommand</code> class using the function <code>HttpCommand.New</code><br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>instance ← HttpCommand.New ''</code></li>
+      <code>instance ← HttpCommand.New ''</code></li>
 <li>Set fields (settings) appropriate to describe the request</li>
 <li>Send the request</li>
 <li>Examine the response result</li>
