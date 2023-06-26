@@ -125,7 +125,7 @@ This setting is intended to be used when Conga is not located in the Dyalog inst
 <tr><td>Default</td>
 <td>N/A</td></tr>
 <tr><td>Example(s)</td>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.Get 'dyalog.com' ⍝ run a request</code><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.LDRC.Version</code><br/>
+<td><code>      HttpCommand.Get 'dyalog.com' ⍝ run a request</code><br/><code>      HttpCommand.LDRC.Version</code><br/>
 <code>3 4 1612</td></tr>
 <tr><td>Details</td>
 <td><code>LDRC</code> should be treated as a read-only setting. It provides a means to access the Conga API which may be helpful for debugging and informational purposes.</td></tr></table>
@@ -137,7 +137,7 @@ This setting is intended to be used when Conga is not located in the Dyalog inst
 <tr><td>Default</td>
 <td>N/A</td></tr>
 <tr><td>Example(s)</td>
-<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.Get 'dyalog.com' ⍝ run a request</code><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>HttpCommand.CongaVersion</code><br/>
+<td><code>      HttpCommand.Get 'dyalog.com' ⍝ run a request</code><br/><code>      HttpCommand.CongaVersion</code><br/>
 <code>3.4</code></td></tr>
 <tr><td>Details</td>
 <td><code>CongaVersion</code> should be treated as a read-only setting. It provides information which may be helpful for debugging and informational purposes.</td></tr></table>

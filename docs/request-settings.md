@@ -180,23 +180,23 @@ If <code>AuthType</code> is not set and <code>Auth</code> is set to either a cha
 <td>Description</td>
 <td><code>Cookies</code> is a vector of namespaces, each containing a representation of an HTTP cookie. It contains cookies sent by the host that may be used in a series of requests to the same host. This setting should be considered read-only.</td></tr>
 <tr><td>Default</td><td><code>''</code></td></tr>
-<tr><td>Example(s)</td><td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(c ← HttpCommand.New 'get' 'github.com').Run</code><br/>
+<tr><td>Example(s)</td><td><code>      (c ← HttpCommand.New 'get' 'github.com').Run</code><br/>
 <code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 299959]
 </code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;≢ c.Cookies</code><br/>
+<code>      ≢ c.Cookies</code><br/>
 <code>3</code><br/>
 
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↑c.Cookies.(Name Host ('DD-MMM-YYYY'(1200⌶)Creation))</code><br/>
-<code>&nbsp;_gh_sess   github.com   05-AUG-2022</code><br/>  
-<code>&nbsp;_octo      github.com   05-AUG-2022</code><br/>  
-<code>&nbsp;logged_in  github.com   05-AUG-2022</code><br/>  
+<code>      ↑c.Cookies.(Name Host ('DD-MMM-YYYY'(1200⌶)Creation))</code><br/>
+<code> _gh_sess   github.com   05-AUG-2022</code><br/>  
+<code> _octo      github.com   05-AUG-2022</code><br/>  
+<code> logged_in  github.com   05-AUG-2022</code><br/>  
 </td></tr></table>
 
 
 ## Name/Value Pairs
 `Params`, for an appropriate content type, and `Headers` can be specified as name/value pairs. `HttpCommand` gives you some flexibility in how you specify name/value pairs. You may use:
 
-* A vector of depth `2` or `¯2` with an even number of elements.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`('name' 'dyalog' 'age' 39)`
-* A vector of 2-element vectors, `HttpCommand` will treat each sub-vector as a name/value pair.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`(('name' 'dyalog') ('age' 39))`
-* A 2-column matrix where each row represents a name/value pair.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`2 2⍴'name' 'dyalog' 'age' 39`
-* A reference to a namespace, `HttpCommand` will treat the variables and their values in the namespace as name/value pairs.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39`<br>Note that the names will be alphabetical in the formatted output.
+* A vector of depth `2` or `¯2` with an even number of elements.<br>      `('name' 'dyalog' 'age' 39)`
+* A vector of 2-element vectors, `HttpCommand` will treat each sub-vector as a name/value pair.<br>      `(('name' 'dyalog') ('age' 39))`
+* A 2-column matrix where each row represents a name/value pair.<br>      `2 2⍴'name' 'dyalog' 'age' 39`
+* A reference to a namespace, `HttpCommand` will treat the variables and their values in the namespace as name/value pairs.<br>      `ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39`<br>Note that the names will be alphabetical in the formatted output.

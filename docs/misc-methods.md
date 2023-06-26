@@ -3,7 +3,7 @@ This section describes `HttpCommand` shared methods that don't conveniently fit 
 Returns `HttpCommand` version information.
 <table>
 <tr><td>Syntax</td>
-<td><code>r←HttpCommand.Version</code></td><td>&nbsp;</tr>
+<td><code>r←HttpCommand.Version</code></td><td> </tr>
 <tr><td>Result</td>
 <td>A 3-element vector of:<ul>
 <li><code>'HttpCommand'</code></li>
@@ -11,17 +11,17 @@ Returns `HttpCommand` version information.
 <li>The version date</li>
 </td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Version</code><br/>
-<code>&nbsp;HttpCommand  5.0.2  2022-08-03</code></td></tr>
+<td><code>      HttpCommand.Version</code><br/>
+<code> HttpCommand  5.0.2  2022-08-03</code></td></tr>
 </table>
 
 ### `Documentation` 
 Returns a link to the documentation for `HttpCommand` that you can click on to navigate to this documentation.
 <table>
 <tr><td>Syntax</td>
-<td><code>r←HttpCommand.Documentation</code></td><td>&nbsp;</td></tr>
+<td><code>r←HttpCommand.Documentation</code></td><td> </td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Documentation</code><br/>
+<td><code>      HttpCommand.Documentation</code><br/>
 <code>See <a href="https://dyalog.github.io/HttpCommand/">https://dyalog.github.io/HttpCommand/</a></code></td></tr>
 </table>
 
@@ -37,8 +37,8 @@ Note: `Upgrade` will only update the in-workspace copy of `HttpCommand` and will
 <li>character vector message describing the result</li>
 </ul></td></tr>
 <tr><td>Example</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Upgrade</code><br/>
+<td><code>      HttpCommand.Upgrade</code><br/>
 <code>
-&nbsp;0&nbsp;&nbsp;Already using the most current version: HttpCommand 5.0.2 2022-08-03</code>
+ 0  Already using the most current version: HttpCommand 5.0.2 2022-08-03</code>
 </td></tr>
 </table>

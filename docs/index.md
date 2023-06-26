@@ -39,9 +39,9 @@ For example, `HttpCommand` version 3.4 may be found in Dyalog version 18.0.
 If `HttpCommand` is being used within your application (as opposed to ad hoc usage in your APL session) it is recommended that all Conga-using components refer to the same Conga namespace:
 
 * Copy the `Conga` namespace from the `conga` workspace.</br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`'Conga' #.⎕CY 'conga'`
+          `'Conga' #.⎕CY 'conga'`
 * Set [`HttpCommand.CongaRef`](conga.md#overriding-default-locations) setting to refer to the `Conga` namespace.</br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`HttpCommand.CongaRef←#.Conga`  
+          `HttpCommand.CongaRef←#.Conga`  
 * Similarly configure the other Conga-using components to refer to the `Conga` namespace.
 * Now each component can create their own Conga "root" using `Conga.Init`.<br/>`HttpCommand` does this for you automatically.
 
@@ -50,7 +50,7 @@ If `HttpCommand` is being used within your application (as opposed to ad hoc usa
 `HttpCommand` is implemented as a Dyalog class and its typical usage pattern is:
 
 1. Create an instance of the `HttpCommand` class using the function `HttpCommand.New`<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`instance ← HttpCommand.New ''`
+      `instance ← HttpCommand.New ''`
 1. Set fields (settings) appropriate to describe the request
 1. Send the request
 1. Examine the response result

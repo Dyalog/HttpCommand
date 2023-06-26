@@ -30,7 +30,7 @@ Note: There are two sets of headers in an HTTP request/response transaction - th
 `GetHeader` is a utility function included in the result namespace that makes it easier to extract response header values. `GetHeader` accommodates the case-insensitive nature of header names. If the header does not exist, `GetHeader` returns `''`.
 <table>
 <tr><td>Syntax</td>
-<td><code>value ← {headers} result.GetHeader name</code></td><td>&nbsp;</tr>
+<td><code>value ← {headers} result.GetHeader name</code></td><td> </tr>
 <tr><td><code>name</code></td>
 <td>A character vector header name, or vector of header names</td></tr>
 <tr><td><code>headers</code></td>
@@ -38,10 +38,10 @@ Note: There are two sets of headers in an HTTP request/response transaction - th
 <tr><td><code>value</code></td>
 <td>The header value(s) corresponding to the header names specified in <code>name</code>, or the empty vector <code>''</code> for header name(s) that don't exist.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result.GetHeader 'content-type'</code><br/>
+<td><code>      result.GetHeader 'content-type'</code><br/>
 <code>text/html; charset=utf-8</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;⍝ Note: there is no 'fred' header</code><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result.GetHeader 'content-type' 'fred' 'server'</code><br/>
+<code>      ⍝ Note: there is no 'fred' header</code><br/>
+<code>      result.GetHeader 'content-type' 'fred' 'server'</code><br/>
 <code>┌────────────────────────┬┬──────────────────────┐</code><br/>
 <code>│text/html; charset=utf-8││Apache/2.4.18 (Ubuntu)│</code><br/>
 <code>└────────────────────────┴┴──────────────────────┘</code><br/>

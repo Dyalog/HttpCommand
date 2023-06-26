@@ -16,7 +16,7 @@ Decode a Base64-encoded string or single-byte integer vector.
 <tr><td><code>out</code></td>
 <td>A character vector representing the decoded base-64 right argument.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Base64Decode 'RHlhbG9nIOKNuuKNtOKMig=='</code><br>
+<td><code>      HttpCommand.Base64Decode 'RHlhbG9nIOKNuuKNtOKMig=='</code><br>
 <code>Dyalog ⍺⍴⌊</code></td></tr>
 </table>
 
@@ -32,7 +32,7 @@ Base64 encode a string or integer vector.
 <tr><td><code>b64</code></td>
 <td>A character vector representing the base-64 encoding of the right argument.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.Base64Encode 'Dyalog ⍺⍴⌊'</code><br>
+<td><code>      HttpCommand.Base64Encode 'Dyalog ⍺⍴⌊'</code><br>
 <code>RHlhbG9nIOKNuuKNtOKMig==</code></td></tr>
 </table>
 
@@ -49,11 +49,11 @@ URLDecode a URLEncoded string.
 <tr><td><code>out</code></td>
 <td>The URLDecoding of <code>in</code>.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlDecode 'Dyalog%20%E2%8D%BA%E2%8D%B4%E2%8C%8A'</code><br/>
+<td><code>      HttpCommand.UrlDecode 'Dyalog%20%E2%8D%BA%E2%8D%B4%E2%8C%8A'</code><br/>
 <code>Dyalog ⍺⍴⌊</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlDecode 'name=Donald%20Duck'</code><br/>
+<code>      HttpCommand.UrlDecode 'name=Donald%20Duck'</code><br/>
 <code>name=Donald Duck</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlDecode 'first=Donald&last=O%27Mallard'</code><br/>
+<code>      HttpCommand.UrlDecode 'first=Donald&last=O%27Mallard'</code><br/>
 <code>first=Donald&last=O'Mallard</code><br/>
 </td></tr>
 </table>
@@ -73,11 +73,11 @@ URLEncode a string or a set of name/value pairs.
 <tr><td><code>out</code></td>
 <td>The URLEncoding of <code>in</code>.</td></tr>
 <tr><td>Example(s)</td>
-<td><code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlEncode 'Dyalog ⍺⍴⌊'</code><br/>
+<td><code>      HttpCommand.UrlEncode 'Dyalog ⍺⍴⌊'</code><br/>
 <code>Dyalog%20%E2%8D%BA%E2%8D%B4%E2%8C%8A</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'name' HttpCommand.UrlEncode 'Donald Duck'</code><br/>
+<code>      'name' HttpCommand.UrlEncode 'Donald Duck'</code><br/>
 <code>name=Donald%20Duck</code><br/><br/>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HttpCommand.UrlEncode ('first' 'Donald') ('last' 'O''Mallard')</code><br/>
+<code>      HttpCommand.UrlEncode ('first' 'Donald') ('last' 'O''Mallard')</code><br/>
 <code>first=Donald&last=O%27Mallard</code><br/>
 </td></tr>
 </table>
