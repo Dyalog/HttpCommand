@@ -906,7 +906,7 @@
 <p>The request failed when the proxy server tried to connect to dyalog.com.  Notice that there is some <code>Data</code> in the response; it turns out that Squid returns some HTML when something fails.  We can examine it using HTMLRenderer.</p>
 <pre><code>      'hr' ⎕WC 'HTMLRenderer' ('HTML' r.Data)
 </code></pre>
-<p><img alt="Squid Error" src="../img/SquidError.PNG" />
+<p><img alt="Squid Error" src="./img/SquidError.PNG" />
 What went wrong? We didn't specify the scheme for dyalog.com. Let's try again...</p>
 <pre><code>      h.URL←'https://dyalog.com'
       h.Run

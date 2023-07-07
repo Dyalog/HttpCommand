@@ -2685,7 +2685,7 @@ Accept: */*<br/><br/></code>
 <h3 id="result-request-secure"><code>Secure</code></h3>
 <p>A Boolean indicating whether the final request was sent using HTTPS. If the request was redirected, this may be reflect a different secure state from the original request. </p>
 <h3 id="result-request-url"><code>URL</code></h3>
-<p>The final URL of the HTTP request.  If the request was redirected, this may be different from the <code>URL</code> setting.</p></section><section class="print-page" id="result-response"><p>or the purposes of this document, we will refer to <code>result</code> as the result namespace returned by <a href="#instance-methods-run"><code>Run</code></a> when <code>RequestOnly=0</code>. <code>result</code> contains information about the request and the response, if any, from the host. Some settings from the request are copied into <code>result</code>.</p>
+<p>The final URL of the HTTP request.  If the request was redirected, this may be different from the <code>URL</code> setting.</p></section><section class="print-page" id="result-response"><p>For the purposes of this document, we will refer to <code>result</code> as the result namespace returned by <a href="#instance-methods-run"><code>Run</code></a> when <code>RequestOnly=0</code>. <code>result</code> contains information about the request and the response, if any, from the host. Some settings from the request are copied into <code>result</code>.</p>
 <h3 id="result-response-httpstatus"><code>HttpStatus</code></h3>
 <p>The integer <a href="https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml">HTTP response status code</a> returned by the host. Status codes are split into specific ranges:</p>
 <ul>
@@ -3340,7 +3340,7 @@ iteration of the Conga Wait loop.   </p>
 <p>The request failed when the proxy server tried to connect to dyalog.com.  Notice that there is some <code>Data</code> in the response; it turns out that Squid returns some HTML when something fails.  We can examine it using HTMLRenderer.</p>
 <pre><code>      'hr' ⎕WC 'HTMLRenderer' ('HTML' r.Data)
 </code></pre>
-<p><img alt="Squid Error" src="../img/SquidError.PNG" />
+<p><img alt="Squid Error" src="../proxy/img/SquidError.PNG" />
 What went wrong? We didn't specify the scheme for dyalog.com. Let's try again...</p>
 <pre><code>      h.URL←'https://dyalog.com'
       h.Run
