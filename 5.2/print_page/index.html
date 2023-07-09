@@ -1690,7 +1690,7 @@ query - the query string for the request. If the HTTP method for the request is 
                     specified, <code>HttpCommand</code> will attempt to infer the content type as follows:
             <ul><li>If <code>Params</code> is a simple character vector and looks like JSON <code>HttpCommand</code> will set the content type as <code>'application/json'</code>; otherwise it will set the content type to <code>`application/x-www-form-urlencoded'</code>. <code>Params</code> will then be processed as described below.</li><li>Otherwise <code>HttpCommand</code> will set the content type to <code>'application/json'</code> and <code>Params</code> will be processed as described below.</li></ul>
             If the content type is specified, <code>Params</code> is processed based on the content type and inserted as the payload of the request.  If the content type is:<ul>
-                        <li><code>'x-www-form-urlencoded'</code>: <code>Params</code> will be formatted using <a href="#request-settings-shared-urlencode"><code>UrlEncode</code></a> unless it already composed completely of valid URLEncoding characters.</li>
+                        <li><code>'x-www-form-urlencoded'</code>: <code>Params</code> will be formatted using <a href="#encode-methods-urlencode"><code>UrlEncode</code></a> unless it already composed completely of valid URLEncoding characters.</li>
                         <li><code>'application/json'</code>:<ul>
                                 <li>If <code>Params</code> is a character vector that is a valid JSON representation, it is left unaltered.</li>
                                 <li>Otherwise <code>Params</code> will be converted to JSON format using <code>1 ⎕JSON</code>.</li>
