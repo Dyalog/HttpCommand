@@ -1,4 +1,4 @@
-or the purposes of this document, we will refer to `result` as the result namespace returned by [`Run`](./instance-methods.md#run) when `RequestOnly=0`. `result` contains information about the request and the response, if any, from the host. Some settings from the request are copied into `result`.
+For the purposes of this document, we will refer to `result` as the result namespace returned by [`Run`](./instance-methods.md#run) when `RequestOnly=0`. `result` contains information about the request and the response, if any, from the host. Some settings from the request are copied into `result`.
 
 ### `HttpStatus`
 The integer [HTTP response status code](https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml) returned by the host. Status codes are split into specific ranges:
