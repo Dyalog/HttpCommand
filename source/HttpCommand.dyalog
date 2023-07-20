@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.2.0' '2023-06-15'
+      r←'HttpCommand' '5.3.0' '2023-07-19'
     ∇
 
 ⍝ Request-related fields
@@ -19,6 +19,7 @@
     :field public Cookies←⍬                        ⍝ request cookies - vector of namespaces
     :field public Auth←''                          ⍝ authentication string
     :field public AuthType←''                      ⍝ authentication type
+    :field public BaseURL←''                       ⍝ base URL to use when making multiple requests to the same host
 
 ⍝ Proxy-related fields - only used if connecting through a proxy server
     :field public ProxyURL←''                      ⍝ address of the proxy server
@@ -49,7 +50,7 @@
     :field public KeepAlive←1                      ⍝ default to not close client connection
     :field public TranslateData←0                  ⍝ set to 1 to translate XML or JSON response data
     :field public UseZip←0                         ⍝ zip request payload (0-no, 1-use gzip, 2-use deflate)
-    :field public ZipLevel←3                       ⍝ default compression level (0-9)
+    :field public ZipLevel←1                       ⍝ default compression level (0-9)
     :field public shared Debug←0                   ⍝ set to 1 to disable trapping, 2 to stop just before creating client
 
     :field public readonly shared ValidFormUrlEncodedChars←'&=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~*+~%'
@@ -427,6 +428,7 @@
       :EndIf
      
       url←,url
+      url←BaseURL makeURL url
       cmd←uc,cmd
      
      ∆GET:
@@ -930,6 +932,14 @@
     seconds←{⍵÷86400} ⍝ convert seconds to fractional day (for cookie max-age)
     atLeast←{a←(≢⍵)↑⍺ ⋄ ⊃((~∧\⍵=a)/a>⍵),1} ⍝ checks if ⍺ is at least version ⍵
     Zipper←219⌶
+
+      makeURL←{ ⍝ build URL from BaseURL (⍺) and URL (⍵)
+          ~0∊⍴'^https?\:\/\/'⎕S 3⍠('IC' 1)⊢⍵:⍵  ⍝ URL begins with http:// or https://
+          0∊⍴⍺:⍵        ⍝ no BaseURL
+          t←'/'=⊃⍵      ⍝ URL begins with '/'?
+          '/'=⊃⌽⍺:⍺,t↓⍵ ⍝ BaseURL ends with '/'
+          ⍺,t↓'/',⍵     ⍝ insert '/' if not already there
+      }
 
     ∇ r←makeHeaders w
       r←{

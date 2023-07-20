@@ -68,7 +68,7 @@ query - the query string for the request. If the HTTP method for the request is 
             <ul><li>If <code>Params</code> is a simple character vector and looks like JSON <code>HttpCommand</code> will set the content type as <code>'application/json'</code>; otherwise it will set the content type to <code>`application/x-www-form-urlencoded'</code>. <code>Params</code> will then be processed as described below.</li><li>Otherwise <code>HttpCommand</code> will set the content type to <code>'application/json'</code> and <code>Params</code> will be processed as described below.</li></ul>
             If the content type is specified, <code>Params</code> is processed based on the content type and inserted as the payload of the request.  If the content type is:<ul>
                         <li><code>'x-www-form-urlencoded'</code>: <code>Params</code> will be formatted using <a
-                                href="shared#urlencode"><code>UrlEncode</code></a> unless it already composed completely of valid URLEncoding characters.</li>
+                                href="/encode-methods/#urlencode"><code>UrlEncode</code></a> unless it already composed completely of valid URLEncoding characters.</li>
                         <li><code>'application/json'</code>:<ul>
                                 <li>If <code>Params</code> is a character vector that is a valid JSON representation, it is left unaltered.</li>
                                 <li>Otherwise <code>Params</code> will be converted to JSON format using <code>1 ⎕JSON</code>.</li>
@@ -162,7 +162,7 @@ If <code>AuthType</code> is not set and <code>Auth</code> is set to either a cha
 <tr><td>Default</td>
 <td><code>0</code></td></tr>
 <tr><td>Details</td>
-<td>The <a href="#ziplevel">ZipLevel</a> setting controls the level of compression when using gzip or deflate encoding.</td></tr>
+<td>The <a href="#ziplevel"><code>ZipLevel</code></a> setting controls the level of compression when using gzip or deflate encoding.</td></tr>
 </table>
 
 ### `ZipLevel`
@@ -170,9 +170,35 @@ If <code>AuthType</code> is not set and <code>Auth</code> is set to either a cha
 <td>Description</td>
 <td><code>ZipLevel</code> controls the level of compression when using gzip or deflate encoding. Valid values are <code>0</code> through <code>9</code>. Higher values use a higher degree of compression but also consume more CPU.</td></tr>
 <tr><td>Default</td>
-<td><code>3</code></td></tr>
+<td><code>1</code></td></tr>
 <tr><td>Details</td>
-<td>The <a href="usezip">UseZip</a> setting controls which compression algorithm, if any, is used.</td></tr>
+<td>The <a href="usezip"><code>UseZip</code></a> setting controls which compression algorithm, if any, is used.</td></tr>
+</table>
+
+### `BaseURL`
+<table><tr>
+<td>Description</td>
+<td><code>BaseURL</code> can be used when making multiple requests to similar-named endpoints. Set <code>BaseURL</code> to the common root of the URLs that you will be using and then set <a href="#url"><code>URL</code></a> to the remaining portion of the specific URL. <code>BaseURL</code> will be prepended to <a href="#url"><code>URL</code></a> to form the complete URL for the request.  Subsequent calls to other endpoints can be made by setting <a href="#url"><code>URL</code></a>.</td></tr>
+<tr><td>Default</td>
+<td><code>''</code></td></tr>
+<tr><td>Example(s)</td><td><pre><code>      h.BaseURL←'https://api.github.com/'
+      h.URL←'orgs/Dyalog/repos'
+      h.Run
+[rc: 0 | msg:  | HTTP Status: 200 "OK" | ≢Data: 153884]
+      h.URL←'orgs/Dyalog/members'
+      h.Run
+[rc: 0 | msg:  | HTTP Status: 200 "OK" | ≢Data: 1911]
+</code></pre><br/>
+<pre><code>      h.BaseURL←'https://api.github.com/repos/Dyalog/HttpCommand/'
+      h.URL←'commits'
+      h.Run
+[rc: 0 | msg:  | HTTP Status: 200 "OK" | ≢Data: 98869]
+      h.URL←'branches'
+      h.Run
+[rc: 0 | msg:  | HTTP Status: 200 "OK" | ≢Data: 867]
+</code></pre></td></tr>
+<tr><td>Details</td>
+<td>If <code>URL</code> begins with <code>'http://'</code> or <code>'https://'</code>, <code>BaseURL</code> will not be prepended to <code>URL</code>.</td></tr>
 </table>
 
 ### `Cookies`
