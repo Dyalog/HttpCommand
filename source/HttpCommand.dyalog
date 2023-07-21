@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.3.0' '2023-07-19'
+      r←'HttpCommand' '5.3.1' '2023-07-20'
     ∇
 
 ⍝ Request-related fields
@@ -325,7 +325,7 @@
               :EndIf
               :If ∨/'.Conga'⍷⍕CongaRef ⍝ Conga?
                   LDRC←CongaPath CongaRef.Init'HttpCommand'
-              :ElseIf 0≡⊃CongaPath CongaRef.Init'' ⍝ DRC?
+              :ElseIf 0≡⊃CongaRef.Init'' ⍝ DRC?
                   LDRC←CongaRef
               :Else ⍝ should never get to here, but... (paranoia)
                   r.msg←'it does not refer to a valid Conga interface'
