@@ -1,6 +1,7 @@
 
 __Note__: While `HttpCommand` itself is `⎕IO` and `⎕ML` insensitive, the examples in this documentation assume an environment of `(⎕IO ⎕ML)←1`.
 
+## Loading `HttpCommand`
 `HttpCommand` is a utility is designed to make it easy for the APL user to send requests to and receive responses from HTTP servers like web servers and web services. `HttpCommand` is included with Dyalog APL as a loadable utility. To bring it into your workspace, simply do:
 ```APL
       ]Load HttpCommand
@@ -33,17 +34,15 @@ For example, `HttpCommand` version 3.4 may be found in Dyalog version 18.0.
 0  Upgraded to HttpCommand 5.0.7 2022-08-27 from HttpCommand 4.0.14 2022-09-04 
 ```
 
-:point_right: It is **strongly recommended** that you save your own copy of `HttpCommand` in your application rather than dynamically loading or upgrading it at runtime. In particular, it is bad practice to repeated load `HttpCommand` as this may cause Conga to  reinitialize each time `HttpCommand` is loaded and may interfere with other components of your application that also use Conga.  
+## `HttpCommand` is Available as a Tatin Package 
+[Tatin](https://tatin.dev) is a package manager for APL-based packages. `HttpCommand` is available as a Tatin package. If you have the Tatin client installed, you can load `HttpCommand` using:
+```APL
+      ]TATIN.LoadPackages HttpCommand
+```
+The Tatin client will be included in your Dyalog installation beginning with Dyalog version 19.0. For earlier versions of Dyalog, refer to the [Tatin website](https://tatin.dev) for instructions on installing the Tatin client.
 
-
-If `HttpCommand` is being used within your application (as opposed to ad hoc usage in your APL session) it is recommended that all Conga-using components refer to the same Conga namespace:
-
-* Copy the `Conga` namespace from the `conga` workspace.</br>
-          `'Conga' #.⎕CY 'conga'`
-* Set [`HttpCommand.CongaRef`](conga.md#overriding-default-locations) setting to refer to the `Conga` namespace.</br>
-          `HttpCommand.CongaRef←#.Conga`  
-* Similarly configure the other Conga-using components to refer to the `Conga` namespace.
-* Now each component can create their own Conga "root" using `Conga.Init`.<br/>`HttpCommand` does this for you automatically.
+!!! warning "Load Once, Use Often"
+     It is **strongly recommended** that you save your own copy of `HttpCommand` in your application rather than dynamically loading or upgrading it at runtime. In particular, it is bad practice to repeated load `HttpCommand` as this may cause Conga to  reinitialize each time `HttpCommand` is loaded and may interfere with other components of your application that also use Conga. If `HttpCommand` is being used within your application (as opposed to ad hoc usage in your APL session) it is recommended that all Conga-using components refer to the same Conga namespace:
 
 ## Typical Usage Patterns
 
@@ -90,6 +89,15 @@ This documentation should provide sufficient information to use `HttpCommand` to
 * An APL object that implements a cross-platform interface to the shared libraries.  The object will be either the `DRC` namespace or an instance of the `Conga.LIB` class. For the purposes of this document we will refer to this object as the __Conga API__.
 
 See [HttpCommand and Conga](./conga.md) for more information on how `HttpCommand` interacts with Conga.  See [Integrating HttpCommand](./integrating.md) for more information on how to package Conga and `HttpCommand` in a distributed application. 
+
+If your application has other components that also use Conga, we recommend that you use the "multiple roots" feature of the `Conga` namespace:
+
+* Copy the `Conga` namespace from the `conga` workspace.</br>
+          `'Conga' #.⎕CY 'conga'`
+* Set [`HttpCommand.CongaRef`](conga.md#overriding-default-locations) setting to refer to the `Conga` namespace.</br>
+          `HttpCommand.CongaRef←#.Conga`  
+* Similarly configure the other Conga-using components to refer to the `Conga` namespace.
+* Now each component can create their own Conga "root" using `Conga.Init`.<br/>`HttpCommand` does this for you automatically.
 
 ## Further Reading
 * This documentation does not attempt to be an in-depth examination of either Conga or the HTTP protocol. For more information on Conga, see the [Conga User Guide](https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf)

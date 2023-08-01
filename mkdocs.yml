@@ -2,7 +2,7 @@ site_name: HttpCommand
 repo_url: https://github.com/dyalog/httpcommand
 repo_name: Dyalog/HttpCommand
 dev_addr: 127.0.0.1:22222
-copyright: Copyright &copy; 2015-2022 <strong><a href="https://dyalog.com">Dyalog, LTD</a></strong>
+copyright: Made with <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener"><strong>Material for MkDocs</strong></a><br/>Copyright &copy; 2015-2022 <strong><a href="https://dyalog.com" target="_blank" rel="noopener">Dyalog, LTD</a></strong>
 nav:
     - Overview: 'index.md'
     - Usage:
