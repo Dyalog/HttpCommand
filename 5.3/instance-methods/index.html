@@ -1,0 +1,1236 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../misc-methods/">
+      
+      
+        <link rel="next" href="../result-operational/">
+      
+      <link rel="icon" href="../img/favicon-32.png">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
+    
+    
+      
+        <title>Instance Methods - HttpCommand</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.eebd395e.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings2.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings3.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings4.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings5.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings6.css">
+    
+      <link rel="stylesheet" href="../css/print-site.css">
+    
+      <link rel="stylesheet" href="../css/print-site-material.css">
+    
+      <link rel="stylesheet" href="../css/main.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#run" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="HttpCommand" class="md-header__button md-logo" aria-label="HttpCommand" data-md-component="logo">
+      
+  <img src="../img/dyalog-white.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HttpCommand
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Instance Methods
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/dyalog/httpcommand" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Dyalog/HttpCommand
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="HttpCommand" class="md-nav__button md-logo" aria-label="HttpCommand" data-md-component="logo">
+      
+  <img src="../img/dyalog-white.svg" alt="logo">
+
+    </a>
+    HttpCommand
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/dyalog/httpcommand" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Dyalog/HttpCommand
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          Usage
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Usage
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        Quick Start
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../userguide/" class="md-nav__link">
+        Usage Guide
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        Examples
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trouble/" class="md-nav__link">
+        Troubleshooting
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+          Settings
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Settings
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../request-settings/" class="md-nav__link">
+        Request-related Settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operational-settings/" class="md-nav__link">
+        Operational Settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conga-settings/" class="md-nav__link">
+        Conga-related Settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../proxy-settings/" class="md-nav__link">
+        Proxy-related Settings
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+          Shared Methods
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Shared Methods
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shortcut-methods/" class="md-nav__link">
+        Shortcut Methods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../encode-methods/" class="md-nav__link">
+        Encode/Decode Methods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../misc-methods/" class="md-nav__link">
+        Miscellaneous Methods
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Instance Methods
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Instance Methods
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#run" class="md-nav__link">
+    Run
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    Show
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config" class="md-nav__link">
+    Config
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#init" class="md-nav__link">
+    Init
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#header-related-methods" class="md-nav__link">
+    Header-related Methods
+  </a>
+  
+    <nav class="md-nav" aria-label="Header-related Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#addheader" class="md-nav__link">
+    AddHeader
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setheader" class="md-nav__link">
+    SetHeader
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removeheader" class="md-nav__link">
+    RemoveHeader
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+          Result Namespace
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Result Namespace
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result-operational/" class="md-nav__link">
+        Operational Elements
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result-request/" class="md-nav__link">
+        Request Elements
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result-response/" class="md-nav__link">
+        Response Elements
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../msgs/" class="md-nav__link">
+        Messages and Return Codes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Advanced Topics
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Advanced Topics
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conga/" class="md-nav__link">
+        HttpCommand and Conga
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../secure/" class="md-nav__link">
+        Secure Communications
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../proxy/" class="md-nav__link">
+        Using a Proxy Server
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrating/" class="md-nav__link">
+        Integrating HttpCommand
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          About
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          About
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-notes/" class="md-nav__link">
+        Release Notes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../print_page/" class="md-nav__link">
+        Print
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#run" class="md-nav__link">
+    Run
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#show" class="md-nav__link">
+    Show
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#config" class="md-nav__link">
+    Config
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#init" class="md-nav__link">
+    Init
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#header-related-methods" class="md-nav__link">
+    Header-related Methods
+  </a>
+  
+    <nav class="md-nav" aria-label="Header-related Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#addheader" class="md-nav__link">
+    AddHeader
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setheader" class="md-nav__link">
+    SetHeader
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removeheader" class="md-nav__link">
+    RemoveHeader
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+  <h1>Instance Methods</h1>
+
+<p>The methods documented in this section are instance methods and may be called from an instance of <code>HttpCommand</code>. In the documentation below, we will use the name <code>instance</code> to represent an instance of <code>HttpCommand</code>. </p>
+<h3 id="run"><code>Run</code></h3>
+<p><code>Run</code> "runs" the HTTP request defined by the instance's settings. <code>Run</code> is called internally by the shared "shortcut" methods <code>Get</code>, <code>GetJSON</code>, and <code>Do</code>. </p>
+<table>
+<tr><td>Syntax</td>
+<td><code>result←instance.Run</code></td><td> </tr>
+<tr><td><code>result</code></td>
+<td><code>result</code> depends on the <code>RequestOnly</code> setting.<br/><br/>
+If <code>RequestOnly=1</code>, <code>Run</code> will return, if possible, the HTTP request that <i>would</i> be sent if <code>RequestOnly</code> was set to <code>0</code>. If <code>HttpCommand</code> cannot form a proper HTTP request, <code>Run</code> will return a <a href="/result">result namespace</a> with pertinent information.<br/><br/>
+If <code>RequestOnly=0</code>, <code>Run</code> will return a <a href="/result">result namespace</a> containing the result of attempting to build and send the HTTP request specified by the instance's settings. 
+</td></tr>
+<tr><td>Examples</td>
+<td><code>      instance←HttpCommand.New ''</code><br/>
+<code>      instance.RequestOnly←1</code><br/><br/>
+There isn't sufficient information for <code>HttpCommand</code> to build a proper HTTP request.<br/>
+<code>      ⊢result ← instance.Run</code></br>
+<code>[rc: ¯1 | msg: No URL specified | HTTP Status:  "" | ⍴Data: 0]</code><br/><br/>
+<code>      instance.URL←'dyalog.com'</code><br/>
+Now, there's enough information to form a proper HTTP request.<br/>
+<code>      ⊢result ← instance.Run</code><br/>
+<code>GET / HTTP/1.1<br/>
+Host: dyalog.com<br/>
+User-Agent: Dyalog-HttpCommand/5.0.3<br/>
+Accept: */*<br/><br/></code>
+<code>      instance.RequestOnly←0</code><br/>
+<code>      ⊢result ← instance.Run</code><br/>
+<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 23127]</code>
+</table>
+
+<h3 id="show"><code>Show</code></h3>
+<p>Returns the HTTP request that <code>HttpCommand</code> would send when <code>Run</code> is executed and <code>RequestOnly</code> is <code>0</code>.  <code>Show</code> is equivalent to setting <code>RequestOnly</code> to <code>1</code> and running <code>Run</code>.</p>
+<table>
+<tr><td>Syntax</td>
+<td><code>r←instance.Show</code></td><td> </td></tr>
+<tr><td>Example</td>
+<td><code>      instance ← HttpCommand.New 'get' 'dyalog.com'</code><br/>
+<code>      instance.Show</code><br/>
+<code>GET / HTTP/1.1</code><br/><br/>
+<code>Host: dyalog.com</code><br/><br/>
+<code>User-Agent: Dyalog-HttpCommand/5.0.3</code><br/><br/>
+<code>Accept: */*</code>
+</td></tr>
+</table>
+
+<h3 id="config"><code>Config</code></h3>
+<p><code>Config</code> returns the current state of all <code>HttpCommand</code> settings.</p>
+<table>
+<tr><td>Syntax</td>
+<td><code>r←instance.Config</code></td></tr>
+<tr><td><code>r</code></td>
+<td>A 2-column matrix where<br/>
+<code>[;1] </code>contains the setting names<br/>
+<code>[;2] </code>contains the corresponding setting values</td></tr>
+<tr><td>Example</td>
+<td>
+<code>      instance←HttpCommand.New 'get' 'dyalog.com'</code><br/>
+<code>      instance.Config</code><br/>
+<code> Auth</code><br/>
+<code> AuthType</code><br/>
+<code> BufferSize                      200000</code><br/>
+<code> Cert</code><br/>
+<code> Command                            get</code><br/>                    
+<code> CongaPath</code><br/>
+<code> CongaRef</code><br/>
+<code> CongaVersion</code><br/>
+<code> ContentType</code><br/>
+<code> Cookies</code><br/>
+<code> Debug                                0</code><br/>
+<code> Headers</code><br/>
+<code> KeepAlive                            1</code><br/>                    
+<code> LDRC                           not set</code><br/>                    
+<code> MaxPayloadSize                      ¯1</code><br/>
+<code> MaxRedirections                     10</code><br/>
+<code> OutFile</code><br/>
+<code> Params</code><br/>
+<code> Priority         NORMAL:!CTYPE-OPENPGP</code><br/>
+<code> PrivateKeyFile</code><br/>
+<code> PublicCertFile</code><br/>
+<code> RequestOnly                          0</code><br/>
+<code> SSLFlags                            32</code><br/>
+<code> SuppressHeaders                      0</code><br/>
+<code> Timeout                             10</code><br/>
+<code> TranslateData                        0</code><br/>
+<code> URL                         dyalog.com</code><br/>
+<code> WaitTime                          5000</code><br/>
+</td></tr>
+</table>
+
+<h3 id="init"><code>Init</code></h3>
+<p><code>Init</code> initializes Conga, Dyalog's TCP/IP utility library. Normally, <code>HttpCommand</code> will initialize Conga when <code>Run</code> is first  called. <code>Init</code> is intended to be used when the user wants to "tweak" Conga prior to <code>Run</code> being executed. It's very unlikely that you'll ever need to use <code>Init</code>.</p>
+<table>
+<tr><td>Syntax</td>
+<td><code>r←instance.Init</code></td></tr>
+<tr><td><code>r</code></td>
+<td>a 2-element vector of<br/><ul><li><code>[1]</code> the return code. <code>0</code> means Conga is initialized. Non-<code>0</code> indicates some error occurred in Conga initialization.</li>
+<li><code>[2]</code> a message describing what went wrong if the return code is not <code>0</code></li>
+</ul></td></tr>
+<tr><td>Example</td>
+<td><code>      instance←HttpCommand.New ''</code><br/>
+<code>      instance.CongaPath←'/doesnotexist'</code><br/>
+<code>      instance.Init</code><br/>
+<code>¯1  CongaPath "c:/doesnotexist/" does not exist</code>
+</td></tr>
+</table>
+
+<h2 id="header-related-methods">Header-related Methods</h2>
+<p>There are two sets of headers associated with an HTTP request - the request headers and the response headers. The methods described here deal with request headers.</p>
+<p><code>HttpCommand</code>'s request headers are stored in the <code>Headers</code> setting which is a 2-column matrix of name/value pairs. Header names are case-insensitive; header values are not. While you can manipulate the <code>Headers</code> array directly, <code>HttpCommand</code> has three methods to manage <code>Headers</code> that accommodate the case-insensitive nature of header names.</p>
+<p>Note: The examples below were run using <code>]boxing on</code>.</p>
+<h3 id="addheader"><code>AddHeader</code></h3>
+<p><code>AddHeader</code> will add a header if a header with that name does not already exist. Use <code>SetHeader</code> to set a header regardless if one with the same name already exists.</p>
+<table>
+<tr><td>Syntax</td>
+<td><code>name instance.AddHeader value</code></td></tr>
+<tr><td><code>value</code></td>
+<td>the value for the header</td></tr>
+<tr><td><code>name</code></td>
+<td>the name for the header</td></tr>
+<tr><td>Example</td>
+<td><code>      instance←HttpCommand.New ''</code><br/>
+<code>      'My-Header' instance.AddHeader 'Drake Mallard'</code><br/>
+<code>      instance.Headers</code><br/>
+<code>┌─────────┬─────────────┐</code><br/>
+<code>│My-Header│Drake Mallard│</code><br/>
+<code>└─────────┴─────────────┘</code><br/>
+<code>AddHeader</code> will not replace an existing header with the same case-insensitive name<br/> 
+<code>      'my-header' instance.AddHeader 'Daffy Duck'</code><br/>
+<code>      instance.Headers</code><br/>
+<code>┌─────────┬─────────────┐</code><br/>
+<code>│My-Header│Drake Mallard│</code><br/>
+<code>└─────────┴─────────────┘</code><br/>
+</td></tr>
+</table>
+
+<h3 id="setheader"><code>SetHeader</code></h3>
+<p><code>SetHeader</code> will set a header, replacing one of the same name if it already exists.</p>
+<table>
+<tr><td>Syntax</td>
+<td><code>name instance.SetHeader value</code></td></tr>
+<tr><td><code>value</code></td>
+<td>the value for the header</td></tr>
+<tr><td><code>name</code></td>
+<td>the name for the header</td></tr>
+<tr><td>Example</td>
+<td><code>      instance←HttpCommand.New ''</code><br/>
+<code>      'My-Header' instance.SetHeader 'Drake Mallard'</code><br/>
+<code>      instance.Headers</code><br/>
+<code>┌─────────┬─────────────┐</code><br/>
+<code>│My-Header│Drake Mallard│</code><br/>
+<code>└─────────┴─────────────┘</code><br/><code>SetHeader</code> will replace an existing header with the same case-insensitive name<br/> 
+<code>      'my-header' instance.SetHeader 'Daffy Duck'</code><br/>
+<code>      instance.Headers</code><br/>
+<code>┌─────────┬──────────┐</code><br/>
+<code>│My-Header│Daffy Duck│</code><br/>
+<code>└─────────┴──────────┘</code><br/>
+<code>
+</td></tr>
+</table>
+
+<h3 id="removeheader"><code>RemoveHeader</code></h3>
+<p><code>RemoveHeader</code> removes a header. If the header does not exist, <code>RemoveHeader</code> has no effect.</p>
+<table>
+<tr><td>Syntax</td>
+<td><code>instance.RemoveHeader name</code></td></tr>
+<tr><td><code>name</code></td>
+<td>the case-insensitive name of the header to remove</td</tr>
+<tr><td>Example</td>
+<td><code>      'My-Header' instance.SetHeader 'Daffy Duck'</code></br>
+<code>      'another' instance.SetHeader 'some value'</code></br>
+<code>      instance.Headers</code><br/>
+<code>┌─────────┬──────────┐</code><br/>
+<code>│My-Header│Daffy Duck│</code><br/>
+<code>├─────────┼──────────┤</code><br/>
+<code>│another  │some value│</code><br/>
+<code>└─────────┴──────────┘</code></br>
+<code>      instance.RemoveHeader 'my-header'</code><br/>
+<code>      instance.Headers</code><br/>
+<code>┌───────┬──────────┐</code><br/>
+<code>│another│some value│</code><br/>
+<code>└───────┴──────────┘</code><br/>
+</td></tr>
+</table>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Made with <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener"><strong>Material for MkDocs</strong></a><br/>Copyright &copy; 2015-2022 <strong><a href="https://dyalog.com" target="_blank" rel="noopener">Dyalog, LTD</a></strong>
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.instant"], "search": "../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.220ee61c.min.js"></script>
+      
+        
+          <script src="../js/print-site.js"></script>
+        
+      
+    
+  </body>
+</html>
