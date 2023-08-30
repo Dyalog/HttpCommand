@@ -1952,10 +1952,15 @@ Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON
 <td><code>h.SuppressHeaders←1</code></td></tr>
 <tr><td>Details</td>
 <td><code>HttpCommand</code> will only generate headers that you have not specified yourself. <code>HttpCommand</code> generates the following default headers:<ul><li><code>Host</code> - the host name in the URL. This header <b>must</b> be supplied.</li>
-<li><code>User-Agent</code> - <code>Dyalog-HttpCommand/&lt;version&gt;</code></li>
-<li><code>Accept</code> - <code>*/*</code>. By default, <code>HttpCommand</code> will accept any response type</li>
-<li><code>Authorization</code> - set only if you provide HTTP Basic authentication credentials, or set <code>Auth</code> and  <code>AuthType</code.</li>
-<li><code>Cookie</code> - any saved cookies applicable to the request.
+<li><code>User-Agent: Dyalog-HttpCommand/&lt;version&gt;</code></li>
+<li><code>Accept: */*</code> By default, <code>HttpCommand</code> will accept any response type</li>
+<li><code>Accept-Encoding: gzip, deflate</code> By default, <code>HttpCommand</code> will accept compressed response payloads</li>
+<li><code>Authorization</code> set only if you provide HTTP Basic authentication credentials, or set <code>Auth</code> and  <code>AuthType</code></li>
+<li><code>Cookie</code> - any saved cookies applicable to the request.</li>
+<li><code>Content-Type</code> is conditionally set as described <a href="#..-userguide-content-types">here</a></li></ul>
+Setting <code>SuppressHeaders←1</code> will suppress ALL <code>HttpCommand</code>-generated headers which means you will need to specify any necessary request headers yourself.  
+<br/>
+Individual headers can be suppressed by using the <a href="#..-instance-methods-setheader"><code>SetHeader</code></a> instance method and assigning the header a value of <code>''</code>.<br/><br/>Note: Conga will always insert a <code>Content-Length</code> header for any request that has a payload. 
 </td></tr></table>
 
 <h3 id="operational-settings-timeout"><code>Timeout</code></h3>
@@ -2623,16 +2628,19 @@ Accept: */*<br/><br/></code>
 <h2 id="instance-methods-header-related-methods">Header-related Methods</h2>
 <p>There are two sets of headers associated with an HTTP request - the request headers and the response headers. The methods described here deal with request headers.</p>
 <p><code>HttpCommand</code>'s request headers are stored in the <code>Headers</code> setting which is a 2-column matrix of name/value pairs. Header names are case-insensitive; header values are not. While you can manipulate the <code>Headers</code> array directly, <code>HttpCommand</code> has three methods to manage <code>Headers</code> that accommodate the case-insensitive nature of header names.</p>
+<p>By default, <code>HttpCommand</code> will automatically generate several request headers.  See <a href="#operational-settings-suppressheaders"><code>SuppressHeaders</code></a> for the list of these headers.  To suppress the generation of specific headers, you can set its value to <code>''</code>  </p>
 <p>Note: The examples below were run using <code>]boxing on</code>.</p>
 <h3 id="instance-methods-addheader"><code>AddHeader</code></h3>
-<p><code>AddHeader</code> will add a header if a header with that name does not already exist. Use <code>SetHeader</code> to set a header regardless if one with the same name already exists.</p>
+<p><code>AddHeader</code> will add a header if a user-defined header with that name does not already exist. Use <code>SetHeader</code> to set a header regardless if one with the same name already exists.</p>
 <table>
 <tr><td>Syntax</td>
-<td><code>name instance.AddHeader value</code></td></tr>
+<td><code>{hdrs}←name instance.AddHeader value</code></td></tr>
 <tr><td><code>value</code></td>
 <td>the value for the header</td></tr>
 <tr><td><code>name</code></td>
 <td>the name for the header</td></tr>
+<tr><td><code>hdrs</code></td>
+<td>the updated matrix of user-specified headers</td></tr>
 <tr><td>Example</td>
 <td><code>      instance←HttpCommand.New ''</code><br/>
 <code>      'My-Header' instance.AddHeader 'Drake Mallard'</code><br/>
@@ -2646,6 +2654,8 @@ Accept: */*<br/><br/></code>
 <code>┌─────────┬─────────────┐</code><br/>
 <code>│My-Header│Drake Mallard│</code><br/>
 <code>└─────────┴─────────────┘</code><br/>
+Setting the value of an <code>HttpCommand</code>-generated header that to <code>''</code> will suppress that header from being sent in the request.<br/>
+<code>      'accept-encoding' instance.SetHeader ''</code><br/>
 </td></tr>
 </table>
 
@@ -2653,34 +2663,38 @@ Accept: */*<br/><br/></code>
 <p><code>SetHeader</code> will set a header, replacing one of the same name if it already exists.</p>
 <table>
 <tr><td>Syntax</td>
-<td><code>name instance.SetHeader value</code></td></tr>
+<td><code>{hdrs}←name instance.SetHeader value</code></td></tr>
 <tr><td><code>value</code></td>
 <td>the value for the header</td></tr>
 <tr><td><code>name</code></td>
 <td>the name for the header</td></tr>
+<tr><td><code>hdrs</code></td>
+<td>the updated matrix of user-specified headers</td></tr>
 <tr><td>Example</td>
 <td><code>      instance←HttpCommand.New ''</code><br/>
-<code>      'My-Header' instance.SetHeader 'Drake Mallard'</code><br/>
-<code>      instance.Headers</code><br/>
+<code>      ⊢'My-Header' instance.SetHeader 'Drake Mallard'</code><br/>
 <code>┌─────────┬─────────────┐</code><br/>
 <code>│My-Header│Drake Mallard│</code><br/>
-<code>└─────────┴─────────────┘</code><br/><code>SetHeader</code> will replace an existing header with the same case-insensitive name<br/> 
-<code>      'my-header' instance.SetHeader 'Daffy Duck'</code><br/>
-<code>      instance.Headers</code><br/>
+<code>└─────────┴─────────────┘</code><br/><br/>
+<code>SetHeader</code> will replace an existing header with the same case-insensitive name<br/> 
+<code>      ⊢'my-header' instance.SetHeader 'Daffy Duck'</code><br/>
 <code>┌─────────┬──────────┐</code><br/>
 <code>│My-Header│Daffy Duck│</code><br/>
-<code>└─────────┴──────────┘</code><br/>
-<code>
+<code>└─────────┴──────────┘</code><br/><br/>
+Setting the value of an <code>HttpCommand</code>-generated header that to <code>''</code> will suppress that header from being sent in the request.<br/>
+<code>      'accept-encoding' instance.SetHeader ''</code><br/>
 </td></tr>
 </table>
 
 <h3 id="instance-methods-removeheader"><code>RemoveHeader</code></h3>
-<p><code>RemoveHeader</code> removes a header. If the header does not exist, <code>RemoveHeader</code> has no effect.</p>
+<p><code>RemoveHeader</code> removes a user-specified header. If the header does not exist, <code>RemoveHeader</code> has no effect. <code>RemoveHeader</code> does not affect the <code>HttpCommand</code>-generated headers.</p>
 <table>
 <tr><td>Syntax</td>
-<td><code>instance.RemoveHeader name</code></td></tr>
+<td><code>{hdrs}←instance.RemoveHeader name</code></td></tr>
 <tr><td><code>name</code></td>
 <td>the case-insensitive name of the header to remove</td</tr>
+<tr><td><code>hdrs</code></td>
+<td>the updated matrix of user-specified headers</td></tr>
 <tr><td>Example</td>
 <td><code>      'My-Header' instance.SetHeader 'Daffy Duck'</code></br>
 <code>      'another' instance.SetHeader 'some value'</code></br>
