@@ -109,17 +109,21 @@ There are two sets of headers associated with an HTTP request - the request head
 
 `HttpCommand`'s request headers are stored in the `Headers` setting which is a 2-column matrix of name/value pairs. Header names are case-insensitive; header values are not. While you can manipulate the `Headers` array directly, `HttpCommand` has three methods to manage `Headers` that accommodate the case-insensitive nature of header names.
 
+By default, `HttpCommand` will automatically generate several request headers.  See [`SuppressHeaders`](operational-settings.md#suppressheaders) for the list of these headers.  To suppress the generation of specific headers, you can set its value to `''`  
+
 Note: The examples below were run using `]boxing on`.
 
 ### `AddHeader` 
-`AddHeader` will add a header if a header with that name does not already exist. Use `SetHeader` to set a header regardless if one with the same name already exists.
+`AddHeader` will add a header if a user-defined header with that name does not already exist. Use `SetHeader` to set a header regardless if one with the same name already exists.
 <table>
 <tr><td>Syntax</td>
-<td><code>name instance.AddHeader value</code></td></tr>
+<td><code>{hdrs}←name instance.AddHeader value</code></td></tr>
 <tr><td><code>value</code></td>
 <td>the value for the header</td></tr>
 <tr><td><code>name</code></td>
 <td>the name for the header</td></tr>
+<tr><td><code>hdrs</code></td>
+<td>the updated matrix of user-specified headers</td></tr>
 <tr><td>Example</td>
 <td><code>      instance←HttpCommand.New ''</code><br/>
 <code>      'My-Header' instance.AddHeader 'Drake Mallard'</code><br/>
@@ -133,6 +137,8 @@ Note: The examples below were run using `]boxing on`.
 <code>┌─────────┬─────────────┐</code><br/>
 <code>│My-Header│Drake Mallard│</code><br/>
 <code>└─────────┴─────────────┘</code><br/>
+Setting the value of an <code>HttpCommand</code>-generated header that to <code>''</code> will suppress that header from being sent in the request.<br/>
+<code>      'accept-encoding' instance.SetHeader ''</code><br/>
 </td></tr>
 </table>
 
@@ -140,34 +146,38 @@ Note: The examples below were run using `]boxing on`.
 `SetHeader` will set a header, replacing one of the same name if it already exists.
 <table>
 <tr><td>Syntax</td>
-<td><code>name instance.SetHeader value</code></td></tr>
+<td><code>{hdrs}←name instance.SetHeader value</code></td></tr>
 <tr><td><code>value</code></td>
 <td>the value for the header</td></tr>
 <tr><td><code>name</code></td>
 <td>the name for the header</td></tr>
+<tr><td><code>hdrs</code></td>
+<td>the updated matrix of user-specified headers</td></tr>
 <tr><td>Example</td>
 <td><code>      instance←HttpCommand.New ''</code><br/>
-<code>      'My-Header' instance.SetHeader 'Drake Mallard'</code><br/>
-<code>      instance.Headers</code><br/>
+<code>      ⊢'My-Header' instance.SetHeader 'Drake Mallard'</code><br/>
 <code>┌─────────┬─────────────┐</code><br/>
 <code>│My-Header│Drake Mallard│</code><br/>
-<code>└─────────┴─────────────┘</code><br/><code>SetHeader</code> will replace an existing header with the same case-insensitive name<br/> 
-<code>      'my-header' instance.SetHeader 'Daffy Duck'</code><br/>
-<code>      instance.Headers</code><br/>
+<code>└─────────┴─────────────┘</code><br/><br/>
+<code>SetHeader</code> will replace an existing header with the same case-insensitive name<br/> 
+<code>      ⊢'my-header' instance.SetHeader 'Daffy Duck'</code><br/>
 <code>┌─────────┬──────────┐</code><br/>
 <code>│My-Header│Daffy Duck│</code><br/>
-<code>└─────────┴──────────┘</code><br/>
-<code>
+<code>└─────────┴──────────┘</code><br/><br/>
+Setting the value of an <code>HttpCommand</code>-generated header that to <code>''</code> will suppress that header from being sent in the request.<br/>
+<code>      'accept-encoding' instance.SetHeader ''</code><br/>
 </td></tr>
 </table>
 
 ### `RemoveHeader` 
-`RemoveHeader` removes a header. If the header does not exist, `RemoveHeader` has no effect.
+`RemoveHeader` removes a user-specified header. If the header does not exist, `RemoveHeader` has no effect. `RemoveHeader` does not affect the `HttpCommand`-generated headers.
 <table>
 <tr><td>Syntax</td>
-<td><code>instance.RemoveHeader name</code></td></tr>
+<td><code>{hdrs}←instance.RemoveHeader name</code></td></tr>
 <tr><td><code>name</code></td>
 <td>the case-insensitive name of the header to remove</td</tr>
+<tr><td><code>hdrs</code></td>
+<td>the updated matrix of user-specified headers</td></tr>
 <tr><td>Example</td>
 <td><code>      'My-Header' instance.SetHeader 'Daffy Duck'</code></br>
 <code>      'another' instance.SetHeader 'some value'</code></br>

@@ -87,10 +87,15 @@ Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON
 <td><code>h.SuppressHeaders←1</code></td></tr>
 <tr><td>Details</td>
 <td><code>HttpCommand</code> will only generate headers that you have not specified yourself. <code>HttpCommand</code> generates the following default headers:<ul><li><code>Host</code> - the host name in the URL. This header <b>must</b> be supplied.</li>
-<li><code>User-Agent</code> - <code>Dyalog-HttpCommand/&lt;version&gt;</code></li>
-<li><code>Accept</code> - <code>*/*</code>. By default, <code>HttpCommand</code> will accept any response type</li>
-<li><code>Authorization</code> - set only if you provide HTTP Basic authentication credentials, or set <code>Auth</code> and  <code>AuthType</code.</li>
-<li><code>Cookie</code> - any saved cookies applicable to the request.
+<li><code>User-Agent: Dyalog-HttpCommand/&lt;version&gt;</code></li>
+<li><code>Accept: */*</code> By default, <code>HttpCommand</code> will accept any response type</li>
+<li><code>Accept-Encoding: gzip, deflate</code> By default, <code>HttpCommand</code> will accept compressed response payloads</li>
+<li><code>Authorization</code> set only if you provide HTTP Basic authentication credentials, or set <code>Auth</code> and  <code>AuthType</code></li>
+<li><code>Cookie</code> - any saved cookies applicable to the request.</li>
+<li><code>Content-Type</code> is conditionally set as described <a href="../../userguide/#content-types">here</a></li></ul>
+Setting <code>SuppressHeaders←1</code> will suppress ALL <code>HttpCommand</code>-generated headers which means you will need to specify any necessary request headers yourself.  
+<br/>
+Individual headers can be suppressed by using the <a href="../../instance-methods/#setheader"><code>SetHeader</code></a> instance method and assigning the header a value of <code>''</code>.<br/><br/>Note: Conga will always insert a <code>Content-Length</code> header for any request that has a payload. 
 </td></tr></table>
 
 ### `Timeout`

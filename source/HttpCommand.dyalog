@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.3.4' '2023-08-28'
+      r←'HttpCommand' '5.3.5' '2023-08-29'
     ∇
 
 ⍝ Request-related fields
@@ -564,6 +564,8 @@
           :EndIf
       :EndIf
      
+      hdrs⌿⍨←~0∊¨≢¨hdrs[;2] ⍝ remove any headers with empty values
+     
       :If RequestOnly
           r←cmd,' ',(path,(0∊⍴urlparms)↓'?',urlparms),' HTTP/1.1',(∊{NL,⍺,': ',∊⍕⍵}/hdrs),NL,NL,parms
           →∆EXIT
@@ -995,7 +997,7 @@
               dlb¨¨((,⍵)((~∊)⊆⊣)NL)splitOnFirst¨':'
           }⍵
           2=⍴⍴⍵:{          ⍝ matrix
-              0∊≢¨⍵:¯1     ⍝ no empty names or values
+              0∊≢¨⍵[;1]:¯1     ⍝ no empty names
               0 1 1/0,,¨⍵  ⍝ ensure it's 2 columns
           }⍵
           3=|≡⍵:∇{         ⍝ depth 3
@@ -1232,17 +1234,19 @@
       r←2↓∊cookies.('; ',Name,'=',Value)
     ∇
 
-    ∇ name AddHeader value
+    ∇ {r}←name AddHeader value
     ⍝ add a header unless it's already defined
       :Access public
       Headers←makeHeaders Headers
       Headers←name(Headers addHeader)value
+      r←Headers
     ∇
 
-    ∇ name SetHeader value;ind
+    ∇ {r}←name SetHeader value;ind
     ⍝ set a header value, overwriting any existing one
       :Access public
       Headers←name(Headers setHeader)value
+      r←Headers
     ∇
 
     ∇ hdrs←name(hdrs setHeader)value;ind
@@ -1252,11 +1256,12 @@
       hdrs[ind;]←name(⍕value)
     ∇
 
-    ∇ RemoveHeader name
+    ∇ {r}←RemoveHeader name
     ⍝ remove a header
       :Access public
       Headers←makeHeaders Headers
       Headers⌿⍨←Headers[;1](≢¨ci)eis name
+      r←Headers
     ∇
 
     ∇ r←{a}eis w;f
