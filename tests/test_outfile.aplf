@@ -12,20 +12,24 @@
  ⎕NUNTIE tn
  h←#.HttpCommand.New'get' 'dyalog.com'
  resp←h.Run
+ →Cleanup if notEmpty r←(0 200≢resp.(rc HttpStatus))/⍕resp
  data←resp.Data ⍝ note size of data
  h.OutFile←fname
  resp←h.Run
+ →Cleanup if notEmpty r←(0 200≢resp.(rc HttpStatus))/⍕resp
  →Cleanup if notEmpty r←(data≢readFile fname)/'OutFile data does not match reference data'
  →Cleanup if notEmpty r←(resp.BytesWritten≠fileSize fname)/'File size does not match BytesWritten'
  resp←h.Run
  →Cleanup if notEmpty r←((resp.rc=¯1)⍲resp.msg contains'not empty')/'Error in overwrite protection'
  h.OutFile←fname 1 ⍝ overwrite file
  resp←h.Run
+ →Cleanup if notEmpty r←(0 200≢resp.(rc HttpStatus))/⍕resp
  →Cleanup if notEmpty r←(data≢readFile fname)/'Overwrite OutFile data does not match reference data'
  →Cleanup if notEmpty r←(resp.BytesWritten≠fileSize fname)/'Overwrite file size does not match BytesWritten'
  h.OutFile←fname 2 ⍝ append to file
  size←fileSize fname
  resp←h.Run
+ →Cleanup if notEmpty r←(0 200≢resp.(rc HttpStatus))/⍕resp
  →Cleanup if notEmpty r←((data⍴⍨2×⍴data)≢readFile fname)/'Append OutFile data does not match reference data'
  →Cleanup if notEmpty r←((size+resp.BytesWritten)≠fileSize fname)/'Append file size does not match previous size + BytesWritten'
 Cleanup:
