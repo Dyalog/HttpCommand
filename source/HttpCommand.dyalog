@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.3.3' '2023-08-14'
+      r←'HttpCommand' '5.3.4' '2023-08-28'
     ∇
 
 ⍝ Request-related fields
@@ -399,7 +399,7 @@
      ∆FAIL:(rc secureParams)←¯1 msg ⍝ failure
     ∇
 
-    ∇ {r}←certs HttpCmd args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers;cmd;file;protocol;conx;proxied;proxy;cert;noCT;simpleParms;noContentLength;connectionClose
+    ∇ {r}←certs HttpCmd args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers;cmd;file;protocol;conx;proxied;proxy;cert;noCT;simpleParms;noContentLength;connectionClose;tmpFile;tmpTn;redirected;encoding;compType;isutf8
     ⍝ issue an HTTP command
     ⍝ certs - X509Cert|(PublicCertFile PrivateKeyFile) SSLValidation Priority PublicCertFile PrivateKeyFile
     ⍝ args  - [1] HTTP method
@@ -430,7 +430,8 @@
       url←,url
       url←BaseURL makeURL url
       cmd←uc,cmd
-     
+      toFile←redirected←outTn←tmpTn←0 ⍝ initial settings
+      tmpFile←''
      ∆GET:
      
     ⍝ do header initialization here because we may return here on a redirect
@@ -568,36 +569,40 @@
           →∆EXIT
       :EndIf
      
-      outTn←0
       (outFile replace)←2↑{⍵,(≢⍵)↓'' 0}eis OutFile
-      :If toFile←~0∊⍴outFile
-          :Trap Debug↓0
-              outFile←1 ⎕NPARTS outFile
-              :If ~⎕NEXISTS⊃outFile
-                  →∆END⊣r.msg←'Output file folder "',(⊃outFile),'" does not exist'
-              :EndIf
-              :If 0∊⍴∊1↓outFile ⍝ no file name specified, try to use the name from the URL
-                  :If ~0∊⍴file←∊1↓1 ⎕NPARTS path
-                      outFile←(⊃outFile),file
-                  :Else ⍝ no file name specified and none in the URL
-                      →∆END⊣r.msg←'No file name specified in OutFile or URL'
+      :If 0=outTn ⍝ if we don't already have an output file tied
+          :If toFile←~0∊⍴outFile ⍝ if we're directing the response payload to file
+              :Trap Debug↓0
+                  outFile←1 ⎕NPARTS outFile
+                  :If ~⎕NEXISTS⊃outFile
+                      →∆END⊣r.msg←'Output file folder "',(⊃outFile),'" does not exist'
                   :EndIf
-              :EndIf
-              :If ⎕NEXISTS outFile←∊outFile
-                  :If (0=replace)∧0≠2 ⎕NINFO outFile
-                      →∆END⊣r.msg←'Output file "',outFile,'" is not empty'
+                  :If 0∊⍴∊1↓outFile ⍝ no file name specified, try to use the name from the URL
+                      :If ~0∊⍴file←∊1↓1 ⎕NPARTS path
+                          outFile←(⊃outFile),file
+                      :Else ⍝ no file name specified and none in the URL
+                          →∆END⊣r.msg←'No file name specified in OutFile or URL'
+                      :EndIf
+                  :EndIf
+                  :If ⎕NEXISTS outFile←∊outFile
+                      :If (0=replace)∧0≠2 ⎕NINFO outFile
+                          →∆END⊣r.msg←'Output file "',outFile,'" is not empty'
+                      :Else
+                          outTn←outFile ⎕NTIE 0
+                          {}0 ⎕NRESIZE⍣(1=replace)⊢outTn
+                      :EndIf
                   :Else
-                      outTn←outFile ⎕NTIE 0
-                      {}0 ⎕NRESIZE⍣(1=replace)⊢outTn
+                      outTn←outFile ⎕NCREATE 0
                   :EndIf
+                  startSize←⎕NSIZE outTn
+                  r.OutFile←outFile
+                  tmpFile←tempFolder,'/',(∊1↓1 ⎕NPARTS outFile) ⍝ create temporary file to work with
+                  tmpTn←tmpFile(⎕NCREATE⍠'Unique' 1)0 ⍝ create with a unique name
+                  tmpFile←∊1 ⎕NPARTS ⎕NNAMES[⎕NNUMS⍳tmpTn;] ⍝ save the name for ⎕NDELETE later
               :Else
-                  outTn←outFile ⎕NCREATE 0
-              :EndIf
-              startSize←⎕NSIZE outTn
-              r.OutFile←outFile
-          :Else
-              →∆END⊣r.msg←({⍺,(~0∊⍴⍵)/' (',⍵,')'}/⎕DMX.(EM Message)),' occurred while trying to initialize output file "',(⍕outFile),'"'
-          :EndTrap
+                  →∆END⊣r.msg←({⍺,(~0∊⍴⍵)/' (',⍵,')'}/⎕DMX.(EM Message)),' occurred while trying to initialize output file "',(⍕outFile),'"'
+              :EndTrap
+          :EndIf
       :EndIf
      
       secureParams←''
@@ -704,6 +709,7 @@
                           :Else
                               r.(HttpVersion HttpStatus HttpMessage Headers)←4↑dat
                               r.HttpStatus←toInt r.HttpStatus
+                              redirected←3=⌊0.01×r.HttpStatus
                               datalen←⊃toInt{0∊⍴⍵:'¯1' ⋄ ⍵}r.GetHeader'Content-Length' ⍝ ¯1 if no content length not specified
                               connectionClose←'close'≡lc r.GetHeader'Connection'
                               noContentLength←datalen=¯1
@@ -712,9 +718,10 @@
                           :EndIf
                       :Case 'HTTPBody'
                           →∆END⍴⍨forceClose←r CheckPayloadSize(≢data)+≢dat
-                          :If toFile
-                              →∆END⍴⍨forceClose←r CheckPayloadSize(⎕NSIZE outTn)+≢dat
-                              dat ⎕NAPPEND outTn
+                          :If toFile>redirected ⍝ don't write redirect response payload to file
+                              →∆END⍴⍨forceClose←r CheckPayloadSize(⎕NSIZE tmpTn)+≢dat
+                              dat ⎕NAPPEND tmpTn
+                              ⎕NUNTIE ⍬
                           :Else
                               data,←dat
                           :EndIf
@@ -722,9 +729,10 @@
                       :Case 'HTTPChunk'
                           :If 1=≡dat
                               →∆END⊣r.(Data msg)←dat'Conga failed to parse the response HTTP chunk' ⍝ HTTP chunk parsing failed?
-                          :ElseIf toFile
-                              →∆END⍴⍨forceClose←r CheckPayloadSize(⎕NSIZE outTn)+≢1⊃dat
-                              (1⊃dat)⎕NAPPEND outTn
+                          :ElseIf toFile>redirected ⍝ don't write redirect response payload to file
+                              →∆END⍴⍨forceClose←r CheckPayloadSize(⎕NSIZE tmpTn)+≢1⊃dat
+                              (1⊃dat)⎕NAPPEND tmpTn
+                              ⎕NUNTIE ⍬
                           :Else
                               →∆END⍴⍨forceClose←r CheckPayloadSize(≢data)+≢1⊃dat
                               data,←1⊃dat
@@ -752,9 +760,10 @@
                           :EndIf
                       :Case 'BlockLast' ⍝ BlockLast included for pre-Conga v3.4 compatibility for RFC7230 (Sec 3.3.3 item 7)
                           →∆END⍴⍨forceClose←r CheckPayloadSize(≢data)+≢dat
-                          :If toFile
-                              →∆END⍴⍨forceClose←r CheckPayloadSize(⎕NSIZE outTn)+≢dat
-                              dat ⎕NAPPEND outTn
+                          :If toFile<redirected
+                              →∆END⍴⍨forceClose←r CheckPayloadSize(⎕NSIZE tmpTn)+≢dat
+                              dat ⎕NAPPEND tmpTn
+                              ⎕NUNTIE ⍬
                           :Else
                               data,←dat
                           :EndIf
@@ -783,11 +792,7 @@
                   :EndIf
               :EndWhile
           :EndTrap
-          :If toFile
-              r.BytesWritten←(⎕NSIZE outTn)-startSize
-          :EndIf
      
-          {}⎕NUNTIE outTn
           r.Elapsed←⎕AI[3]-starttime
      
           :If timedOut
@@ -800,21 +805,24 @@
           forceClose∨←connectionClose ⍝ if there's a 'Connection: close' header
      
           :If 0=err
-              :If ~toFile
-                  :Trap Debug↓0 ⍝ If any errors occur, abandon conversion
-                      :Select z←lc r.GetHeader'content-encoding' ⍝ was the response compressed?
-                      :Case '' ⍝ no content-encoding header, do nothing
-                      :Case 'deflate'
-                          data←⎕UCS 256|¯2 Zipper 83 ⎕DR data
-                      :Case 'gzip'
-                          data←⎕UCS 256|¯3 Zipper 83 ⎕DR data
-                      :Else
-                          r.msg←'Unhandled content-encoding: ',z
-                      :EndSelect
+              ct←lc r.GetHeader'content-type'
+              isutf8←0<≢'charset\s*=\s*utf-8'⎕S'&'⍠1⊢ct←lc r.GetHeader'content-type'
+              isutf8∨←(∨/'application/json'⍷ct)∧~∨/'charset'⍷ct ⍝ application/json defaults to UTF-8 unless other charset specified
+              encoding←lc r.GetHeader'content-encoding' ⍝ response payload compressed?
+              compType←¯2 ¯3 0['deflate' 'gzip'⍳⊂encoding]
      
-                      :If 0<≢'charset\s*=\s*utf-8'⎕S'&'⍠1⊢ct←lc r.GetHeader'content-type'
-                      :OrIf (∨/'application/json'⍷ct)∧~∨/'charset'⍷ct ⍝ application/json defaults to UTF-8
-                          data←'UTF-8'⎕UCS ⎕UCS data ⍝ Convert from UTF-8
+              :If toFile≤redirected
+                  :Trap Debug↓0 ⍝ If any errors occur, abandon conversion
+                      :If ~0∊⍴encoding
+                          :If 0≠compType
+                              data←⎕UCS 256|compType Zipper 83 ⎕DR data
+                          :Else
+                              r.msg←'Unhandled content-encoding: ',compType,', could not decode response payload'
+                          :EndIf
+                      :EndIf
+     
+                      :If isutf8
+                          data←'UTF-8'⎕UCS ⎕UCS data
                           data←(65279=⎕UCS⊃data)↓data ⍝ drop off BOM, if any
                       :EndIf
                   :Else
@@ -824,7 +832,7 @@
                   :EndTrap
      
                   :If TranslateData=1
-                      :If ∨/∊'text/xml' 'application/xml'⍷¨⊂ct←lc r.GetHeader'content-type'
+                      :If ∨/∊'text/xml' 'application/xml'⍷¨⊂ct
                           r{0::⍺.(rc Data msg)←¯2 ⍵'Could not translate XML payload' ⋄ ⍺.Data←⎕XML ⍵}data
                       :ElseIf ∨/'application/json'⍷ct
                           r.Data←data
@@ -835,7 +843,20 @@
                   :Else
                       r.Data←data
                   :EndIf
-              :EndIf
+     
+              :Else ⍝ toFile and not redirected
+                  :If ~0∊⍴encoding ⍝ content-encoding header?
+                      :If 0≠compType
+                          :If 0≠z←compType UnzipFile tmpTn
+                              r.msg←(⎕EM z),' occurred when attempting to decompress response payload'
+                          :EndIf
+                      :Else
+                          r.msg←'Unhandled content-encoding: ',compType,', could not decode response payload'
+                      :EndIf
+                  :EndIf
+                  r.BytesWritten←⎕NSIZE tmpTn
+                  (⎕NREAD tmpTn,83,(r.BytesWritten),0)⎕NAPPEND outTn
+              :EndIf ⍝ ~toFile
      
               r.Cookies←parseCookies r.Headers r.Host(extractPath r.Path)
               Cookies←Cookies updateCookies r.Cookies
@@ -846,7 +867,7 @@
                       :If ''≢url←r.GetHeader'location' ⍝ if we were redirected use the "location" header field for the URL
                           :If '/'=⊃url ⋄ url,⍨←host ⋄ :EndIf ⍝ if a relative redirection, use the current host
                           r.Redirections,←t←#.⎕NS''
-                          t.(URL HttpVersion HttpStatus HttpMessage Headers)←r.(URL HttpVersion HttpStatus HttpMessage Headers)
+                          t.(URL HttpVersion HttpStatus HttpMessage Headers Data)←r.(URL HttpVersion HttpStatus HttpMessage Headers Data)
                           {}LDRC.Close Client
                           cmd←(1+303=r.HttpStatus)⊃cmd'GET' ⍝ 303 (See Other) is always followed by a 'GET'. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/303
                           →∆GET
@@ -870,6 +891,8 @@
       :EndIf
       r.rc←1⊃rc ⍝ set the return code to the Conga return code
      ∆END:
+      ⎕NUNTIE tmpTn,outTn
+      {0:: ⋄ ⎕NDELETE ⍵}tmpFile
       Client←{0::'' ⋄ KeepAlive>forceClose:⍵ ⋄ ''⊣LDRC.Close ⍵}Client
      ∆EXIT:
     ∇
@@ -896,6 +919,24 @@
       →∆EXIT⍴⍨progress≡snap            ⍝ exit if nothing further received
       (timedOut donetime progress)←0(donetime+WaitTime)snap ⍝ reset ticker
      ∆EXIT:
+    ∇
+
+    ∇ {r}←type UnzipFile tn;data
+      :Access public shared
+    ⍝ Unzip an output file
+    ⍝ type is compression type: ¯2 for gzip, ¯3 for deflate
+    ⍝ tn is the tie number of the file to unzip
+    ⍝ r is 0 for success or ⎕EN
+      :Trap 0
+          data←⎕NREAD tn 83,(⎕NSIZE tn),0
+          data←⎕UCS 256|type Zipper data
+          0 ⎕NRESIZE tn
+          data ⎕NAPPEND tn
+          ⎕NUNTIE ⍬
+          r←0
+      :Else
+          r←⎕EN
+      :EndTrap
     ∇
 
     NL←⎕UCS 13 10
@@ -934,6 +975,7 @@
     seconds←{⍵÷86400} ⍝ convert seconds to fractional day (for cookie max-age)
     atLeast←{a←(≢⍵)↑⍺ ⋄ ⊃((~∧\⍵=a)/a>⍵),1} ⍝ checks if ⍺ is at least version ⍵
     Zipper←219⌶
+    tempFolder←739⌶0
 
       makeURL←{ ⍝ build URL from BaseURL (⍺) and URL (⍵)
           ~0∊⍴'^https?\:\/\/'⎕S 3⍠('IC' 1)⊢⍵:⍵  ⍝ URL begins with http:// or https://
