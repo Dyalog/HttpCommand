@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.3.5' '2023-08-29'
+      r←'HttpCommand' '5.3.6' '2023-08-31'
     ∇
 
 ⍝ Request-related fields
@@ -416,6 +416,8 @@
       :If 0∊⍴cmd ⋄ cmd←'GET' ⋄ :EndIf
      
       r←Result
+      toFile←redirected←outTn←tmpTn←0 ⍝ initial settings
+      tmpFile←''
      
     ⍝ Do some cursory parameter checking
       →∆END↓⍨0∊⍴r.msg←'No URL specified'/⍨0∊⍴url ⍝ exit early if no URL
@@ -430,8 +432,7 @@
       url←,url
       url←BaseURL makeURL url
       cmd←uc,cmd
-      toFile←redirected←outTn←tmpTn←0 ⍝ initial settings
-      tmpFile←''
+
      ∆GET:
      
     ⍝ do header initialization here because we may return here on a redirect
