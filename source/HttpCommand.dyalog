@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.3.6' '2023-08-31'
+      r←'HttpCommand' '5.3.7' '2023-09-01'
     ∇
 
 ⍝ Request-related fields
@@ -436,8 +436,11 @@
      ∆GET:
      
     ⍝ do header initialization here because we may return here on a redirect
+      :Trap 7
       hdrs←makeHeaders headers
-      →∆END↓⍨0∊⍴r.msg←'Improper header format'/⍨¯1≡hdrs
+      :Else
+          →∆END⊣r.msg←'Improper header format'
+      :EndTrap
      
       conx←ConxProps ConnectionProperties r.URL←url
       →∆END↓⍨0∊⍴r.msg←conx.msg
@@ -963,7 +966,6 @@
     toInt←{0∊⍴⍵:⍬ ⋄ ~3 5∊⍨10|⎕DR t←1⊃2⊃⎕VFI ⍕⍵:⍬ ⋄ t≠⌊t:⍬ ⋄ t} ⍝ simple char to int
     fmtHeaders←{0∊⍴⍵:'' ⋄ (firstCaps¨⍵[;1])(,∘⍕¨⍵[;2])} ⍝ formatted HTTP headers
     firstCaps←{1↓uc@(¯1↓0,'-'∘=)lc '-',⍵} ⍝ capitalize first letters e.g. Content-Encoding
-    addHeader←{'∘???∘'≡⍺⍺ getHeader ⍺:⍺⍺⍪⍺ (⍕⍵) ⋄ ⍺⍺} ⍝ add a header unless it's already defined
     getHeader←{⍺{1<|≡⍵:⍺∘∇¨⍵ ⋄ (⍺[;2],⊂'∘???∘')⊃⍨⍺[;1](⍳{(⍵⍵ ⍺)⍺⍺(⍵⍵ ⍵)}lc)⊆,⍵}⍵} ⍝ return header value(s) or '∘???∘' if not found
     tableGet←{⍺[;2]/⍨⍺[;1](≡ ci)¨⊂⍵}
     endsWith←{∧/⍵=⍺↑⍨-≢⍵}
@@ -998,7 +1000,7 @@
               dlb¨¨((,⍵)((~∊)⊆⊣)NL)splitOnFirst¨':'
           }⍵
           2=⍴⍴⍵:{          ⍝ matrix
-              0∊≢¨⍵[;1]:¯1     ⍝ no empty names
+              0∊≢¨⍵[;1]:¯1 ⍝ no empty names
               0 1 1/0,,¨⍵  ⍝ ensure it's 2 columns
           }⍵
           3=|≡⍵:∇{         ⍝ depth 3
@@ -1011,6 +1013,7 @@
           }⍵
           ¯1
       }w
+      'Invalid Headers format'⎕SIGNAL 7/⍨r≡¯1
     ∇
 
     ∇ r←JSONexport data
@@ -1235,19 +1238,30 @@
       r←2↓∊cookies.('; ',Name,'=',Value)
     ∇
 
-    ∇ {r}←name AddHeader value
+    ∇ {r}←name AddHeader value;hdrs
     ⍝ add a header unless it's already defined
       :Access public
-      Headers←makeHeaders Headers
-      Headers←name(Headers addHeader)value
-      r←Headers
+      :Trap 7
+          r←Headers←name(Headers addHeader)value
+      :Else
+          ⎕EM ⎕SIGNAL ⎕EN
+      :EndTrap
+    ∇
+
+    ∇ hdrs←name(hdrs addHeader)value
+    ⍝ add a header unless it's already defined
+      hdrs←makeHeaders hdrs
+      hdrs⍪←('∘???∘'≡hdrs getHeader name)⌿⍉⍪name value
     ∇
 
     ∇ {r}←name SetHeader value;ind
     ⍝ set a header value, overwriting any existing one
       :Access public
-      Headers←name(Headers setHeader)value
-      r←Headers
+      :Trap 7
+          r←Headers←name(Headers setHeader)value
+      :Else
+          ⎕EM ⎕SIGNAL ⎕EN
+      :EndTrap
     ∇
 
     ∇ hdrs←name(hdrs setHeader)value;ind
@@ -1260,7 +1274,11 @@
     ∇ {r}←RemoveHeader name
     ⍝ remove a header
       :Access public
+      :Trap 7
       Headers←makeHeaders Headers
+      :Else
+          ⎕EM ⎕SIGNAL ⎕EN
+      :EndTrap
       Headers⌿⍨←Headers[;1](≢¨ci)eis name
       r←Headers
     ∇
