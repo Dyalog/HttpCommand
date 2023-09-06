@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.3.7' '2023-09-01'
+      r←'HttpCommand' '5.4.0' '2023-09-06'
     ∇
 
 ⍝ Request-related fields
@@ -88,6 +88,7 @@
       :Access shared
       ns.(Command URL rc msg HttpVersion HttpStatus HttpMessage Headers Data PeerCert Redirections Cookies OutFile Elapsed BytesWritten)←'' '' ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')⍬'' 0 ¯1
       ns.GetHeader←{⎕IO←⎕ML←1 ⋄ ⍺←Headers ⋄ ⍺{1<|≡⍵:⍺∘∇¨⍵ ⋄ (⍺[;2],⊂'')⊃⍨⍺[;1](⍳{(⍵⍵ ⍺)⍺⍺(⍵⍵ ⍵)}{2::0(819⌶)⍵ ⋄ ¯3 ⎕C ⍵})⊆,⍵}⍵} ⍝ return header value or '' if not found
+      ns.⎕FX'∇r←IsOK' 'r←0 2≡⌊.01×rc HttpStatus' '∇'
     ∇
 
     ∇ Goodbye
@@ -432,12 +433,12 @@
       url←,url
       url←BaseURL makeURL url
       cmd←uc,cmd
-
+     
      ∆GET:
      
     ⍝ do header initialization here because we may return here on a redirect
       :Trap 7
-      hdrs←makeHeaders headers
+          hdrs←makeHeaders headers
       :Else
           →∆END⊣r.msg←'Improper header format'
       :EndTrap
@@ -1275,7 +1276,7 @@
     ⍝ remove a header
       :Access public
       :Trap 7
-      Headers←makeHeaders Headers
+          Headers←makeHeaders Headers
       :Else
           ⎕EM ⎕SIGNAL ⎕EN
       :EndTrap

@@ -1,5 +1,9 @@
+## Version 5.4
+* Added function [`IsOK`](./result-operational.md#isok) to result namespace.
 ## Version 5.3
 * Added [`BaseURL`](./request-settings.md#baseurl) to make it easier to issue multiple requests to a common host.
+* Request header functions return shy result of new Headers array
+* Better error trapping for invalidly formatted headers
 ## Version 5.2
 * Added support to send zipped request payloads. See [`UseZip`](./request-settings.md#usezip) and [`ZipLevel`](./request-settings.md#ziplevel) for more information.
 ## Version 5.1
