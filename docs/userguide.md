@@ -24,7 +24,7 @@ Typical use of `HttpCommand` might follow this pattern.
 
 ```
  resp ← HttpCommand.Get 'some-url'
-:If 0 200 ≢ resp.(rc HttpStatus)
+:If resp.IsOK ⍝ use the IsOK function from the result namespace
     ⍝ code to handle bad request
 :Else
     ⍝ code to process the response 
@@ -40,7 +40,7 @@ If you expect to make several `HttpCommand` calls, you may want to create an ins
 :For url :In urls ⍝ loop over the URLs
   hc.URL←url ⍝ set this URL
   resp←hc.Run
-  :If 0 200≡resp.(rc HttpStatus)
+  :If resp.IsOK
     ⍝ process the response
   :Else
     ⍝ process the exception/error
