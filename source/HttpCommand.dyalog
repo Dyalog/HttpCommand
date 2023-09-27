@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.4.0' '2023-09-06'
+      r←'HttpCommand' '5.4.1' '2023-09-27'
     ∇
 
 ⍝ Request-related fields
@@ -1414,6 +1414,9 @@
     ⍝ loads the latest released version from GitHub
       :Access public shared
       (rc msg)←¯1 'Default message'
+      :If 82=⎕DR''
+          →0⊣msg←'Upgrade is not available on Classic interpreters'
+      :EndIf
       :Trap Debug↓0
           latest←GetJSON'get' 'https://api.github.com/repos/Dyalog/HttpCommand/releases/latest'
           :If 0 200≢latest.(rc HttpStatus)

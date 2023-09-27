@@ -28,6 +28,12 @@ Returns a link to the documentation for `HttpCommand` that you can click on to n
 ### `Upgrade` 
 `Upgrade` checks GitHub for a newer version of `HttpCommand` and if one is found it will be `⎕FIX`ed in the workspace.
 
+`Upgrade` will not work on Classic interpreters. To manually upgrade `HttpCommand`:
+
+* Open a browser to [https://www.github.com/Dyalog/HttpCommand/releases/latest](https://www.github.com/Dyalog/HttpCommand/releases/latest)
+* Click on the `HttpCommand.dyalog` file in the list of assets for the release.  This will download the file.
+* From APL, do `2 ⎕FIX 'filename'` where filename is the full pathname of the downloaded file. 
+
 Note: `Upgrade` will only update the in-workspace copy of `HttpCommand` and will not update the version of `HttpCommand` found in the Dyalog installation folder. The installed version of <code>HttpCommand</code> is upgraded when updates to Dyalog APL are installed.<table>
 <tr><td>Syntax</td>
 <td><code>r←HttpCommand.Upgrade</code></td></tr>

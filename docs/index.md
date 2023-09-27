@@ -20,6 +20,8 @@ This documentation describes version 5 of `HttpCommand`.  Dyalog versions 18.2 a
 
 If `HttpCommand.Version` reports a version earlier than 4.0.14, `HttpCommand.Upgrade` will upgrade to the latest version 4. Then running `HttpCommand.Upgrade` once more will upgrade to version 5.
 
+`HttpCommand.Upgrade` does not work with Classic interpreters. See [`Upgrade`](./misc-methods.md#upgrade) for more information.
+
 For example, `HttpCommand` version 3.4 may be found in Dyalog version 18.0.
 ```
       ]load HttpCommand
