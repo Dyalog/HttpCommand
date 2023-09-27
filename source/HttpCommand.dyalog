@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.4.1' '2023-09-27'
+      r←'HttpCommand' '5.4.2' '2023-09-27'
     ∇
 
 ⍝ Request-related fields
@@ -88,7 +88,7 @@
       :Access shared
       ns.(Command URL rc msg HttpVersion HttpStatus HttpMessage Headers Data PeerCert Redirections Cookies OutFile Elapsed BytesWritten)←'' '' ¯1 '' ''⍬''(0 2⍴⊂'')''⍬(0⍴⊂'')⍬'' 0 ¯1
       ns.GetHeader←{⎕IO←⎕ML←1 ⋄ ⍺←Headers ⋄ ⍺{1<|≡⍵:⍺∘∇¨⍵ ⋄ (⍺[;2],⊂'')⊃⍨⍺[;1](⍳{(⍵⍵ ⍺)⍺⍺(⍵⍵ ⍵)}{2::0(819⌶)⍵ ⋄ ¯3 ⎕C ⍵})⊆,⍵}⍵} ⍝ return header value or '' if not found
-      ns.⎕FX'∇r←IsOK' 'r←0 2≡⌊.01×rc HttpStatus' '∇'
+      ns.⎕FX'∇r←IsOK' 'r←0 2≡rc,⌊.01×HttpStatus' '∇'
     ∇
 
     ∇ Goodbye
@@ -822,7 +822,8 @@
                   :Trap Debug↓0 ⍝ If any errors occur, abandon conversion
                       :If ~0∊⍴encoding
                           :If 0≠compType
-                              data←⎕UCS 256|compType Zipper 83 ⎕DR data
+                              data←256|compType Zipper 83 ⎕DR data ⍝ unzip
+                              data←⎕UCS data ⍝ try to translate
                           :Else
                               r.msg←'Unhandled content-encoding: ',compType,', could not decode response payload'
                           :EndIf
@@ -835,6 +836,7 @@
                   :Else
                       r.rc←⎕DMX.EN
                       r.msg←⎕DMX.EM,' occurred during response payload conversion (Data was not converted)'
+                      r.Data←data
                       →∆END
                   :EndTrap
      

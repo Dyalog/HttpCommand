@@ -345,13 +345,19 @@ The messages in this section are returned when Conga returns a non-zero return c
 <tr><td><b>Resolution</b></td>
 <td>This is a server-side problem.</td></tr></table>
 
-
 <table><tr><td><b>Message</b></td>
 <td><code>Too many redirections ({MaxRedirections})</code></td></tr>
 <tr><td><b>Description</b></td>
 <td>The host sent more 3XX HTTP status responses (redirections) than <code>MaxRedirections</code> specified.</td></tr>
 <tr><td><b>Resolution</b></td>
 <td><code>MaxRedirections</code> is intended to prevent redirection loops or too many redirection hops. If the redirections are legitimate, increase the value of <code>MaxRedirections</code>.</td></tr></table>
+
+<table><tr><td><b>Message</b></td>
+<td><code>TRANSLATION ERROR occurred during response payload conversion (Data was not converted)</code></td></tr>
+<tr><td><b>Description</b></td>
+<td>This will occur if the response payload contains an invalid UTF-8 sequence or if you are using a Classic interpreter and the response payload contains characters not found in <code>⎕AVU</code>. <code>Data</code> will contain the response payload as an unconverted vector of single-byte integers.</td></tr>
+<tr><td><b>Resolution</b></td>
+<td>If you're using a Classic interpreter, consider using a Unicode interpreter.  Otherwise try to identify the offending characters/sequences and take appropriate action to remove or amend them.</td></tr></table>
 
 <table><tr><td><b>Message</b></td>
 <td><code>Could not translate XML payload</code></td></tr>
