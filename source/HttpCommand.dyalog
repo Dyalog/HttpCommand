@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.4.2' '2023-09-27'
+      r←'HttpCommand' '5.4.3' '2023-10-14'
     ∇
 
 ⍝ Request-related fields
@@ -1087,7 +1087,7 @@
       ns.msg←msg
     ∇
 
-    ∇ (protocol secure host path urlparms)←{conx}parseURL url;path;p
+    ∇ (protocol secure host path urlparms)←{conx}parseURL url;path;p;ind
     ⍝ Parses a URL and returns
     ⍝   secure - Boolean whether running HTTPS or not based on leading http://
     ⍝   host - domain or IP address
@@ -1100,7 +1100,8 @@
       secure←protocol beginsWith'https:'
       url←p↓url                          ⍝ Remove HTTP[s]:// if present
       (host path)←url splitOnFirst'/'    ⍝ Extract host and path from url
-      host←lc host                       ⍝ host (domain) is case-insensitive
+      ind←host iotaz '@'                 ⍝ any credentials?
+      host←(ind↑host),lc ind↓host        ⍝ host (domain) is case-insensitive (credentials are not)
       :If ~0∊⍴conx ⍝ if we have an existing connection
       :AndIf 0∊⍴protocol ⍝ and no protocol was specified
           secure←(conx.Host≡host)∧conx.Secure ⍝ use the protocol from the existing connection
