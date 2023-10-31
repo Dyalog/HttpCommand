@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.4.3' '2023-10-14'
+      r←'HttpCommand' '5.4.4' '2023-10-31'
     ∇
 
 ⍝ Request-related fields
@@ -818,14 +818,17 @@
               encoding←lc r.GetHeader'content-encoding' ⍝ response payload compressed?
               compType←¯2 ¯3 0['deflate' 'gzip'⍳⊂encoding]
      
+     
               :If toFile≤redirected
                   :Trap Debug↓0 ⍝ If any errors occur, abandon conversion
-                      :If ~0∊⍴encoding
-                          :If 0≠compType
-                              data←256|compType Zipper 83 ⎕DR data ⍝ unzip
-                              data←⎕UCS data ⍝ try to translate
-                          :Else
-                              r.msg←'Unhandled content-encoding: ',compType,', could not decode response payload'
+                      :If ~0∊⍴data
+                          :If ~0∊⍴encoding
+                              :If 0≠compType
+                                  data←256|compType Zipper 83 ⎕DR data ⍝ unzip
+                                  data←⎕UCS data ⍝ try to translate
+                              :Else
+                                  r.msg←'Unhandled content-encoding: ',compType,', could not decode response payload'
+                              :EndIf
                           :EndIf
                       :EndIf
      
@@ -1100,7 +1103,7 @@
       secure←protocol beginsWith'https:'
       url←p↓url                          ⍝ Remove HTTP[s]:// if present
       (host path)←url splitOnFirst'/'    ⍝ Extract host and path from url
-      ind←host iotaz '@'                 ⍝ any credentials?
+      ind←host iotaz'@'                  ⍝ any credentials?
       host←(ind↑host),lc ind↓host        ⍝ host (domain) is case-insensitive (credentials are not)
       :If ~0∊⍴conx ⍝ if we have an existing connection
       :AndIf 0∊⍴protocol ⍝ and no protocol was specified
