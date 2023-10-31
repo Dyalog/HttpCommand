@@ -1103,7 +1103,7 @@
       secure←protocol beginsWith'https:'
       url←p↓url                          ⍝ Remove HTTP[s]:// if present
       (host path)←url splitOnFirst'/'    ⍝ Extract host and path from url
-      ind←host iotaz'@'                 ⍝ any credentials?
+      ind←host iotaz'@'                  ⍝ any credentials?
       host←(ind↑host),lc ind↓host        ⍝ host (domain) is case-insensitive (credentials are not)
       :If ~0∊⍴conx ⍝ if we have an existing connection
       :AndIf 0∊⍴protocol ⍝ and no protocol was specified
