@@ -732,7 +732,7 @@
 
         GetFromTable←{(⍵[;1]⍳⊂,⍺)⊃⍵[;2],⊂''}
         split←{p←(⍺⍷⍵)⍳1 ⋄ ((p-1)↑⍵)(p↓⍵)} ⍝ Split ⍵ on first occurrence of ⍺
-        lc←0∘(819⌶)
+        lc←{2::0(819⌶)⍵ ⋄ ¯3 ⎕C ⍵} ⍝ lower case conversion
         deb←{{1↓¯1↓⍵/⍨~'  '⍷⍵}' ',⍵,' '}
 
         ∇ {r}←{message}Fail status
@@ -950,7 +950,7 @@
     stripQuotes←{'""'≡2↑¯1⌽⍵:¯1↓1↓⍵ ⋄ ⍵} ⍝ strip leading and ending "
     deb←{{1↓¯1↓⍵/⍨~'  '⍷⍵}' ',⍵,' '} ⍝ delete extraneous blanks
     dlb←{⍵↓⍨+/∧\' '=⍵} ⍝ delete leading blanks
-    lc←0∘(819⌶) ⍝ lower case
+    lc←{2::0(819⌶)⍵ ⋄ ¯3 ⎕C ⍵} ⍝ lower case conversion
     nameClass←{⎕NC⊂,'⍵'} ⍝ name class of argument
     nocase←{(lc ⍺)⍺⍺ lc ⍵} ⍝ case insensitive operator
     begins←{⍺≡(⍴⍺)↑⍵} ⍝ does ⍺ begin with ⍵?
