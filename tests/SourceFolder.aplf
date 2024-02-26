@@ -1,0 +1,6 @@
+ r←SourceFolder name;src
+ :If ''≡src←4⊃5179⌶name
+     ∘∘∘
+ :Else
+     r←1⊃1 ⎕NPARTS src
+ :EndIf

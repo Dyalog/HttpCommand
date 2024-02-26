@@ -1,0 +1,39 @@
+ r←test_BaseURL dummy;h;base;url;port;t;host
+ ⍝ test all combinations of setting BaseURL and URL
+ ⍝ most tests use HttpCommand.Show to return the request that would be sent, and we inspect that
+ ⍝ in the final case, we use HttpCommand.Run to test an actual request against a local HttpServer
+
+ h←HttpCommand.New''
+ base←'http://',host←'localhost:',⍕port←8090 Using HttpServer
+ url←'EndPoints/ping'
+
+ :If {9≠⎕NC'⍵'}t←h.Show  ⍝ result should be namespace with error
+ :OrIf ~'No URL specified'(∨/⍷)t.msg
+     →0⊣r←'Unexpected result when URL and BaseURL are not specified'
+ :EndIf
+
+ h.BaseURL←base
+ :If (⎕DR'')≠⎕DR t←h.Show
+ :OrIf ~('Host: ',host)(∨/⍷)t
+ :OrIf ~('GET /')(∨/⍷)t
+     →0⊣r←'Unexpected result when just BaseURL is specified'
+ :EndIf
+
+ h.BaseURL←''
+ h.URL←url
+ :If (⎕DR'')≠⎕DR t←h.Show
+ :OrIf ~'Host: endpoints'(∨/⍷)t
+ :OrIf ~('GET /ping')(∨/⍷)t
+     →0⊣r←'Unexpected result when just URL is specified'
+ :EndIf
+
+ h.BaseURL←base
+ :If (⎕DR'')≠⎕DR t←h.Show
+ :OrIf ~('Host: ',host)(∨/⍷)t
+ :OrIf ~('GET /EndPoints/ping')(∨/⍷)t
+ :OrIf {9≠⎕NC'⍵'}t←h.Run
+ :OrIf 'pong'≢t.Data
+     →0⊣r←'Unexpected result when URL and BaseURL are specified'
+ :EndIf
+
+ r←''
