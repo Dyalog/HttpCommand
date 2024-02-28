@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.4.5' '2023-02-26'
+      r←'HttpCommand' '5.4.6' '2024-02-28'
     ∇
 
 ⍝ Request-related fields
