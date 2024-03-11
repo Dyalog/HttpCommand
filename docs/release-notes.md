@@ -1,5 +1,5 @@
 ## Version 5.5
-* Added configuration setting [`Secret`](./operational-settings.md#secret) which will suppress the display of credentials in the authorization header. This is primarily so that one can demo using authenticated requests without have their credentials displayed in the session.
+* Added configuration setting [`Secret`](./operational-settings.md#secret) which will suppress the display of credentials in the authorization header. This is primarily so that one can demo using authenticated requests without having their credentials displayed in the session.
 * Added ability for HTTP header names and values to reference environment variables by enclosing the environment variable name in % (e.g. `%MyPassword%`). This provides additional security by reducing the need to store sensitive or variable information inline. This is particularly useful when setting [`Auth`](./request-settings.md#auth).  
 ## Version 5.4
 * Added function [`IsOK`](./result-operational.md#isok) to result namespace.
