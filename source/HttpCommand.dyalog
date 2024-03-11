@@ -97,10 +97,14 @@
       {}{0::'' ⋄ LDRC.Names'.'⊣LDRC.Close ⍵}⍣(~0∊⍴Client)⊢Client
     ∇
 
-    ∇ r←Config
+    ∇ r←Config;i
     ⍝ Returns current configuration
       :Access public
       r←↑{6::⍵'not set' ⋄ ⍵(⍎⍵)}¨(⎕THIS⍎'⎕NL ¯2.2')~⊂'ValidFormUrlEncodedChars'
+      :If (≢r)≥i←r[;1]⍳⊂'Auth'
+      :AndIf Secret
+          r[i;2]←⊂'>>> Secret setting is 1 <<<'
+      :EndIf
     ∇
 
     ∇ r←Run
