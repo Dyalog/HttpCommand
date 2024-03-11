@@ -80,7 +80,7 @@ Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON
 ### `Secret`
 <table><tr>
 <td>Description</td>
-<td>If set to 1, <code>HttpCommand</code> will suppress the display of credentials in the Authroization header, instead replacing them with <code>&gt;&gt;&gt; Secret setting is 1 &lt;&lt;&lt;</code>. This applies only when using the <a href="./instance-methods.md#show"><code>Show</code></a> method or setting <a href="#requestonly"><code>RequestOnly</code></a> to 1.</td></tr>
+<td>If set to 1, <code>HttpCommand</code> will suppress the display of credentials in the Authorization header, instead replacing them with <code>&gt;&gt;&gt; Secret setting is 1 &lt;&lt;&lt;</code>. This applies when using the <a href="./instance-methods.md#show"><code>Show</code></a> or <a href="./instance-methods.md#config"><code>Config</code></a> methods or setting <a href="#requestonly"><code>RequestOnly</code></a> to 1. <code>Secret</code> will not affect the request that is actually sent to the host.</td></tr>
 <tr><td>Default</td>
 <td><code>1</code></td></tr>
 <tr><td>Example(s)</td>
@@ -104,8 +104,7 @@ Accept-Encoding: gzip, deflate
 Authorization: Basic dXNlcmlkOnBhc3N3b3Jk
 </code></pre></td></tr>
 <tr><td>Details</td>
-<td>This setting is useful for debugging a request that isn't behaving as you expect.<br/><br/>
-Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON</code>, <code>Do</code>, or <code>New</code> to <code>1</code> will have the same effect as setting <code>RequestOnly</code> as will the instance method <code>Show</code>.</td></tr></table>
+<td>This setting is useful when doing an <code>HttpCommand</code> demonstration as it will avoid inadvertently displaying credentials in the APL session.</td></tr></table>
 
 ### `SuppressHeaders`
 <table><tr>
