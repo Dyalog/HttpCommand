@@ -124,7 +124,9 @@ If the request has content in the request payload, Conga will automatically supp
 ### `Auth`
 <table><tr>
 <td>Description</td>
-<td>This setting is the authentication/authorization string appropriate for the authentication scheme specified in <code>AuthType</code>. Used along with <a href="#authtype"><code>AuthType</code></a>, <code>Auth</code> is a shortcut for setting the authorization HTTP header for requests that require authentication.  If <code>Auth</code> is non-empty, <code>HttpCommand</code> will create an <code>'authorization'</code> header and and set its value to <code>AuthType,' ',Auth</code>. If you happen set both <code>Auth</code> and an <code>authorization</code> header, <code>Auth</code> takes precedence.
+<td>This setting is the authentication/authorization string appropriate for the authentication scheme specified in <code>AuthType</code>. Used along with <a href="#authtype"><code>AuthType</code></a>, <code>Auth</code> is a shortcut for setting the authorization HTTP header for requests that require authentication.  If <code>Auth</code> is non-empty, <code>HttpCommand</code> will create an <code>'authorization'</code> header and and set its value to <code>AuthType,' ',Auth</code>. If you happen set both <code>Auth</code> and an <code>authorization</code> header, <code>Auth</code> takes precedence.<br/><br/>
+
+You may specify an environment variable whose value is to be used for <code>Auth</code> by enclosing the environment variable name in <code>'%'</code>. This helps avoid the need to hardcode credentials in your code.
 </td></tr>
 <tr><td>Default</td><td><code>''</code></td></tr>
 <tr><td>Example(s)</td><td><code>h.Auth←'my-secret-token'</code>

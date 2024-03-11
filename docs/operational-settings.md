@@ -77,6 +77,36 @@ If a folder is specified, the file name will be the same as the resource specifi
 <td>This setting is useful for debugging a request that isn't behaving as you expect.<br/><br/>
 Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON</code>, <code>Do</code>, or <code>New</code> to <code>1</code> will have the same effect as setting <code>RequestOnly</code> as will the instance method <code>Show</code>.</td></tr></table>
 
+### `Secret`
+<table><tr>
+<td>Description</td>
+<td>If set to 1, <code>HttpCommand</code> will suppress the display of credentials in the Authroization header, instead replacing them with <code>&gt;&gt;&gt; Secret setting is 1 &lt;&lt;&lt;</code>. This applies only when using the <a href="./instance-methods.md#show"><code>Show</code></a> method or setting <a href="#requestonly"><code>RequestOnly</code></a> to 1.</td></tr>
+<tr><td>Default</td>
+<td><code>1</code></td></tr>
+<tr><td>Example(s)</td>
+<td>
+<pre><code>      h←HttpCommand.New 'get' 'userid:password@someurl.com'
+      h.Show
+GET / HTTP/1.1
+Host: someurl.com
+User-Agent: Dyalog-HttpCommand/5.5.0
+Accept: */*
+Accept-Encoding: gzip, deflate
+Authorization: >>> Secret setting is 1 <<<
+
+      h.Secret←0
+      h.Show
+GET / HTTP/1.1
+Host: someurl.com
+User-Agent: Dyalog-HttpCommand/5.5.0
+Accept: */*
+Accept-Encoding: gzip, deflate
+Authorization: Basic dXNlcmlkOnBhc3N3b3Jk
+</code></pre></td></tr>
+<tr><td>Details</td>
+<td>This setting is useful for debugging a request that isn't behaving as you expect.<br/><br/>
+Setting optional left argument of shared methods <code>Get</code>, <code>GetJSON</code>, <code>Do</code>, or <code>New</code> to <code>1</code> will have the same effect as setting <code>RequestOnly</code> as will the instance method <code>Show</code>.</td></tr></table>
+
 ### `SuppressHeaders`
 <table><tr>
 <td>Description</td>
