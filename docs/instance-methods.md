@@ -78,6 +78,7 @@ Returns the HTTP request that `HttpCommand` would send when `Run` is executed an
 <code> PrivateKeyFile</code><br/>
 <code> PublicCertFile</code><br/>
 <code> RequestOnly                          0</code><br/>
+<code> Secret                               1</code><br/>
 <code> SSLFlags                            32</code><br/>
 <code> SuppressHeaders                      0</code><br/>
 <code> Timeout                             10</code><br/>
@@ -105,11 +106,21 @@ Returns the HTTP request that `HttpCommand` would send when `Run` is executed an
 </table>
 
 ## Header-related Methods
-There are two sets of headers associated with an HTTP request - the request headers and the response headers. The methods described here deal with request headers.
+There are two sets of headers associated with an HTTP request - the request headers and the response headers. The methods described here deal with **request headers**.
 
 `HttpCommand`'s request headers are stored in the `Headers` setting which is a 2-column matrix of name/value pairs. Header names are case-insensitive; header values are not. While you can manipulate the `Headers` array directly, `HttpCommand` has three methods to manage `Headers` that accommodate the case-insensitive nature of header names.
 
-By default, `HttpCommand` will automatically generate several request headers.  See [`SuppressHeaders`](operational-settings.md#suppressheaders) for the list of these headers.  To suppress the generation of specific headers, you can set its value to `''`  
+By default, `HttpCommand` will automatically generate several request headers if you haven't specified values for them.  See [`SuppressHeaders`](operational-settings.md#suppressheaders) for the list of these headers.  To suppress the generation of specific headers, you can set its value to `''`.
+
+You may specify that `HttpCommand` should substitute the value of an environment variable in a header name or value by surrounding the name of the environment variable with `%`. For example:
+<pre><code>      1 HttpCommand.Get 'someurl.com' '' ('MyHeader' '%DYALOG%')
+GET / HTTP/1.1
+MyHeader: C:\Program Files\Dyalog\Dyalog APL-64 19.0 Unicode
+Host: someurl.com
+User-Agent: Dyalog-HttpCommand/5.5.0
+Accept: */*
+Accept-Encoding: gzip, deflate
+</code></pre>
 
 Note: The examples below were run using `]boxing on`.
 
