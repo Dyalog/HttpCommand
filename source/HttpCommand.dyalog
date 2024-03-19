@@ -971,12 +971,14 @@
     ⍝ format multipart/form-data payload
     ⍝ parms is a namespace with named objects
     ⍝
-      msg←''
-      payload←boundary
+      msg←payload←''
       :For name :In parms.⎕NL ¯2
+          payload,←boundary
           (value contentType)←2↑(⊆parms⍎name),⊂''
-          contentType←''
           payload,←NL,'Content-Disposition: form-data; name="',name,'"'
+          :If ~0∊⍴contentType
+              payload,←NL,'Content-Type: ',contentType
+          :EndIf
           :If '@<'∊⍨⊃value
               :If ⎕NEXISTS 1↓value
               :AndIf 2=1 ⎕NINFO 1↓value
@@ -990,9 +992,8 @@
           :Else
               payload,←NL,NL,(∊⍕value),NL
           :EndIf
-          payload,←boundary
       :EndFor
-      payload,←'--'
+      payload,←boundary,'--'
     ∇
 
     ∇ (contentType content)←contentType readFile filename;ext;tn
