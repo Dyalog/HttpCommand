@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.5.0' '2024-03-07'
+      r←'HttpCommand' '5.6.0' '2024-03-17'
     ∇
 
 ⍝ Request-related fields
@@ -405,7 +405,7 @@
      ∆FAIL:(rc secureParams)←¯1 msg ⍝ failure
     ∇
 
-    ∇ {r}←certs HttpCmd args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers;cmd;file;protocol;conx;proxied;proxy;cert;noCT;simpleParms;noContentLength;connectionClose;tmpFile;tmpTn;redirected;encoding;compType;isutf8
+    ∇ {r}←certs HttpCmd args;url;parms;hdrs;urlparms;p;b;secure;port;host;path;auth;req;err;done;data;datalen;rc;donetime;ind;len;obj;evt;dat;z;msg;timedOut;certfile;keyfile;simpleChar;defaultPort;cookies;domain;t;replace;outFile;toFile;startSize;options;congaPath;progress;starttime;outTn;secureParams;ct;forceClose;headers;cmd;file;protocol;conx;proxied;proxy;cert;noCT;simpleParms;noContentLength;connectionClose;tmpFile;tmpTn;redirected;encoding;compType;isutf8;boundary
     ⍝ issue an HTTP command
     ⍝ certs - X509Cert|(PublicCertFile PrivateKeyFile) SSLValidation Priority PublicCertFile PrivateKeyFile
     ⍝ args  - [1] HTTP method
@@ -546,6 +546,17 @@
                       parms←JSONexport parms ⍝ JSONify it
                   :Else
                       parms←SafeJSON parms
+                  :EndIf
+              :Case 'multipart/form-data'
+                  :If 9.1≠nameClass parms ⍝ must be a namespace
+                      →∆END⊣r.msg←'Params must be a namespace when using "multipart/form-data" content type'
+                  :Else
+                      boundary←'--',32{⍵[?⍺⍴≢⍵]}⎕D,⎕A,⎕C ⎕A
+                      hdrs←'Content-Type'(hdrs setHeader)'multipart/form-data; boundary=',boundary
+                      (parms msg)←boundary multipart parms
+                      :If ~0∊⍴msg
+                          →∆END⊣r.msg←msg
+                      :EndIf
                   :EndIf
               :Else
                   parms←∊⍕parms
@@ -900,7 +911,7 @@
           :EndIf
       :Else
           :If 1081=⊃rc ⍝ 1081 could be due to an error in Conga that fails on long URLs, so try sending request as a character vector
-              :If 0=⊃rc←LDRC.Send Client(cmd,' ',(path,(0∊⍴urlparms)↓'?',urlparms),' HTTP/1.1',(⎕UCS 13 10),(∊': '(⎕UCS 13 10),⍨¨⍤1⊢hdrs),(⎕UCS 13 10),parms)
+              :If 0=⊃rc←LDRC.Send Client(cmd,' ',(path,(0∊⍴urlparms)↓'?',urlparms),' HTTP/1.1',NL,(∊': 'NL,⍨¨⍤1⊢hdrs),NL,parms)
                   →∆LISTEN
               :EndIf
           :EndIf
@@ -954,6 +965,49 @@
       :Else
           r←⎕EN
       :EndTrap
+    ∇
+
+    ∇ (payload msg)←boundary multipart parms;name;value;filename;contentType;content
+    ⍝ format multipart/form-data payload
+    ⍝ parms is a namespace with named objects
+    ⍝
+      msg←payload←''
+      :For name :In parms.⎕NL ¯2
+          payload,←boundary
+          (value contentType)←2↑(⊆parms⍎name),⊂''
+          payload,←NL,'Content-Disposition: form-data; name="',name,'"'
+          :If ~0∊⍴contentType
+              payload,←NL,'Content-Type: ',contentType
+          :EndIf
+          :If '@<'∊⍨⊃value
+              :If ⎕NEXISTS 1↓value
+              :AndIf 2=1 ⎕NINFO 1↓value
+                  payload,←('@'=⊃value)/'; filename="',(∊¯2↑1 ⎕NPARTS value),'"'
+                  (contentType content)←contentType readFile 1↓value
+                  payload,←NL,'Content-Type: ',contentType,NL,NL
+                  payload,←content,NL
+              :Else
+                  →0⊣msg←'File not found: "',(1↓value),'"'
+              :EndIf
+          :Else
+              payload,←NL,NL,(∊⍕value),NL
+          :EndIf
+      :EndFor
+      payload,←boundary,'--'
+    ∇
+
+    ∇ (contentType content)←contentType readFile filename;ext;tn
+    ⍝ return file content in a manner consistent with multipart/form-data
+      :Access public shared
+      :If 0∊⍴contentType
+          ext←⎕C 3⊃1 ⎕NPARTS filename
+          :If ext≡'.txt' ⋄ contentType←'text/plain'
+          :Else ⋄ contentType←'application/octet-stream'
+          :EndIf
+      :EndIf
+      tn←filename ⎕NTIE 0
+      content←⎕NREAD tn,(⎕DR''),¯1
+      ⎕NUNTIE tn
     ∇
 
     NL←⎕UCS 13 10
