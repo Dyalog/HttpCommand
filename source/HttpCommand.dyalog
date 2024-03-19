@@ -551,7 +551,7 @@
                   :If 9.1≠nameClass parms ⍝ must be a namespace
                       →∆END⊣r.msg←'Params must be a namespace when using "multipart/form-data" content type'
                   :Else
-                      boundary←'--',32{⍵[?⍺⍴≢⍵]}⎕D,⎕A,⎕C ⎕A
+                      boundary←50{⍵[?⍺⍴≢⍵]}⎕D,⎕A,⎕C ⎕A
                       hdrs←'Content-Type'(hdrs setHeader)'multipart/form-data; boundary=',boundary
                       (parms msg)←boundary multipart parms
                       :If ~0∊⍴msg
@@ -973,7 +973,7 @@
     ⍝
       msg←payload←''
       :For name :In parms.⎕NL ¯2
-          payload,←boundary
+          payload,←'--',boundary
           (value contentType)←2↑(⊆parms⍎name),⊂''
           payload,←NL,'Content-Disposition: form-data; name="',name,'"'
           :If ~0∊⍴contentType
@@ -993,7 +993,7 @@
               payload,←NL,NL,(∊⍕value),NL
           :EndIf
       :EndFor
-      payload,←boundary,'--'
+      payload,←'--',boundary,'--'
     ∇
 
     ∇ (contentType content)←contentType readFile filename;ext;tn
