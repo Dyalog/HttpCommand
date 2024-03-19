@@ -972,7 +972,7 @@
     ⍝ parms is a namespace with named objects
     ⍝
       msg←''
-      payload←'--',boundary
+      payload←boundary
       :For name :In parms.⎕NL ¯2
           (value contentType)←2↑(⊆parms⍎name),⊂''
           contentType←''
@@ -990,7 +990,7 @@
           :Else
               payload,←NL,NL,(∊⍕value),NL
           :EndIf
-          payload,←'--',boundary
+          payload,←boundary
       :EndFor
       payload,←'--'
     ∇
