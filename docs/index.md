@@ -1,24 +1,36 @@
+`HttpCommand` is a utility is designed to make it easy for the APL user to send requests to and receive responses from HTTP servers like web servers and web services.
 
-__Note__: While `HttpCommand` itself is `⎕IO` and `⎕ML` insensitive, the examples in this documentation assume an environment of `(⎕IO ⎕ML)←1`.
+!!! note
+    While `HttpCommand` itself is `⎕IO` and `⎕ML` insensitive, the examples in this documentation assume an environment of `(⎕IO ⎕ML)←1`.
 
 ## Loading `HttpCommand`
-`HttpCommand` is a utility is designed to make it easy for the APL user to send requests to and receive responses from HTTP servers like web servers and web services. `HttpCommand` is included with Dyalog APL as a loadable utility. To bring it into your workspace, simply do:
+ `HttpCommand` is included with your Dyalog APL installation. To bring it into your workspace:
+
+### Dyalog APL Version 19.0 and later
 ```APL
-      ]Load HttpCommand
+      ]import {ns} HttpCommand
 ```
 or, under program control, do:
 ```APL
-      ⎕SE.SALT.Load 'HttpCommand' 
+      ⎕SE.Link.Import {ns} 'HttpCommand' 
 ```
-Beginning with Dyalog v18.2, you can also use the `]get` user command:
+where `{ns}` is an optional namespace name or reference.
+
+### Dyalog APL versions before 19.0
 ```APL
-      ]Get HttpCommand
+      ]load HttpCommand {-target=ns}
 ```
+or, under program control, do:
+```APL
+      ⎕SE.SALT.Load 'HttpCommand {-target=ns}' 
+```
+`{-target=ns}` optionally specifies the namespace in which to load `HttpCommand`. `ns` is the namespace name. 
 
-## Upgrading to `HttpCommand` Version 5
-This documentation describes version 5 of `HttpCommand`.  Dyalog versions 18.2 and 18.0 have earlier versions of `HttpCommand` pre-installed. To upgrade your in-workspace copy of `HttpCommand` to version 5, you may have to run [`HttpCommand.Upgrade`](./misc-methods.md#upgrade) once or twice depending on how recent your Dyalog installation is.
 
-If `HttpCommand.Version` reports a version earlier than 4.0.14, `HttpCommand.Upgrade` will upgrade to the latest version 4. Then running `HttpCommand.Upgrade` once more will upgrade to version 5.
+## Upgrading to the Latest `HttpCommand`
+This documentation describes the latest version of `HttpCommand`, which may be more recent than the version of `HttpCommand` that came pre-installed with your Dyalog APL. Use [`HttpCommand.Upgrade`](./misc-methods.md#upgrade) upgrade your in-workspace copy of `HttpCommand`. Note that this only upgrades your in-workspace copy of `HttpCommand` and does not overwrite the version included in your Dyalog installation.
+
+If `HttpCommand.Version` reports a version earlier than 4.0.14, `HttpCommand.Upgrade` will need to be run twice to upgrade to the latest version.
 
 `HttpCommand.Upgrade` does not work with Classic interpreters. See [`Upgrade`](./misc-methods.md#upgrade) for more information.
 
@@ -33,8 +45,11 @@ For example, `HttpCommand` version 3.4 may be found in Dyalog version 18.0.
       HttpCommand.Version  ⍝ verify that we upgraded to v4.0.14
  HttpCommand  4.0.14  2022-09-04 
       HttpCommand.Upgrade  ⍝ now upgrade to v5
-0  Upgraded to HttpCommand 5.0.7 2022-08-27 from HttpCommand 4.0.14 2022-09-04 
+0  Upgraded to HttpCommand 5.6.0 2024-03-17 from HttpCommand 4.0.14 2022-09-04 
 ```
+
+!!! note
+    When deploying `HttpCommand` as a part of your application, you should save a copy with your application to ensure you know precisely what version of `HttpCommand` is being used. You don't want to dynamically load or upgrade `HttpCommand` in your application.
 
 ## `HttpCommand` is Available as a Tatin Package 
 [Tatin](https://tatin.dev) is a package manager for APL-based packages. `HttpCommand` is available as a Tatin package. If you have the Tatin client installed, you can load `HttpCommand` using:
@@ -44,7 +59,7 @@ For example, `HttpCommand` version 3.4 may be found in Dyalog version 18.0.
 The Tatin client will be included in your Dyalog installation beginning with Dyalog version 19.0. For earlier versions of Dyalog, refer to the [Tatin website](https://tatin.dev) for instructions on installing the Tatin client.
 
 !!! warning "Load Once, Use Often"
-     It is **strongly recommended** that you save your own copy of `HttpCommand` in your application rather than dynamically loading or upgrading it at runtime. In particular, it is bad practice to repeated load `HttpCommand` as this may cause Conga to  reinitialize each time `HttpCommand` is loaded and may interfere with other components of your application that also use Conga. If `HttpCommand` is being used within your application (as opposed to ad hoc usage in your APL session) it is recommended that all Conga-using components refer to the same Conga namespace:
+     It is **strongly recommended** that you save your own copy of `HttpCommand` in your application rather than dynamically loading or upgrading it at runtime. In particular, it is bad practice to repeated load `HttpCommand` as this may cause Conga to  reinitialize each time `HttpCommand` is loaded and may interfere with other components of your application that also use Conga. If `HttpCommand` is being used within your application (as opposed to ad hoc usage in your APL session) it is recommended that all Conga-using components refer to the same Conga namespace. See [HttpCommand and Conga](./conga.md)
 
 ## Typical Usage Patterns
 
