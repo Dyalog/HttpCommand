@@ -54,3 +54,25 @@ pre + pre , hr + pre {
 pre + pre > code, hr + pre > code {
     padding-top: 0.2em!important;
 }
+
+/* make admonition styling a la Dyalog */
+.md-typeset .admonition,
+.md-typeset details { 
+	border-color: #ED7F00 !important;
+	box-shadow: #ED7F00 !important;
+}
+
+.md-typeset .admonition-title {
+	background-color: #F3AD5b !important;
+} 
+
+.md-typeset .admonition-title:before,
+.md-typeset summary:before{
+	background-color: #F8F8F8 !important;
+}
+
+.md-typeset pre > code {
+	overflow: scroll !important;
+	scrollbar-color: black;
+	scrollbar-width: thin;
+}

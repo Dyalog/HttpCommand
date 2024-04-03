@@ -25,13 +25,13 @@ Typical use of `HttpCommand` might follow this pattern.
 ```
  resp ← HttpCommand.Get 'some-url'
 :If resp.IsOK ⍝ use the IsOK function from the result namespace
-    ⍝ code to handle bad request
-:Else
     ⍝ code to process the response 
+:Else
+    ⍝ code to handle bad request
 :EndIf
 ```
 
-If you expect to make several `HttpCommand` calls, you may want to create an instance and then update the necessary settings and execute the `Run` method for each call.  This is particularly useful when the requests are made to the same host as the connection to the host will be kept open, unless the host itself closes it.
+If you expect to make several `HttpCommand` calls, you may want to create an instance and then update the necessary settings and execute the `Run` method for each call.  This can be useful when the requests are made to the same host as the connection to the host will be kept open, unless the host itself closes it.
 
 ```
  hc←HttpCommand.New 'get'  ⍝ here we expect all requests to be HTTP GET
@@ -47,21 +47,12 @@ If you expect to make several `HttpCommand` calls, you may want to create an ins
   :EndIf
 :EndFor 
 ```
-## Content Types
-👉 If your HTTP request has a payload and you do not specify the content type, `HttpCommand` will attempt to determine whether to use a content type of `'application/json'` or `'application/x-www-form-urlencoded'`.
 
-This may be fine for interactively tinkering in the APL session. But when running `HttpCommand` under program control you should **explicitly specify the content type** for the payload by either setting `ContentType` or adding a `content-type` header. 
-
-The exception to this is when using `GetJSON` which is specifically intended to interact with JSON-based web services and will use a default content type of `application/json`. 
-### Special Treatment of `application/json` Content Type
-If you specify a content type of `'application/json'`, `HttpCommand` will automatically convert a non-JSON `Params` setting to JSON. In the rare case where `Params` is an APL character vector that is valid JSON, you should convert it yourself using `1 ⎕JSON`.
 ## `Timeout` and Long-running Requests
 The default `Timeout` setting (10 seconds) is adequate for most requests. There are a couple of patterns of long running requests.  `Timeout` can be set to a positive or negative number.
 
 - Setting `Timeout` to a positive number means that `HttpCommand` will time out after `Timeout` seconds with a return code (`rc`) of 100.  Any partial payload received will returned in `Data` element of the result. 
-- Setting `Timeout` to a negative number means that `HttpCommand` will not time out as long as data is being received.  This is useful in the case where a large payload may be received but you are uncertain of how long it will take to receive. If no data is received within a period of `Timeout` seconds, `HttpCommand` will time out with a return code (`rc`) of 100. Any partial payload received will be returned in the `Data` element of the result. 
-
-Using a negative `Timeout` value is useful in the case where a large payload is being received in chunks but has no benefit if the entire payload is sent in one chunk or if the host takes more than `|Timeout` seconds to begin sending its response. In that case, you'll need to set `|Timeout` to a larger value.
+- Setting `Timeout` to a negative number means that `HttpCommand` will not time out as long as data is being received.  This is useful in the case where a large payload may be received but you are uncertain of how long it will take to receive. If no data is received within a period of `|Timeout` seconds, `HttpCommand` will time out with a return code (`rc`) of 100. Any partial payload received will be returned in the `Data` element of the result.<br/><br/> Using a negative `Timeout` value is useful in the case where a large payload is being received in chunks but has no benefit if the entire payload is sent in one chunk or if the host takes more than `|Timeout` seconds to begin sending its response. In that case, you'll need to set `|Timeout` to a larger value.
 
 ## Compressing Response Payload ##
 `HttpCommand` can accept and process response payloads that are compressed using either the gzip or deflate compression schemes. To accomplish this, you need to set the `accept-encoding` header to `'gzip, deflate'`.
