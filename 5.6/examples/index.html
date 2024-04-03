@@ -1,0 +1,1239 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../img/favicon-32.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+    
+    
+      
+        <title>Examples - HttpCommand</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.975780f9.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings2.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings3.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings4.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings5.css">
+    
+      <link rel="stylesheet" href="../css/print-site-enum-headings6.css">
+    
+      <link rel="stylesheet" href="../css/print-site.css">
+    
+      <link rel="stylesheet" href="../css/print-site-material.css">
+    
+      <link rel="stylesheet" href="../css/main.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#interacting-with-web-services" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="HttpCommand" class="md-header__button md-logo" aria-label="HttpCommand" data-md-component="logo">
+      
+  <img src="../img/dyalog-white.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HttpCommand
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Examples
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/dyalog/httpcommand" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Dyalog/HttpCommand
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="HttpCommand" class="md-nav__button md-logo" aria-label="HttpCommand" data-md-component="logo">
+      
+  <img src="../img/dyalog-white.svg" alt="logo">
+
+    </a>
+    HttpCommand
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/dyalog/httpcommand" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Dyalog/HttpCommand
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Usage
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Usage" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Usage
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        Quick Start
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../userguide/" class="md-nav__link">
+        Usage Guide
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Examples
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Examples
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#interacting-with-web-services" class="md-nav__link">
+    Interacting with Web Services
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authenticationauthorization" class="md-nav__link">
+    Authentication/Authorization
+  </a>
+  
+    <nav class="md-nav" aria-label="Authentication/Authorization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#http-basic-authentication" class="md-nav__link">
+    HTTP Basic Authentication
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-based-authentication" class="md-nav__link">
+    Token-based Authentication
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interacting-with-json-based-web-services" class="md-nav__link">
+    Interacting with JSON-based Web Services
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#posting-data-to-a-web-service" class="md-nav__link">
+    Posting Data to a Web Service
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#downloading-a-file" class="md-nav__link">
+    Downloading a File
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#twitter-example" class="md-nav__link">
+    Twitter Example
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trouble/" class="md-nav__link">
+        Troubleshooting
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_1">
+          Settings
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Settings" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          Settings
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../request-settings/" class="md-nav__link">
+        Request-related Settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operational-settings/" class="md-nav__link">
+        Operational Settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conga-settings/" class="md-nav__link">
+        Conga-related Settings
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../proxy-settings/" class="md-nav__link">
+        Proxy-related Settings
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Shared Methods
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Shared Methods" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Shared Methods
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shortcut-methods/" class="md-nav__link">
+        Shortcut Methods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../encode-methods/" class="md-nav__link">
+        Encode/Decode Methods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../misc-methods/" class="md-nav__link">
+        Miscellaneous Methods
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instance-methods/" class="md-nav__link">
+        Instance Methods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          Result Namespace
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Result Namespace" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Result Namespace
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result-operational/" class="md-nav__link">
+        Operational Elements
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result-request/" class="md-nav__link">
+        Request Elements
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result-response/" class="md-nav__link">
+        Response Elements
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../msgs/" class="md-nav__link">
+        Messages and Return Codes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Advanced Topics
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Advanced Topics" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Advanced Topics
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../content-types/" class="md-nav__link">
+        Request Content Types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../conga/" class="md-nav__link">
+        HttpCommand and Conga
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../secure/" class="md-nav__link">
+        Secure Communications
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../proxy/" class="md-nav__link">
+        Using a Proxy Server
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../integrating/" class="md-nav__link">
+        Integrating HttpCommand
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          About
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          About
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../LICENSE/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-notes/" class="md-nav__link">
+        Release Notes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../print_page/" class="md-nav__link">
+        Print
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#interacting-with-web-services" class="md-nav__link">
+    Interacting with Web Services
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authenticationauthorization" class="md-nav__link">
+    Authentication/Authorization
+  </a>
+  
+    <nav class="md-nav" aria-label="Authentication/Authorization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#http-basic-authentication" class="md-nav__link">
+    HTTP Basic Authentication
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-based-authentication" class="md-nav__link">
+    Token-based Authentication
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interacting-with-json-based-web-services" class="md-nav__link">
+    Interacting with JSON-based Web Services
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#posting-data-to-a-web-service" class="md-nav__link">
+    Posting Data to a Web Service
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#downloading-a-file" class="md-nav__link">
+    Downloading a File
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#twitter-example" class="md-nav__link">
+    Twitter Example
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <a href="https://github.com/dyalog/httpcommand/edit/master/docs/examples.md" title="Edit this page" class="md-content__button md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+  <h1>Examples</h1>
+
+<h2 id="interacting-with-web-services">Interacting with Web Services</h2>
+<p>A web service will generally have a published API which describes how to interact with the service.  This API will be your guide for how to build requests using <code>HttpCommand</code> to access the web service. In many cases, the API will also describe the format of the data it returns in the <code>content-type</code> header.</p>
+<p>A web service may require authentication in order to gain access to certain resources or perform certain operations. GitHub is a good example of this - it does not require authentication to perform read-only queries on public resources, but authentication is necessary to perform write operations or to access private repositories.</p>
+<p>Let's look at GitHub's <a href="https://docs.github.com/en/rest">REST API</a> as an example. The GitHub API returns its data in JSON format. </p>
+<p>Note: If you run these same examples, you may get slightly different results because of updates to Dyalog's content on GitHub.</p>
+<pre><code>      c ← HttpCommand.New 'get' 'https://api.github.com/orgs/Dyalog'
+
+      ⊢r ← c.Run ⍝ send the request
+[rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 1101]
+
+      r.Headers c.Lookup 'content-type' ⍝ check the content-type
+application/json; charset=utf-8
+
+      d←⎕JSON r.Data ⍝ convert the JSON 
+
+      d.(name public_repos) 
+ Dyalog  48
+
+      html ← 'HTML' ('&lt;img src=&quot;',d.avatar_url,'&quot;/&gt;')
+      coord ← 'coord' 'pixel' ⋄ size ← 'size' (250 250)
+      'h' ⎕WC 'HTMLRenderer' html coord size
+</code></pre>
+<p><img alt="Dyalog avatar" src="../img/avatar.png" /></p>
+<h2 id="authenticationauthorization">Authentication/Authorization</h2>
+<p>The example above uses no authentication and therefore returns only publicly-available information. Many web services require some form of authentication to provide authorization to access private resources or functionality. Two common authentication schemes are "token-based" and "HTTP Basic".  </p>
+<h3 id="http-basic-authentication">HTTP Basic Authentication</h3>
+<p>Some web services allow you to use HTTP Basic authentication using userid and password credentials. <strong>Any request that includes authentication data should be sent using HTTPS if possible</strong>. <code>HttpCommand</code> allows you to specify these credentials in a few ways:</p>
+<ul>
+<li>in the <code>URL</code> by including <code>userid:password@</code> before the domain name</li>
+<li>by setting <code>AuthType</code> to <code>'Basic'</code> and </br><code>Auth</code> to <code>HttpCommand.Base64Encode 'userid:password'</code></li>
+<li>by including an "Authorization" header in the format</br><code>'Basic ',HttpCommand.Base64Encode 'userid:password'</code></li>
+</ul>
+<p>The following examples use the "basic-auth" endpoint of the website <a href="http://httpbin.org">http://httpbin.org</a>. httpbin.org provides many useful endpoints for testing HTTP requests. In this case, the userid and password are concatenated to the URL so the endpoint can validate the credentials.</p>
+<p>First, let's try using credentials in the URL...</p>
+<pre><code>      u ← 'userid'
+      p ← 'password'
+      endpoint ← 'httpbin.org/basic-auth/userid/password'
+
+      ⊢url ← 'https://',u,':',p,'@',endpoint
+https://userid:password@httpbin.org/basic-auth/userid/password
+
+      ⊢r ← HttpCommand.Get url 
+[rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 49]
+      r.Data
+{
+  &quot;authenticated&quot;: true, 
+  &quot;user&quot;: &quot;user&quot;
+}
+</code></pre>
+<p>If we alter the URL so that the credentials don't match, we'll get a <code>401 "UNAUTHORIZED"</code> HTTP status.</p>
+<pre><code>      HttpCommand.Get url,'1'
+[rc: 0 | msg:  | HTTP Status: 401 &quot;UNAUTHORIZED&quot; | ⍴Data: 0]
+</code></pre>
+<p>Now, let's try setting the "Authorization" header...</p>
+<pre><code>      ⊢credentials ← HttpCommand.Base64Encode u,':',p
+dXNlcmlkOnBhc3N3b3Jk
+      hdrs ← 'Authorization' ('Basic ',credentials)
+      url ← 'https://',endpoint
+      HttpCommand.Get url '' hdrs
+[rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 49]
+</code></pre>
+<p>Finally, let's use the <code>AuthType</code> and <code>Auth</code> settings...</p>
+<pre><code>      h ← HttpCommand.New 'get' url ⍝ create an instance
+      h.Auth ← credentials
+      h.AuthType ← 'Basic'
+      h.Run
+[rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 49]
+</code></pre>
+<h3 id="token-based-authentication">Token-based Authentication</h3>
+<p>One common authentication method uses tokens which are issued by the web service provider. Tokens should be protected just as you would protect your password. A token may have an expiration date after which you'll need to get a new token. <strong>Any request that includes authentication data should be sent using HTTPS if possible</strong>.</p>
+<p>For this next example we'll use a <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token">GitHub Personal Access Token</a> which happens to provide more access to Dyalog's information on GitHub.</p>
+<p>The API documentation for the web service you are using should provide information about the use of tokens. In GitHub's case, the token is passed in the HTTP request's "Authorization" header. <code>HttpCommand</code> allows you to specify the token either by creating an "Authorization" header or by setting the <code>Auth</code> configuration setting. If you set the <code>Auth</code> setting, <code>HttpCommand</code> will add the "Authorization" header automatically.</p>
+<p>Let's assume that the token we're using in this example is in a variable named <code>token</code>. (Obviously, we are not going to publish the <em>actual</em> token here.) Also note if you plan on making several requests to the same web service, it's easier to create an instance of <code>HttpCommand</code>, set the <code>Auth</code> configuration setting, then set any other configuration settings and run the <code>Run</code> method for each request.</p>
+<p>First, let's compare the difference between an authorized and a non-authorized request...</p>
+<pre><code class="language-APL">      ⊢HttpCommand.Get 'https://api.github.com/orgs/Dyalog'
+[rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 1101]
+
+      hdr←'authorization' ('Token ',token)
+
+      ⊢HttpCommand.Get 'https://api.github.com/orgs/Dyalog' '' hdr
+[rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 1804]
+</code></pre>
+<p>Note more data is returned for the authorized request. This additional data will include things like organizational and administrative information.</p>
+<h2 id="interacting-with-json-based-web-services">Interacting with JSON-based Web Services</h2>
+<p>Many web services including those based on <a href="https://github.com/Dyalog/Jarvis">Jarvis</a>, Dyalog's web service framework, use JSON to format their request and response payloads. Normally, to interact with a JSON-based web service, you would set the "content-type" header of the request to "application/json" if the request has a payload; then you would process the response's JSON payload, possibly with <code>⎕JSON</code>.  </p>
+<p><code>HttpCommand</code>'s <code>GetJSON</code> method is designed to make it easy to to interact with such services.  <code>GetJSON</code> will convert an APL array request payload to JSON format and conversely convert a JSON response payload to APL. We saw in the <a href="#interacting-with-web-services">Interacting with Web Services</a> example above that GitHub returns its result as JSON.</p>
+<h2 id="posting-data-to-a-web-service">Posting Data to a Web Service</h2>
+<p>So far we've only read data from GitHub using the HTTP GET method. The GitHub API also allows authenticated users to create and update information. In this example we will create a new repository using the HTTP POST method and our GitHub Personal Access Token. For security reasons, we will use the same <code>token</code> variable from the previous example. At the time of this writing, we are using the GitHub API documentation for <a href="https://docs.github.com/en/enterprise-server@3.1/rest/repos/repos#create-a-repository-for-the-authenticated-user">creating a repository for an authenticated user</a> as a guide. </p>
+<p>For this example, we'll use a namespace, <code>args</code>, to specify all the settings for our request...  </p>
+<pre><code>      args←⎕NS ''
+      args.Command            ← 'post'
+      args.URL                ← 'https://api.github.com/user/repos'
+      args.Params             ← ⎕NS ''
+      args.Params.name        ← 'TestRepository'
+      args.Params.description ← 'HttpCommand Example'
+      args.Params.auto_init   ← ⊂'true' ⍝ APL's equivalent to JSON true
+      ⊢r ← HttpCommand.GetJSON args
+[rc: 0 | msg:  | HTTP Status: 401 &quot;Unauthorized&quot; | ⍴Data: ⍬]
+</code></pre>
+<p>Oops!  We didn't use our token for authentication and so the request was rejected as unauthorized. We also specify the authentication scheme as <code>'token'</code>, which is what the GitHub API uses.</p>
+<pre><code>      args.(AuthType Auth) ← 'Token' token
+      ⊢r ← HttpCommand.GetJSON args
+[rc: 0 | msg:  | HTTP Status: 201 &quot;Created&quot; | ⍴Data: ⍬]
+</code></pre>
+<p>Notice that the shape of the response's payload (Data) is <code>⍬</code>. This is because we used the <code>GetJSON</code> method and <code>HttpCommand</code> automatically converted the response's JSON payload into a Dyalog JSON object which contains all the information about the newly created repository...</p>
+<pre><code>      ]Box on
+      r.Data.(name created_at)
+┌──────────────┬────────────────────┐
+│TestRepository│2022-08-01T21:23:08Z│
+└──────────────┴────────────────────┘
+</code></pre>
+<h2 id="downloading-a-file">Downloading a File</h2>
+<p>If you want to download a file you can simply use <code>HttpCommand.Get</code> with the URL of the file and then write the response's payload to a local file.  Or, you can set the <code>OutFile</code> setting to the local file name and have <code>HttpCommand</code> write the file for you. This is especially advantageous for large files if the server uses "chunked" transfer encoding to send the payload in chunks. In that case, rather than buffering the entire payload in the workspace and then writing to the local file, <code>HttpCommand</code> will write each chunk out as it is received. </p>
+<pre><code>      args←⎕NS '' 
+      args.OutFile ← '/tmp/test.pdf'
+      args.Command ← 'get' 
+      args.URL     ← 'https://www.dyalog.com/uploads/files/student_competition/2021_problems_phase1.pdf'
+      ⊢r ← HttpCommand.Do args
+[rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | 179723 bytes written to c:/tmp/test.pdf]
+</code></pre>
+<h2 id="twitter-example">Twitter Example</h2>
+<p>The GitHub examples above used the default <code>AuthType</code> of <code>'Token'</code>. <a href="https://developer.twitter.com/en/docs/twitter-api">Twitter's v2 REST API</a> uses OAuth 2.0's <code>'bearer'</code> authentication scheme.  In this example our super secret bearer token is stored in a variable named <code>bearerToken</code>. </p>
+<pre><code>      apiURL ← 'https://api.twitter.com/2/' ⍝ set the base URL for each request
+      c ← HttpCommand.New ''
+      c.(AuthType Auth) ← 'bearer' bearerToken
+</code></pre>
+<p>First we need to get the id for the Twitter account we want to look at. Twitter returns its response payload in JSON, so we can have <code>HttpCommand</code> automatically convert the JSON into an APL object by setting <code>TranslateData</code> to 1. If there are no errors in the request, Twitter will put the response's data in an object called <code>'data'</code>. </p>
+<pre><code>      c.TranslateData ← 1 ⍝ have HttpCommand translate known data types
+      c.URL ← apiURL,'users/by?usernames=dyalogapl'
+      ⊢id ← ⊃(c.Run).Data.data.id ⍝ get the id for user &quot;dyalogapl&quot;
+36050079
+      c.URL ← apiURL,'users/',id,'/tweets?tweet.fields=created_at'
+      ⊢ r ← c.Run
+[rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: ⍬]
+      ≢ tweets ← r.Data.data ⍝ how many tweets were returned?      
+10
+      ↑(4↑tweets).((10↑created_at) (50↑text))
+ 2022-07-26  Remember to submit your solutions to the annual AP 
+ 2022-07-25  Dyalog ’22 – make sure you register for Dyalog ’22 
+ 2022-07-20  The APL practice problems site https://t.co/1SEoa5 
+ 2022-07-15  There are only two weeks until the 10% Early Bird  
+</code></pre>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../userguide/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Usage Guide" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Usage Guide
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../trouble/" class="md-footer__link md-footer__link--next" aria-label="Next: Troubleshooting" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Troubleshooting
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Made with <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener"><strong>Material for MkDocs</strong></a><br/>Copyright &copy; 2015-2024 <strong><a href="https://dyalog.com" target="_blank" rel="noopener">Dyalog, LTD</a></strong>
+    </div>
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.instant"], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      
+        <script src="../js/print-site.js"></script>
+      
+    
+    
+  </body>
+</html>
