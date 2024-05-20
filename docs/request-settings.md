@@ -1,5 +1,5 @@
 Request-related settings are settings you use to specify attributes of the HTTP request that `HttpCommand` will process.
-## Settings
+## Instance Settings
 ### `Command`
 <table><tr>
 <td>Description</td>
@@ -219,6 +219,57 @@ If <code>AuthType</code> is not set and <code>Auth</code> is set to either a cha
 <code> _octo      github.com   05-AUG-2022</code><br/>  
 <code> logged_in  github.com   05-AUG-2022</code><br/>  
 </td></tr></table>
+
+## Shared Settings
+### `HeaderSubstitution`
+<table><tr>
+<td>Description</td>
+<td><p>In the following text, the phrase "environment variable" is taken to mean either an environment variable or a Dyalog configuration setting as both of these are retrieved using the same technique (<code>2 ⎕NQ '.' 'GetEnvironment')</code>.</p><p><code>HeaderSubstitution</code> provides a shorthand technique to inject environment variable values into the request's HTTP header names and values. If <code>HeaderSubstitution</code> is <code>''</code> (the default), no substitution is done. When <code>HeaderSubstitution</code> has a non-empty value, it denotes the beginning and ending delimiteres between which you may use the name of an enviroment variable. If <code>HeaderSubstitution</code> is a single character, that character is used as both the beginning and ending delimiter.</p>
+<p>You may also use the delimiters in the <a href="#auth"><code>Auth</code></a> setting as <code>Auth</code> is used to format the HTTP Authorization header.</p>
+</td></tr>
+<tr><td>Default</td>
+<td><code>''</code></td></tr>
+<tr><td>Example(s)</td><td>
+For these examples, assume we have an environment variable named "MyVariable" which has a value of <code>'0123456789'</code>. <pre><code>      HttpCommand.HeaderSubstitution←'' ⍝ no substitutions done
+      h←HttpCommand.New 'get' 'someurl.com'
+      'name' h.SetHeader '%MyVariable%'
+      h.Show
+      GET / HTTP/1.1
+name: %MyVariable%
+Host: someurl.com
+User-Agent: Dyalog-HttpCommand/5.7.0
+Accept: */*
+Accept-Encoding: gzip, deflate</code></pre>
+<p>Now let's specify a delimiter...</p>
+<pre><code>      HttpCommand.HeaderSubstitution←'%' ⍝ specify a delimiter
+      h.Show
+GET / HTTP/1.1
+name: 0123456789
+Host: someurl.com
+User-Agent: Dyalog-HttpCommand/5.7.0
+Accept: */*
+Accept-Encoding: gzip, deflate
+</code></pre>
+<p>The delimiters do not have to be single characters...</p>
+<pre><code>      HttpCommand.HeaderSubstitution←'env:[' ']' 
+      'name' h.SetHeader 'env:[MyVariable]'
+      h.Show
+GET / HTTP/1.1
+name: 0123456789
+Host: someurl.com
+User-Agent: Dyalog-HttpCommand/5.7.0
+Accept: */*
+Accept-Encoding: gzip, deflate</code></pre>
+<p>Alternatively, you can use the <code>GetEnv</code> method to retrieve environment variables and/or Dyalog configuration settings.</p>
+<pre><code>      'name' h.SetHeader GetEnv 'MyAPIKey' 
+</code></pre>
+</td></tr>
+<tr><td>Details</td>
+<td><p>Many web services require an API key. It is generally considered bad practice to hard-code such API keys in your application code. Storing the keys as environment variables allows them to be retrieved more securely.</p>
+<p>If no environment variable matches the name between the delimeters, no substitution is performed.</p>
+</td></tr>
+</table>
+
 
 
 ## Name/Value Pairs

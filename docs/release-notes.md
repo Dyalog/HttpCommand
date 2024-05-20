@@ -1,3 +1,5 @@
+## Version 5.7
+* Added shared setting [HeaderSubstitution](./request-settings.md#headersubstitution) to control if and how environment variables are injected into header names and/or values.
 ## Version 5.6
 * Added support for content type "multipart/form-data". See [Content Types](./userguide.md#content-types).
 ## Version 5.5

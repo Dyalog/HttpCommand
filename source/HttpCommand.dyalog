@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.6.0' '2024-03-17'
+      r←'HttpCommand' '5.7.0' '2024-05-17'
     ∇
 
 ⍝ Request-related fields
@@ -20,6 +20,8 @@
     :field public Auth←''                          ⍝ authentication string
     :field public AuthType←''                      ⍝ authentication type
     :field public BaseURL←''                       ⍝ base URL to use when making multiple requests to the same host
+    :field public shared HeaderSubstitution←''     ⍝ delimiters to indicate environment/configuration settings be substituted in headers, set to '' to disable
+
 
 ⍝ Proxy-related fields - only used if connecting through a proxy server
     :field public ProxyURL←''                      ⍝ address of the proxy server
@@ -53,7 +55,6 @@
     :field public UseZip←0                         ⍝ zip request payload (0-no, 1-use gzip, 2-use deflate)
     :field public ZipLevel←1                       ⍝ default compression level (0-9)
     :field public shared Debug←0                   ⍝ set to 1 to disable trapping, 2 to stop just before creating client
-
     :field public readonly shared ValidFormUrlEncodedChars←'&=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~*+~%'
 
     :field Client←''                               ⍝ Conga client ID
@@ -1355,9 +1356,14 @@
       r←Headers
     ∇
 
-    ∇ hdrs←environment hdrs
+    ∇ hdrs←environment hdrs;beg;end;escape;hits;regex
     ⍝ substitute any header names or values that begin with '$env:' with the named environment variable
-      hdrs←(⍴hdrs)⍴'%[[:alpha:]].*?%'⎕R{GetEnv 1↓¯1↓⍵.Match}⊢,hdrs
+      :If ~0∊⍴HeaderSubstitution
+          (beg end)←2⍴HeaderSubstitution
+          escape←'.^$*+?()[]{\|-'∘{m←∊(1+⍺∊⍨t←⌽⍵)↑¨1 ⋄ t←m\t ⋄ t[⍸~m]←'\' ⋄ ⌽t} ⍝ chars that need escaping in regex
+          regex←(escape beg),'[[:alpha:]].*?',escape end
+          hdrs←(⍴hdrs)⍴regex ⎕R{0∊⍴e←GetEnv(≢beg)↓(-≢end)↓⍵.Match:⍵.Match ⋄ e}⊢,hdrs
+      :EndIf
     ∇
 
     ∇ hdrs←privatize hdrs
