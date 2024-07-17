@@ -1,3 +1,5 @@
+## Version 5.8
+* Added configuration setting [`ChunkSize`](./request-settings.md#chunksize) to enable sending request payloads using "chunked" transfer-encoding.
 ## Version 5.7
 * Added shared setting [HeaderSubstitution](./request-settings.md#headersubstitution) to control if and how environment variables are injected into header names and/or values.
 ## Version 5.6

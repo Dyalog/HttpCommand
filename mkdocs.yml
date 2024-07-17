@@ -46,6 +46,8 @@ theme:
 
 extra: 
   generator: false
+  version:
+    provider: mike
 
 extra_css:
   - css/main.css
@@ -76,6 +78,10 @@ markdown_extensions:
   - abbr
   - footnotes
   - attr_list 
+  - def_list
+  - markdown_tables_extended
+  - pymdownx.tasklist:
+      custom_checkbox: true 
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg

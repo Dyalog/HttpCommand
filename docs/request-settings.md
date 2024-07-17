@@ -220,6 +220,14 @@ If <code>AuthType</code> is not set and <code>Auth</code> is set to either a cha
 <code> logged_in  github.com   05-AUG-2022</code><br/>  
 </td></tr></table>
 
+### `ChunkSize`
+
+|--|--|
+| Description | A non-zero `ChunkSize` will make `HttpCommand` use "chunked" transfer-encoding and send the payload of the request in chunk of `ChunkSize` bytes. |
+| Default | `0` meaning do not use "chunked" transfer-encoding |
+| Details | Using a non-zero `ChunkSize` will cause `HttpCommand` to format the payload of the request according to the specification for "chunked" transfer-encoding. This involves breaking the payload into `ChunkSize`-sized chunks each preceded by the hexadecimal length of the chunk. <br><br>**Note:** In the current implementation, the entire, reformatted, payload is sent in a single request to the host. | 
+
+
 ## Shared Settings
 ### `HeaderSubstitution`
 <table><tr>
