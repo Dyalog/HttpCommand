@@ -3,7 +3,7 @@
 ## Version 5.7
 * Added shared setting [HeaderSubstitution](./request-settings.md#headersubstitution) to control if and how environment variables are injected into header names and/or values.
 ## Version 5.6
-* Added support for content type "multipart/form-data". See [Content Types](./userguide.md#content-types).
+* Added support for content type "multipart/form-data". See [Content Types](./content-types.md).
 ## Version 5.5
 * Added configuration setting [`Secret`](./operational-settings.md#secret) which will suppress the display of credentials in the authorization header. This is primarily so that one can demo using authenticated requests without having their credentials displayed in the session.
 * Added ability for HTTP header names and values to reference environment variables by enclosing the environment variable name in % (e.g. `%MyPassword%`). This provides additional security by reducing the need to store sensitive or variable information inline. This is particularly useful when setting [`Auth`](./request-settings.md#auth).  
