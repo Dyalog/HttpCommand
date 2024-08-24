@@ -1896,6 +1896,23 @@ If <code>AuthType</code> is not set and <code>Auth</code> is set to either a cha
 <code> logged_in  github.com   05-AUG-2022</code><br/>  
 </td></tr></table>
 
+<h3 id="request-settings-chunksize"><code>ChunkSize</code></h3>
+<table>
+<tbody>
+<tr>
+<td>Description</td>
+<td>A non-zero <code>ChunkSize</code> will make <code>HttpCommand</code> use "chunked" transfer-encoding and send the payload of the request in chunk of <code>ChunkSize</code> bytes.</td>
+</tr>
+<tr>
+<td>Default</td>
+<td><code>0</code> meaning do not use "chunked" transfer-encoding</td>
+</tr>
+<tr>
+<td>Details</td>
+<td>Using a non-zero <code>ChunkSize</code> will cause <code>HttpCommand</code> to format the payload of the request according to the specification for "chunked" transfer-encoding. This involves breaking the payload into <code>ChunkSize</code>-sized chunks each preceded by the hexadecimal length of the chunk. <br><br><strong>Note:</strong> In the current implementation, the entire, reformatted, payload is sent in a single request to the host.</td>
+</tr>
+</tbody>
+</table>
 <h2 id="request-settings-shared-settings">Shared Settings</h2>
 <h3 id="request-settings-headersubstitution"><code>HeaderSubstitution</code></h3>
 <table><tr>
@@ -3664,13 +3681,17 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</p></section><section class="print-page" id="release-notes"><h2 id="release-notes-version-57">Version 5.7</h2>
+SOFTWARE.</p></section><section class="print-page" id="release-notes"><h2 id="release-notes-version-58">Version 5.8</h2>
+<ul>
+<li>Added configuration setting <a href="#request-settings-chunksize"><code>ChunkSize</code></a> to enable sending request payloads using "chunked" transfer-encoding.</li>
+</ul>
+<h2 id="release-notes-version-57">Version 5.7</h2>
 <ul>
 <li>Added shared setting <a href="#request-settings-headersubstitution">HeaderSubstitution</a> to control if and how environment variables are injected into header names and/or values.</li>
 </ul>
 <h2 id="release-notes-version-56">Version 5.6</h2>
 <ul>
-<li>Added support for content type "multipart/form-data". See <a href="#userguide-content-types">Content Types</a>.</li>
+<li>Added support for content type "multipart/form-data". See <a href="#content-types">Content Types</a>.</li>
 </ul>
 <h2 id="release-notes-version-55">Version 5.5</h2>
 <ul>
