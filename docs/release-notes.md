@@ -1,3 +1,5 @@
+## Version 5.9
+* Allow [`GetJSON`](./shortcut-methods.md#getjson-issue-a-request-to-a-json-based-web-service) to take a simple character vector URL.
 ## Version 5.8
 * Added configuration setting [`ChunkSize`](./request-settings.md#chunksize) to enable sending request payloads using "chunked" transfer-encoding.
 ## Version 5.7
