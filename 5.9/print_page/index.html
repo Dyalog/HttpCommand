@@ -1407,7 +1407,7 @@ Once the instance is created, additional settings can be assigned directly if ne
 <p>Each of the above methods also accept 3 additional positional arguments, <code>[Cert [SSLFlags [Priority]]]</code>.  These arguments are used to specify settings for secure connections but are seldom used in practice because <code>HttpCommand</code> automatically supplies an anonymous certificate when using a secure connection. See <a href="#secure">Secure Connections</a> and <a href="#conga-settings">Conga-related Settings</a> for more information.</p></section><section class="print-page" id="userguide"><h2 id="userguide-shortcut-or-instance">Shortcut or Instance?</h2>
 <p>There are two ways to use <code>HttpCommand</code>. </p>
 <ul>
-<li>Use one of its shortcut methods (<code>Get</code>, <code>Do</code>, <code>GetJSON</code>) to execute a single HTTP request and examine the response from the host. When you use a shortcut method, <code>HttpCommand</code> will create a new, local, instance of itself and then use the instance's <code>Run</code> method to send the request and receive the response, then exit thereby destroying the local instance. This is generally fine when your requests are independent of one another and do not require any state to be maintained across requests.</br></li>
+<li>Use one of its shortcut methods (<code>Get</code>, <code>Do</code>, <code>GetJSON</code>) to execute a single HTTP request and examine the response from the host. When you use a shortcut method, <code>HttpCommand</code> will create a new, local, instance of itself and then use the instance's <code>Run</code> method to send the request and receive the response, then exit thereby destroying the local instance. This is generally fine when your requests are independent of one another and do not require any state to be maintained across requests.<br/></li>
 <li>Create an instance of <code>HttpCommand</code> using <code>⎕NEW</code> or the <code>New</code> shared method, set whatever parameters are necessary, execute the <code>Run</code> method, and examine the response from the host. Creating an instance of <code>HttpCommand</code> and using the <code>Run</code> method to send the request and receive the response will persist the instance such that state information like connection information and HTTP cookies will be retained across requests.</li>
 </ul>
 <h2 id="userguide-httpcommands-result"><code>HttpCommand</code>'s Result</h2>
@@ -1417,7 +1417,7 @@ Once the instance is created, additional settings can be assigned directly if ne
 </code></pre>
 <ul>
 <li><code>r</code> is the namespace result</li>
-<li><code>r.rc</code> is <code>HttpCommand</code>'s numeric return code. 0 means <code>HttpCommand</code> was able to create and send the request to the host, send it, and receive and process the response.</br>If <code>rc</code> is less than 0, it means there was some problem either composing/sending the request or processing the response.</br>If <code>rc</code> is greater than 0, it is the Conga return code and generally means that Conga encountered something unexpected. More information about <code>rc</code> can be found <a href="#msgs">here</a>. </li>
+<li><code>r.rc</code> is <code>HttpCommand</code>'s numeric return code. 0 means <code>HttpCommand</code> was able to create and send the request to the host, send it, and receive and process the response.<br/>If <code>rc</code> is less than 0, it means there was some problem either composing/sending the request or processing the response.<br/>If <code>rc</code> is greater than 0, it is the Conga return code and generally means that Conga encountered something unexpected. More information about <code>rc</code> can be found <a href="#msgs">here</a>. </li>
 <li><code>r.msg</code> is a (hopefully meaningful) message describing whatever the issue was if <code>r.rc</code> is non-zero.</li>
 <li><code>r.HttpStatus</code> is the numeric HTTP status code returned by the host. A status code in the range 200-299 indicates a successful HTTP response with 200 being the most common code.</li>
 <li><code>r.HttpMessage</code> is the HTTP status message returned by the host.</li>
@@ -1794,7 +1794,7 @@ If the request has content in the request payload, Conga will automatically supp
 <tr><td>Default</td><td><code>''</code></td></tr>
 <tr><td>Example(s)</td><td><code>h.ContentType←'application/json; charset=UTF-8'</code></td></tr>
 <tr><td>Details</td>
-<td>See <a href="#userguide-content-types">Content Types</a> for additional information.</td></tr>
+<td>See <a href="#content-types">Content Types</a> for additional information.</td></tr>
 </table>
 
 <h3 id="request-settings-auth"><code>Auth</code></h3>
@@ -3661,7 +3661,11 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</p></section><section class="print-page" id="release-notes"><h2 id="release-notes-version-58">Version 5.8</h2>
+SOFTWARE.</p></section><section class="print-page" id="release-notes"><h2 id="release-notes-version-59">Version 5.9</h2>
+<ul>
+<li>Allow <a href="#shortcut-methods-getjson-issue-a-request-to-a-json-based-web-service"><code>GetJSON</code></a> to take a simple character vector URL.</li>
+</ul>
+<h2 id="release-notes-version-58">Version 5.8</h2>
 <ul>
 <li>Added configuration setting <a href="#request-settings-chunksize"><code>ChunkSize</code></a> to enable sending request payloads using "chunked" transfer-encoding.</li>
 </ul>

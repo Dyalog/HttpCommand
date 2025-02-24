@@ -965,7 +965,7 @@
 <h2 id="shortcut-or-instance">Shortcut or Instance?</h2>
 <p>There are two ways to use <code>HttpCommand</code>. </p>
 <ul>
-<li>Use one of its shortcut methods (<code>Get</code>, <code>Do</code>, <code>GetJSON</code>) to execute a single HTTP request and examine the response from the host. When you use a shortcut method, <code>HttpCommand</code> will create a new, local, instance of itself and then use the instance's <code>Run</code> method to send the request and receive the response, then exit thereby destroying the local instance. This is generally fine when your requests are independent of one another and do not require any state to be maintained across requests.</br></li>
+<li>Use one of its shortcut methods (<code>Get</code>, <code>Do</code>, <code>GetJSON</code>) to execute a single HTTP request and examine the response from the host. When you use a shortcut method, <code>HttpCommand</code> will create a new, local, instance of itself and then use the instance's <code>Run</code> method to send the request and receive the response, then exit thereby destroying the local instance. This is generally fine when your requests are independent of one another and do not require any state to be maintained across requests.<br/></li>
 <li>Create an instance of <code>HttpCommand</code> using <code>⎕NEW</code> or the <code>New</code> shared method, set whatever parameters are necessary, execute the <code>Run</code> method, and examine the response from the host. Creating an instance of <code>HttpCommand</code> and using the <code>Run</code> method to send the request and receive the response will persist the instance such that state information like connection information and HTTP cookies will be retained across requests.</li>
 </ul>
 <h2 id="httpcommands-result"><code>HttpCommand</code>'s Result</h2>
@@ -975,7 +975,7 @@
 </code></pre>
 <ul>
 <li><code>r</code> is the namespace result</li>
-<li><code>r.rc</code> is <code>HttpCommand</code>'s numeric return code. 0 means <code>HttpCommand</code> was able to create and send the request to the host, send it, and receive and process the response.</br>If <code>rc</code> is less than 0, it means there was some problem either composing/sending the request or processing the response.</br>If <code>rc</code> is greater than 0, it is the Conga return code and generally means that Conga encountered something unexpected. More information about <code>rc</code> can be found <a href="../msgs/">here</a>. </li>
+<li><code>r.rc</code> is <code>HttpCommand</code>'s numeric return code. 0 means <code>HttpCommand</code> was able to create and send the request to the host, send it, and receive and process the response.<br/>If <code>rc</code> is less than 0, it means there was some problem either composing/sending the request or processing the response.<br/>If <code>rc</code> is greater than 0, it is the Conga return code and generally means that Conga encountered something unexpected. More information about <code>rc</code> can be found <a href="../msgs/">here</a>. </li>
 <li><code>r.msg</code> is a (hopefully meaningful) message describing whatever the issue was if <code>r.rc</code> is non-zero.</li>
 <li><code>r.HttpStatus</code> is the numeric HTTP status code returned by the host. A status code in the range 200-299 indicates a successful HTTP response with 200 being the most common code.</li>
 <li><code>r.HttpMessage</code> is the HTTP status message returned by the host.</li>
