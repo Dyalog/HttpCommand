@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.8.0' '2024-07-17'
+      r←'HttpCommand' '5.9.0' '2025-02-24'
     ∇
 
 ⍝ Request-related fields
@@ -190,9 +190,12 @@
 
     ∇ r←{requestOnly}GetJSON args;cmd
     ⍝ Shared method to perform an HTTP request with JSON data as the request and response payloads
-    ⍝ args - [Command URL Params Headers Cert SSLFlags Priority]
+    ⍝ args - [URL] | [Command URL Params Headers Cert SSLFlags Priority]
       :Access public shared
-      :If 0=⎕NC'requestOnly' ⋄ requestOnly←¯1 ⋄ :EndIf
+      :If 0=⎕NC'requestOnly' ⋄ requestOnly←¯1 ⋄ :EndIf                                                      
+
+      :If isSimpleChar args ⍝ simple character vector args?
+      :AndIf (args≡'localhost')≥∧/args∊over lc ⎕A ⋄ args←'GET'args ⋄ :EndIf ⍝ localhost or only alphabetics?
      
       →∆EXIT⍴⍨9.1=nameClass cmd←requestOnly New args
       :If 0∊⍴cmd.Command ⋄ cmd.Command←(1+0∊⍴cmd.Params)⊃'POST' 'GET' ⋄ :EndIf

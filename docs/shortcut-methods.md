@@ -41,55 +41,18 @@ Intermediate positional parameters that are not used should be set to <code>''</
 </table>
 
 ### `GetJSON` - issue a request to a JSON-based web service
-`GetJSON` is used to interact with web services that use JSON for their request and response payloads. It was originally developed as a convenient way to interact with [Jarvis](https://githib.com/dyalog/Jarvis), Dyalog's JSON and REST Service framework. Conveniently, it turns out that there are many web services, including GitHub and Twitter, that use JSON as well. 
+`GetJSON` is used to interact with web services that use JSON for their request and response payloads. It was originally developed as a convenient way to interact with [Jarvis](https://github.com/dyalog/Jarvis), Dyalog's JSON and REST Service framework. Conveniently, it turns out that there are many web services, including GitHub and Twitter, that use JSON as well. 
 
 When `Command` is something other than `GET` or `HEAD`, `GetJSON` will automatically convert APL `Params` into JSON format. For `GET` and `HEAD`, `HttpCommand` will URLEncode `Params` in the query string of the `URL`. The rationale behind this is that `GET` and `HEAD` requests should not have content; therefore `Params` should be included in the query string of `URL` and it doesn't make a lot of sense to include JSON in the query string.  If you really need JSON in the query string, you can use `⎕JSON` to convert `Params`.
 
 `GetJSON` will attempt to convert any JSON response payload into its equivalent APL representation. 
 
-<table>
-<tr><td>Syntax</td>
-<td><code>r ←{RequestOnly} HttpCommand.GetJSON args</code></td></tr>
-<tr><td><code>args</code></td>
-<td>Either<ul><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required.)<br/>
-<code><a href="./request-settings#Command">Command</a> 
-<a href="./request-settings#URL">URL</a> 
-<a href="./request-settings#Params">Params</a> 
-<a href="./request-settings#Headers">Headers</a> 
-<a href="./conga-settings#Cert">Cert</a> 
-<a href="./conga-settings#SSLFlags">SSLFlags</a> 
-<a href="./conga-settings#Priority">Priority</a>
-</code><br/>
-Intermediate positional parameters that are not used should be set to <code>''</code></li>
-<li>A namespace containing named variables for the settings for the request.<br/>
-</li></ul></td></tr>
-<tr><td><code>RequestOnly</code></td>
-<td>(optional) A Boolean indicating:<ul>
-<li><code>0</code> - (default) send the HTTP request and return the response result. 
-<li><code>1</code> - return the formatted HTTP request that HttpCommand <i>would</i> send if <code>RequestOnly</code> was <code>0</code>.</li></ul></td></tr>
-<tr><td><code>r</code></td>
-<td>If RequestOnly is<ul><li><code>0</code> - a namespace containing the request response.</li>
-<li><code>1</code> - the formatted HTTP request that <code>HttpCommand</code> would send if <code>RequestOnly</code> was <code>0</code>.</td></tr>
-<tr><td>Example(s)</td>
-<td>These examples assume you have a <a href="https://github.com/dyalog/Jarvis"><code>Jarvis</code></a> service running at <code>http://localhost:8080</code> and a endpoint of <code>#.sum ← {+/⍵}</code>.<br/><br/>
-<code>      args ← ⎕NS ''
-      args.Command ← 'post'
-      args.URL ← 'localhost:8080/sum'
-      args.Params ← ⍳1000
-      ⊢r ← HttpCommand.GetJSON args
-[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: ⍬]
-      r.Data
-500500
-
-      Params ← ('per_page' '3')('page' '1')('sort' 'full_name')
-      URL ← 'https://api.github.com/orgs/dyalog/repos'
-      ⊢r ← HttpCommand.GetJSON 'get' URL Params
-[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 3]
-
-      r.Data.full_name
- Dyalog/a3s-Linux  Dyalog/APLCourse  Dyalog/aplssh 
-</td></tr>
-</table>
+|--|--|
+| Syntax | `r ←{RequestOnly} HttpCommand.GetJSON args` |
+| `args` | One of:<ul><li>a simple character vector [`URL`](./request-settings.md#url)</li><li>a vector of positional settings (`Command` and `URL` are required.)<br/>[`Command`](./request-settings#command)<br/>[`URL`](./request-settings#url)<br/> [`Params`](./request-settings#params)<br/> [`Headers`](./request-settings#headers)<br/> [`Cert`](./conga-settings#cert)<br/>[`SSLFlags`](./conga-settings#sslflags)<br/>[`Priority`](./conga-settings#priority)<br/>Intermediate positional parameters that are not used should be set to `''`</li><li>A namespace containing named variables for the settings for the request.</li></ul>|
+| `RequestOnly` | (optional) A Boolean indicating:<ul><li>`0` - (default) send the HTTP request and return the response result.<li>`1` - return the formatted HTTP request that HttpCommand *would* send if `RequestOnly` was `0`.</li></ul>|
+| `r` | If `RequestOnly` is<ul><li>`0` - a namespace containing the request response.</li><li>`1` - the formatted HTTP request that `HttpCommand` would send if `RequestOnly` was `0`.</li></ul>|
+| Example(s) | These examples assume you have a [`Jarvis`](https://github.com/dyalog/Jarvis) service running at `http://localhost:8080` and a endpoint of `#.sum ← {+/⍵}`.<br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`args ← ⎕NS ''`<br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`args.Command ← 'post'`<br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`args.URL ← 'localhost:8080/sum'`<br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`args.Params ← ⍳1000`<br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`⊢r ← HttpCommand.GetJSON args`<br/>`[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: ⍬]`<br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`r.Data`<br/>`500500`<br/><br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`Params ← ('per_page' '3')('page' '1')('sort' 'full_name')`<br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`URL ← 'https://api.github.com/orgs/dyalog/repos'`<br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`⊢r ← HttpCommand.GetJSON 'get' URL Params`<br/>`[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 3]`<br/><br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;`r.Data.full_name`<br/>` Dyalog/a3s-Linux  Dyalog/APLCourse  Dyalog/aplssh`|
 
 ### `Do` - issue a generic HTTP request
 `Do` is essentially the same as `Get` except that you specify the HTTP method (`Command`) to use.
