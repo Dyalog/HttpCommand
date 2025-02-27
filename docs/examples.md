@@ -34,8 +34,8 @@ The example above uses no authentication and therefore returns only publicly-ava
 Some web services allow you to use HTTP Basic authentication using userid and password credentials. **Any request that includes authentication data should be sent using HTTPS if possible**. `HttpCommand` allows you to specify these credentials in a few ways:
 
 * in the `URL` by including `userid:password@` before the domain name
-* by setting `AuthType` to `'Basic'` and </br>`Auth` to `HttpCommand.Base64Encode 'userid:password'`
-* by including an "Authorization" header in the format</br>`'Basic ',HttpCommand.Base64Encode 'userid:password'`
+* by setting `AuthType` to `'Basic'` and <br/>`Auth` to `HttpCommand.Base64Encode 'userid:password'`
+* by including an "Authorization" header in the format<br/>`'Basic ',HttpCommand.Base64Encode 'userid:password'`
 
 The following examples use the "basic-auth" endpoint of the website [http://httpbin.org](http://httpbin.org). httpbin.org provides many useful endpoints for testing HTTP requests. In this case, the userid and password are concatenated to the URL so the endpoint can validate the credentials.
 

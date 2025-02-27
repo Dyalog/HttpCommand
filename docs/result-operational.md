@@ -11,17 +11,10 @@ The operational return code. This indicates if `HttpCommand` was able to form an
 The operational status message. If `rc=0`, `msg` will generally be empty (`''`).  `msg` will contain (hopefully) helpful information as to the nature of the error or condition. `msg` is further described in [Messages and Return Codes](./msgs.md).
 ### `∇IsOK`
 `IsOK` is a function included in the result namespace that makes it easier to check if the HTTP request was successful by checking both that `rc=0` and `HttpStatus` is a 200-series value. If the request was successful, `IsOK` will return `1`, otherwise it will return `0`.
-<table>
-<tr><td>Syntax</td>
-<td><code>bool ← IsOK</code></td><td> </tr>
-<tr><td>Example(s)</td>
-<td><code>      result←HttpCommand.Get 'dyalog.com'</code><br/>
-<code>      result.IsOK </code><br/>
-<code>1</code><br/>
-<code>      result←HttpCommand.Get 'blooofo.com' ⍝ domain does not exist</code><br/>
-<code>      result.IsOK</code><br/>
-<code>0</code><br/>
-</td></tr></table>
+
+|--|--|
+|Syntax|`bool ← IsOK`|
+|Example(s)|<pre style="font-family:APL;">      result←HttpCommand.Get 'dyalog.com'<br/>      result.IsOK<br/>1<br/>      result←HttpCommand.Get 'blooofo.com' ⍝ domain does not exist<br/>      result.IsOK<br/>0|
 
 ### `Elapsed`
 The number of millseconds that the request took to process.

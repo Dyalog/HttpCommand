@@ -3,5 +3,5 @@ ID         : HttpCommandUnit
 Description: Unit tests for HttpCommand.dyalog
 
 Setup   : setup_httpcommand_test
-Teardown: teardown
+Teardown: teardown_httpcommand_test
 Test    : test_.*

@@ -109,9 +109,9 @@ See [HttpCommand and Conga](./conga.md) for more information on how `HttpCommand
 
 If your application has other components that also use Conga, we recommend that you use the "multiple roots" feature of the `Conga` namespace:
 
-* Copy the `Conga` namespace from the `conga` workspace.</br>
+* Copy the `Conga` namespace from the `conga` workspace.<br/>
           `'Conga' #.⎕CY 'conga'`
-* Set [`HttpCommand.CongaRef`](conga.md#overriding-default-locations) setting to refer to the `Conga` namespace.</br>
+* Set [`HttpCommand.CongaRef`](conga.md#overriding-default-locations) setting to refer to the `Conga` namespace.<br/>
           `HttpCommand.CongaRef←#.Conga`  
 * Similarly configure the other Conga-using components to refer to the `Conga` namespace.
 * Now each component can create their own Conga "root" using `Conga.Init`.<br/>`HttpCommand` does this for you automatically.

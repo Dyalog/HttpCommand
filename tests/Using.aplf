@@ -1,6 +1,0 @@
- port←{port}Using class;i
- :If 0∊⍴i←⎕INSTANCES class
-     class.Run port ⎕THIS
- :Else
-     port←(⊃⊃i).Port
- :EndIf

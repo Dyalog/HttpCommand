@@ -28,24 +28,13 @@ If the `Content-Type` header indicates that the UTF-8 character set is used, `Ht
 Note: There are two sets of headers in an HTTP request/response transaction - the request headers that are sent to the host, and the response headers that are sent back from the host.
 ### `∇GetHeader` 
 `GetHeader` is a utility function included in the result namespace that makes it easier to extract response header values. `GetHeader` accommodates the case-insensitive nature of header names. If the header does not exist, `GetHeader` returns `''`.
-<table>
-<tr><td>Syntax</td>
-<td><code>value ← {headers} result.GetHeader name</code></td><td> </tr>
-<tr><td><code>name</code></td>
-<td>A character vector header name, or vector of header names</td></tr>
-<tr><td><code>headers</code></td>
-<td>The optional header array to extract from. By default, <code>GetHeader</code> will use the response's <code>Headers</code> array. You may also pass the <code>Headers</code> element of a redirection (see <a href="#redirections"><code>Redirections</code></a>).</td></tr>
-<tr><td><code>value</code></td>
-<td>The header value(s) corresponding to the header names specified in <code>name</code>, or the empty vector <code>''</code> for header name(s) that don't exist.</td></tr>
-<tr><td>Example(s)</td>
-<td><code>      result.GetHeader 'content-type'</code><br/>
-<code>text/html; charset=utf-8</code><br/><br/>
-<code>      ⍝ Note: there is no 'fred' header</code><br/>
-<code>      result.GetHeader 'content-type' 'fred' 'server'</code><br/>
-<code>┌────────────────────────┬┬──────────────────────┐</code><br/>
-<code>│text/html; charset=utf-8││Apache/2.4.18 (Ubuntu)│</code><br/>
-<code>└────────────────────────┴┴──────────────────────┘</code><br/>
-</td></tr></table>
+
+|--|--|
+|Syntax|`value ← {headers} result.GetHeader name`|
+|`name`|A character vector header name, or vector of header names|
+|`headers`|The optional header array to extract from. By default, `GetHeader` will use the response's `Headers` array. You may also pass the `Headers` element of a redirection (see [Redirections](#redirections).|
+|`value`|The header value(s) corresponding to the header names specified in `name`, or the empty vector `''` for header name(s) that don't exist.|
+|Example(s)|<pre style="font-family:APL;">      result.GetHeader 'content-type'<br/>text/html; charset=utf-8<br/><br/>      ⍝ Note: there is no 'fred' header<br/>      result.GetHeader 'content-type' 'fred' 'server'<br/>┌────────────────────────┬┬──────────────────────┐<br/>│text/html; charset=utf-8││Apache/2.4.18 (Ubuntu)│<br/>└────────────────────────┴┴──────────────────────┘|
 
 ### `Cookies`
 `Cookies` is a vector of namespaces, one per cookie set by the host. `Cookies ` are frequently used to maintain a state between the client (`HttpCommand`) and the host. When using an instance of `HttpCommand`, the instance will retain a copy of `Cookies` and apply appropriate cookies to subsequent requests.
@@ -72,11 +61,13 @@ If the connection to the host uses HTTPS as its protocol which means it is a sec
 
 Each namespace in `Redirections` has the following elements:
 
-<table><tr><td><code>HttpStatus</code></td><td>The HTTP status for the request.</td></tr>
-<tr><td><code>HttpMessage</code></td><td>The corresponding HTTP status message for the request.</td></tr>
-<tr><td><code>HttpVersion</code></td><td>The HTTP version that was used in sending the response.</td></tr>
-<tr><td><code>Headers</code></td><td>The headers that were sent by the host. There should be a <code>'Location'</code> header that indicates the redirection location for the requested resource</td></tr>
-<tr><td><code>URL</code></td><td>The URL that was used and produced this redirection.</code></td></tr></table>
+|--|--|
+|`HttpStatus`|The HTTP status for the request.|
+|`HttpMessage`|The corresponding HTTP status message for the request.|
+|`HttpVersion`|The HTTP version that was used in sending the response.|
+|`Headers`|The headers that were sent by the host. There should be a `'Location'` header that indicates the redirection location for the requested resource.|
+|`URL`|The URL that was used and produced this redirection.|
+
 The example below uses <code><a href="http://httpbin.org/relative_redirect/2">httpbin.org/relative_redirect/2</a></code> to redirect the request twice.
 
 ```
