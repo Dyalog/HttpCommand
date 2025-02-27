@@ -1020,203 +1020,153 @@
 <h3 id="run"><code>Run</code></h3>
 <p><code>Run</code> "runs" the HTTP request defined by the instance's settings. <code>Run</code> is called internally by the shared "shortcut" methods <code>Get</code>, <code>GetJSON</code>, and <code>Do</code>. </p>
 <table>
-<tr><td>Syntax</td>
-<td><code>result←instance.Run</code></td><td> </tr>
-<tr><td><code>result</code></td>
-<td><code>result</code> depends on the <code>RequestOnly</code> setting.<br/><br/>
-If <code>RequestOnly=1</code>, <code>Run</code> will return, if possible, the HTTP request that <i>would</i> be sent if <code>RequestOnly</code> was set to <code>0</code>. If <code>HttpCommand</code> cannot form a proper HTTP request, <code>Run</code> will return a <a href="/result">result namespace</a> with pertinent information.<br/><br/>
-If <code>RequestOnly=0</code>, <code>Run</code> will return a <a href="/result">result namespace</a> containing the result of attempting to build and send the HTTP request specified by the instance's settings. 
-</td></tr>
-<tr><td>Examples</td>
-<td><code>      instance←HttpCommand.New ''</code><br/>
-<code>      instance.RequestOnly←1</code><br/><br/>
-There isn't sufficient information for <code>HttpCommand</code> to build a proper HTTP request.<br/>
-<code>      ⊢result ← instance.Run</code></br>
-<code>[rc: ¯1 | msg: No URL specified | HTTP Status:  "" | ⍴Data: 0]</code><br/><br/>
-<code>      instance.URL←'dyalog.com'</code><br/>
-Now, there's enough information to form a proper HTTP request.<br/>
-<code>      ⊢result ← instance.Run</code><br/>
-<code>GET / HTTP/1.1<br/>
-Host: dyalog.com<br/>
-User-Agent: Dyalog-HttpCommand/5.0.3<br/>
-Accept: */*<br/><br/></code>
-<code>      instance.RequestOnly←0</code><br/>
-<code>      ⊢result ← instance.Run</code><br/>
-<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 23127]</code>
+<tbody>
+<tr>
+<td>Syntax</td>
+<td><code>result←instance.Run</code></td>
+</tr>
+<tr>
+<td><code>result</code></td>
+<td><code>result</code> depends on the <code>RequestOnly</code> setting.<br/><br/>If <code>RequestOnly=1</code>, <code>Run</code> will return, if possible, the HTTP request that <i>would</i> be sent if <code>RequestOnly</code> was set to <code>0</code>. If <code>HttpCommand</code> cannot form a proper HTTP request, <code>Run</code> will return a <a href="/result">result namespace</a> with pertinent information.<br/><br/>If <code>RequestOnly=0</code>, <code>Run</code> will return a <a href="/result">result namespace</a> containing the result of attempting to build and send the HTTP request specified by the instance's settings.</td>
+</tr>
+<tr>
+<td>Examples</td>
+<td><pre style="font-family:APL;">      instance←HttpCommand.New ''<br/>      instance.RequestOnly←1</pre>There isn't sufficient information for <code>HttpCommand</code> to build a proper HTTP request.<br/><pre style="font-family:APL;">      ⊢result ← instance.Run<br/>[rc: ¯1 &#124; msg: No URL specified &#124; HTTP Status:  "" &#124; ⍴Data: 0]<br/>      instance.URL←'dyalog.com'</pre>Now, there's enough information to form a proper HTTP request.<br/><pre style="font-family:APL;">      ⊢result ← instance.Run<br/>GET / HTTP/1.1<br/>Host: dyalog.com<br/>User-Agent: Dyalog-HttpCommand/5.0.3<br/>Accept: <em>/</em><br/>      instance.RequestOnly←0<br/>      ⊢result ← instance.Run<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: 23127]</td>
+</tr>
+</tbody>
 </table>
-
 <h3 id="show"><code>Show</code></h3>
 <p>Returns the HTTP request that <code>HttpCommand</code> would send when <code>Run</code> is executed and <code>RequestOnly</code> is <code>0</code>.  <code>Show</code> is equivalent to setting <code>RequestOnly</code> to <code>1</code> and running <code>Run</code>.</p>
 <table>
-<tr><td>Syntax</td>
-<td><code>r←instance.Show</code></td><td> </td></tr>
-<tr><td>Example</td>
-<td><code>      instance ← HttpCommand.New 'get' 'dyalog.com'</code><br/>
-<code>      instance.Show</code><br/>
-<code>GET / HTTP/1.1</code><br/><br/>
-<code>Host: dyalog.com</code><br/><br/>
-<code>User-Agent: Dyalog-HttpCommand/5.0.3</code><br/><br/>
-<code>Accept: */*</code>
-</td></tr>
+<tbody>
+<tr>
+<td>Syntax</td>
+<td><code>r←instance.Show</code></td>
+</tr>
+<tr>
+<td><code>r</code></td>
+<td>The result <code>r</code> is a character vector representing a properly formatted HTTP request if such a request can be formatted from the instance's settings.<br/>If the request cannot be formatted, <code>r</code> is  a namespace containing a non-0 return code, <code>rc</code>, and an explanatory message, <code>msg</code>.</td>
+</tr>
+<tr>
+<td>Example</td>
+<td><pre style="font-family:APL;">      instance ← HttpCommand.New 'get' 'dyalog.com'<br/>      instance.Show<br/>GET / HTTP/1.1<br/><br/>Host: dyalog.com<br/><br/>User-Agent: Dyalog-HttpCommand/5.0.3<br/><br/>Accept: <em>/</em></pre></td>
+</tr>
+</tbody>
 </table>
-
 <h3 id="config"><code>Config</code></h3>
 <p><code>Config</code> returns the current state of all <code>HttpCommand</code> settings.</p>
 <table>
-<tr><td>Syntax</td>
-<td><code>r←instance.Config</code></td></tr>
-<tr><td><code>r</code></td>
-<td>A 2-column matrix where<br/>
-<code>[;1] </code>contains the setting names<br/>
-<code>[;2] </code>contains the corresponding setting values</td></tr>
-<tr><td>Example</td>
-<td>
-<code>      instance←HttpCommand.New 'get' 'dyalog.com'</code><br/>
-<code>      instance.Config</code><br/>
-<code> Auth</code><br/>
-<code> AuthType</code><br/>
-<code> BufferSize                      200000</code><br/>
-<code> Cert</code><br/>
-<code> Command                            get</code><br/>                    
-<code> CongaPath</code><br/>
-<code> CongaRef</code><br/>
-<code> CongaVersion</code><br/>
-<code> ContentType</code><br/>
-<code> Cookies</code><br/>
-<code> Debug                                0</code><br/>
-<code> Headers</code><br/>
-<code> KeepAlive                            1</code><br/>                    
-<code> LDRC                           not set</code><br/>                    
-<code> MaxPayloadSize                      ¯1</code><br/>
-<code> MaxRedirections                     10</code><br/>
-<code> OutFile</code><br/>
-<code> Params</code><br/>
-<code> Priority         NORMAL:!CTYPE-OPENPGP</code><br/>
-<code> PrivateKeyFile</code><br/>
-<code> PublicCertFile</code><br/>
-<code> RequestOnly                          0</code><br/>
-<code> Secret                               1</code><br/>
-<code> SSLFlags                            32</code><br/>
-<code> SuppressHeaders                      0</code><br/>
-<code> Timeout                             10</code><br/>
-<code> TranslateData                        0</code><br/>
-<code> URL                         dyalog.com</code><br/>
-<code> WaitTime                          5000</code><br/>
-</td></tr>
+<tbody>
+<tr>
+<td>Syntax</td>
+<td><code>r←instance.Config</code></td>
+</tr>
+<tr>
+<td><code>r</code></td>
+<td>A 2-column matrix where<br/><code>[;1]</code>contains the setting names<br/><code>[;2]</code>contains the corresponding setting values</td>
+</tr>
+<tr>
+<td>Example</td>
+<td><pre style="font-family:APL;">      instance←HttpCommand.New 'get' 'dyalog.com'<br/>      instance.Config<br/> Auth<br/> AuthType<br/> BufferSize                      200000<br/> Cert<br/> Command                            get<br/> CongaPath<br/> CongaRef<br/> CongaVersion<br/> ContentType<br/> Cookies<br/> Debug                                0<br/> Headers<br/> KeepAlive                            1<br/> LDRC                           not set<br/> MaxPayloadSize                      ¯1<br/> MaxRedirections                     10<br/> OutFile<br/> Params<br/> Priority         NORMAL:!CTYPE-OPENPGP<br/> PrivateKeyFile<br/> PublicCertFile<br/> RequestOnly                          0<br/> Secret                               1<br/> SSLFlags                            32<br/> SuppressHeaders                      0<br/> Timeout                             10<br/> TranslateData                        0<br/> URL                         dyalog.com<br/> WaitTime                          5000</pre></td>
+</tr>
+</tbody>
 </table>
-
 <h3 id="init"><code>Init</code></h3>
 <p><code>Init</code> initializes Conga, Dyalog's TCP/IP utility library. Normally, <code>HttpCommand</code> will initialize Conga when <code>Run</code> is first  called. <code>Init</code> is intended to be used when the user wants to "tweak" Conga prior to <code>Run</code> being executed. It's very unlikely that you'll ever need to use <code>Init</code>.</p>
 <table>
-<tr><td>Syntax</td>
-<td><code>r←instance.Init</code></td></tr>
-<tr><td><code>r</code></td>
-<td>a 2-element vector of<br/><ul><li><code>[1]</code> the return code. <code>0</code> means Conga is initialized. Non-<code>0</code> indicates some error occurred in Conga initialization.</li>
-<li><code>[2]</code> a message describing what went wrong if the return code is not <code>0</code></li>
-</ul></td></tr>
-<tr><td>Example</td>
-<td><code>      instance←HttpCommand.New ''</code><br/>
-<code>      instance.CongaPath←'/doesnotexist'</code><br/>
-<code>      instance.Init</code><br/>
-<code>¯1  CongaPath "c:/doesnotexist/" does not exist</code>
-</td></tr>
+<tbody>
+<tr>
+<td>Syntax</td>
+<td><code>r←instance.Init</code></td>
+</tr>
+<tr>
+<td><code>r</code></td>
+<td>a 2-element vector of<br/><ul><li><code>[1]</code> the return code. <code>0</code> means Conga is initialized. Non-<code>0</code> indicates some error occurred in Conga initialization.</li><li><code>[2]</code> a message describing what went wrong if the return code is not <code>0</code></li></ul></td>
+</tr>
+<tr>
+<td>Example</td>
+<td><pre style="font-family:APL;">      instance←HttpCommand.New ''<br/>      instance.CongaPath←'/doesnotexist'<br/>      instance.Init<br/>¯1  CongaPath "c:/doesnotexist/" does not exist</pre></td>
+</tr>
+</tbody>
 </table>
-
 <h2 id="header-related-methods">Header-related Methods</h2>
 <p>There are two sets of headers associated with an HTTP request - the request headers and the response headers. The methods described here deal with <strong>request headers</strong>.</p>
 <p><code>HttpCommand</code>'s request headers are stored in the <code>Headers</code> setting which is a 2-column matrix of name/value pairs. Header names are case-insensitive; header values are not. While you can manipulate the <code>Headers</code> array directly, <code>HttpCommand</code> has three methods to manage <code>Headers</code> that accommodate the case-insensitive nature of header names.</p>
 <p>By default, <code>HttpCommand</code> will automatically generate several request headers if you haven't specified values for them.  See <a href="../operational-settings/#suppressheaders"><code>SuppressHeaders</code></a> for the list of these headers.  To suppress the generation of specific headers, you can set its value to <code>''</code>.</p>
-<p>You may specify that <code>HttpCommand</code> should substitute the value of an environment variable in a header name or value by surrounding the name of the environment variable with <code>%</code>. For example:</p>
-<pre><code>      1 HttpCommand.Get 'someurl.com' '' ('MyHeader' '%DYALOG%')
-GET / HTTP/1.1
-MyHeader: C:\Program Files\Dyalog\Dyalog APL-64 19.0 Unicode
-Host: someurl.com
-User-Agent: Dyalog-HttpCommand/5.5.0
-Accept: */*
-Accept-Encoding: gzip, deflate
-</code></pre>
-
 <p>Note: The examples below were run using <code>]boxing on</code>.</p>
 <h3 id="addheader"><code>AddHeader</code></h3>
 <p><code>AddHeader</code> will add a header if a user-defined header with that name does not already exist. Use <code>SetHeader</code> to set a header regardless if one with the same name already exists.</p>
 <table>
-<tr><td>Syntax</td>
-<td><code>{hdrs}←name instance.AddHeader value</code></td></tr>
-<tr><td><code>value</code></td>
-<td>the value for the header</td></tr>
-<tr><td><code>name</code></td>
-<td>the name for the header</td></tr>
-<tr><td><code>hdrs</code></td>
-<td>the updated matrix of user-specified headers</td></tr>
-<tr><td>Example</td>
-<td><code>      instance←HttpCommand.New ''</code><br/>
-<code>      'My-Header' instance.AddHeader 'Drake Mallard'</code><br/>
-<code>      instance.Headers</code><br/>
-<code>┌─────────┬─────────────┐</code><br/>
-<code>│My-Header│Drake Mallard│</code><br/>
-<code>└─────────┴─────────────┘</code><br/>
-<code>AddHeader</code> will not replace an existing header with the same case-insensitive name<br/> 
-<code>      'my-header' instance.AddHeader 'Daffy Duck'</code><br/>
-<code>      instance.Headers</code><br/>
-<code>┌─────────┬─────────────┐</code><br/>
-<code>│My-Header│Drake Mallard│</code><br/>
-<code>└─────────┴─────────────┘</code><br/>
-Setting the value of an <code>HttpCommand</code>-generated header that to <code>''</code> will suppress that header from being sent in the request.<br/>
-<code>      'accept-encoding' instance.SetHeader ''</code><br/>
-</td></tr>
+<tbody>
+<tr>
+<td>Syntax</td>
+<td><code>{hdrs}←name instance.AddHeader value</code></td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>the value for the header</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>the name for the header</td>
+</tr>
+<tr>
+<td><code>hdrs</code></td>
+<td>the updated matrix of user-specified headers</td>
+</tr>
+<tr>
+<td>Example</td>
+<td><pre style="font-family:APL;">      instance←HttpCommand.New ''<br/>      'My-Header' instance.AddHeader 'Drake Mallard'<br/>      instance.Headers<br/>┌─────────┬─────────────┐<br/>│My-Header│Drake Mallard│<br/>└─────────┴─────────────┘</pre><code>AddHeader</code> will not replace an existing header with the same case-insensitive name.<br/><pre style="font-family:APL;">      'my-header' instance.AddHeader 'Daffy Duck'<br/>      instance.Headers<br/>┌─────────┬─────────────┐<br/>│My-Header│Drake Mallard│<br/>└─────────┴─────────────┘</pre>Setting the value of an <code>HttpCommand</code>-generated header that to <code>''</code> will suppress that header from being sent in the request.<br/><pre style="font-family:APL;">      'accept-encoding' instance.SetHeader ''</pre></td>
+</tr>
+</tbody>
 </table>
-
 <h3 id="setheader"><code>SetHeader</code></h3>
 <p><code>SetHeader</code> will set a header, replacing one of the same name if it already exists.</p>
 <table>
-<tr><td>Syntax</td>
-<td><code>{hdrs}←name instance.SetHeader value</code></td></tr>
-<tr><td><code>value</code></td>
-<td>the value for the header</td></tr>
-<tr><td><code>name</code></td>
-<td>the name for the header</td></tr>
-<tr><td><code>hdrs</code></td>
-<td>the updated matrix of user-specified headers</td></tr>
-<tr><td>Example</td>
-<td><code>      instance←HttpCommand.New ''</code><br/>
-<code>      ⊢'My-Header' instance.SetHeader 'Drake Mallard'</code><br/>
-<code>┌─────────┬─────────────┐</code><br/>
-<code>│My-Header│Drake Mallard│</code><br/>
-<code>└─────────┴─────────────┘</code><br/><br/>
-<code>SetHeader</code> will replace an existing header with the same case-insensitive name<br/> 
-<code>      ⊢'my-header' instance.SetHeader 'Daffy Duck'</code><br/>
-<code>┌─────────┬──────────┐</code><br/>
-<code>│My-Header│Daffy Duck│</code><br/>
-<code>└─────────┴──────────┘</code><br/><br/>
-Setting the value of an <code>HttpCommand</code>-generated header that to <code>''</code> will suppress that header from being sent in the request.<br/>
-<code>      'accept-encoding' instance.SetHeader ''</code><br/>
-</td></tr>
+<tbody>
+<tr>
+<td>Syntax</td>
+<td><code>{hdrs}←name instance.SetHeader value</code></td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>the value for the header</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>the name for the header</td>
+</tr>
+<tr>
+<td><code>hdrs</code></td>
+<td>the updated matrix of user-specified headers</td>
+</tr>
+<tr>
+<td>Example</td>
+<td><pre style="font-family:APL;">      instance←HttpCommand.New ''<br/>      ⊢'My-Header' instance.SetHeader 'Drake Mallard'<br/>┌─────────┬─────────────┐<br/>│My-Header│Drake Mallard│<br/>└─────────┴─────────────┘</pre><code>SetHeader</code> will replace an existing header with the same case-insensitive name<br/><pre style="font-family:APL;">       ⊢'my-header' instance.SetHeader 'Daffy Duck'<br/>┌─────────┬──────────┐<br/>│My-Header│Daffy Duck│<br/>└─────────┴──────────┘</pre>Setting the value of an <code>HttpCommand</code>-generated header that to <code>''</code> will suppress that header from being sent in the request.<br/><pre style="font-family:APL;">      'accept-encoding' instance.SetHeader ''</pre></td>
+</tr>
+</tbody>
 </table>
-
 <h3 id="removeheader"><code>RemoveHeader</code></h3>
 <p><code>RemoveHeader</code> removes a user-specified header. If the header does not exist, <code>RemoveHeader</code> has no effect. <code>RemoveHeader</code> does not affect the <code>HttpCommand</code>-generated headers.</p>
 <table>
-<tr><td>Syntax</td>
-<td><code>{hdrs}←instance.RemoveHeader name</code></td></tr>
-<tr><td><code>name</code></td>
-<td>the case-insensitive name of the header to remove</td</tr>
-<tr><td><code>hdrs</code></td>
-<td>the updated matrix of user-specified headers</td></tr>
-<tr><td>Example</td>
-<td><code>      'My-Header' instance.SetHeader 'Daffy Duck'</code></br>
-<code>      'another' instance.SetHeader 'some value'</code></br>
-<code>      instance.Headers</code><br/>
-<code>┌─────────┬──────────┐</code><br/>
-<code>│My-Header│Daffy Duck│</code><br/>
-<code>├─────────┼──────────┤</code><br/>
-<code>│another  │some value│</code><br/>
-<code>└─────────┴──────────┘</code></br>
-<code>      instance.RemoveHeader 'my-header'</code><br/>
-<code>      instance.Headers</code><br/>
-<code>┌───────┬──────────┐</code><br/>
-<code>│another│some value│</code><br/>
-<code>└───────┴──────────┘</code><br/>
-</td></tr>
+<tbody>
+<tr>
+<td>Syntax</td>
+<td><code>{hdrs}←instance.RemoveHeader name</code></td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>the case-insensitive name of the header to remove&lt;/td</td>
+</tr>
+<tr>
+<td><code>hdrs</code></td>
+<td>the updated matrix of user-specified headers</td>
+</tr>
+<tr>
+<td>Example</td>
+<td><pre style="font-family:APL;">      'My-Header' instance.SetHeader 'Daffy Duck'<br/>      'another' instance.SetHeader 'some value'<br/>      instance.Headers<br/>┌─────────┬──────────┐<br/>│My-Header│Daffy Duck│<br/>├─────────┼──────────┤<br/>│another  │some value│<br/>└─────────┴──────────┘<br/>      instance.RemoveHeader 'my-header'<br/>      instance.Headers<br/>┌───────┬──────────┐<br/>│another│some value│<br/>└───────┴──────────┘</pre></td>
+</tr>
+</tbody>
 </table>
 
 

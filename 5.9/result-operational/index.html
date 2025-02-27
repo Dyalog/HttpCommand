@@ -992,17 +992,17 @@
 <h3 id="isok"><code>∇IsOK</code></h3>
 <p><code>IsOK</code> is a function included in the result namespace that makes it easier to check if the HTTP request was successful by checking both that <code>rc=0</code> and <code>HttpStatus</code> is a 200-series value. If the request was successful, <code>IsOK</code> will return <code>1</code>, otherwise it will return <code>0</code>.</p>
 <table>
-<tr><td>Syntax</td>
-<td><code>bool ← IsOK</code></td><td> </tr>
-<tr><td>Example(s)</td>
-<td><code>      result←HttpCommand.Get 'dyalog.com'</code><br/>
-<code>      result.IsOK </code><br/>
-<code>1</code><br/>
-<code>      result←HttpCommand.Get 'blooofo.com' ⍝ domain does not exist</code><br/>
-<code>      result.IsOK</code><br/>
-<code>0</code><br/>
-</td></tr></table>
-
+<tbody>
+<tr>
+<td>Syntax</td>
+<td><code>bool ← IsOK</code></td>
+</tr>
+<tr>
+<td>Example(s)</td>
+<td><pre style="font-family:APL;">      result←HttpCommand.Get 'dyalog.com'<br/>      result.IsOK<br/>1<br/>      result←HttpCommand.Get 'blooofo.com' ⍝ domain does not exist<br/>      result.IsOK<br/>0</td>
+</tr>
+</tbody>
+</table>
 <h3 id="elapsed"><code>Elapsed</code></h3>
 <p>The number of millseconds that the request took to process.</p>
 <h3 id="outfile"><code>OutFile</code></h3>

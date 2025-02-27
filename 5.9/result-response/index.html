@@ -1046,24 +1046,29 @@
 <h3 id="getheader"><code>∇GetHeader</code></h3>
 <p><code>GetHeader</code> is a utility function included in the result namespace that makes it easier to extract response header values. <code>GetHeader</code> accommodates the case-insensitive nature of header names. If the header does not exist, <code>GetHeader</code> returns <code>''</code>.</p>
 <table>
-<tr><td>Syntax</td>
-<td><code>value ← {headers} result.GetHeader name</code></td><td> </tr>
-<tr><td><code>name</code></td>
-<td>A character vector header name, or vector of header names</td></tr>
-<tr><td><code>headers</code></td>
-<td>The optional header array to extract from. By default, <code>GetHeader</code> will use the response's <code>Headers</code> array. You may also pass the <code>Headers</code> element of a redirection (see <a href="#redirections"><code>Redirections</code></a>).</td></tr>
-<tr><td><code>value</code></td>
-<td>The header value(s) corresponding to the header names specified in <code>name</code>, or the empty vector <code>''</code> for header name(s) that don't exist.</td></tr>
-<tr><td>Example(s)</td>
-<td><code>      result.GetHeader 'content-type'</code><br/>
-<code>text/html; charset=utf-8</code><br/><br/>
-<code>      ⍝ Note: there is no 'fred' header</code><br/>
-<code>      result.GetHeader 'content-type' 'fred' 'server'</code><br/>
-<code>┌────────────────────────┬┬──────────────────────┐</code><br/>
-<code>│text/html; charset=utf-8││Apache/2.4.18 (Ubuntu)│</code><br/>
-<code>└────────────────────────┴┴──────────────────────┘</code><br/>
-</td></tr></table>
-
+<tbody>
+<tr>
+<td>Syntax</td>
+<td><code>value ← {headers} result.GetHeader name</code></td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>A character vector header name, or vector of header names</td>
+</tr>
+<tr>
+<td><code>headers</code></td>
+<td>The optional header array to extract from. By default, <code>GetHeader</code> will use the response's <code>Headers</code> array. You may also pass the <code>Headers</code> element of a redirection (see <a href="#redirections">Redirections</a>.</td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>The header value(s) corresponding to the header names specified in <code>name</code>, or the empty vector <code>''</code> for header name(s) that don't exist.</td>
+</tr>
+<tr>
+<td>Example(s)</td>
+<td><pre style="font-family:APL;">      result.GetHeader 'content-type'<br/>text/html; charset=utf-8<br/><br/>      ⍝ Note: there is no 'fred' header<br/>      result.GetHeader 'content-type' 'fred' 'server'<br/>┌────────────────────────┬┬──────────────────────┐<br/>│text/html; charset=utf-8││Apache/2.4.18 (Ubuntu)│<br/>└────────────────────────┴┴──────────────────────┘</td>
+</tr>
+</tbody>
+</table>
 <h3 id="cookies"><code>Cookies</code></h3>
 <p><code>Cookies</code> is a vector of namespaces, one per cookie set by the host. <code>Cookies</code> are frequently used to maintain a state between the client (<code>HttpCommand</code>) and the host. When using an instance of <code>HttpCommand</code>, the instance will retain a copy of <code>Cookies</code> and apply appropriate cookies to subsequent requests.</p>
 <p>The sample below shows the names and first 50 characters of the values of 3 cookies returned by GitHub.com. The first cookie holds the session ID.</p>
@@ -1084,11 +1089,30 @@
 <h3 id="redirections"><code>Redirections</code></h3>
 <p><code>Redirections</code> is a vector of namespaces, one per HTTP redirect response from the host. An HTTP redirect is a special kind of response from the host that directs the client to another location for the resource that's being requested. When a web browser like Google Chrome or Mozilla Firefox receives a redirect response, they automatically reissue the request for the resource at the new location. The new location is specified in the response's <code>Location</code> header.  A redirection can itself be redirected and can even result in an infinite redirection loop. <code>HttpCommand</code> will also follow the redirections, but it also retains information about each redirection in <code>Redirections</code>. The <a href="../operational-settings/#maxredirections"><code>MaxRedirections</code></a> setting can limit the number of redirections that <code>HttpCommand</code> will follow.</p>
 <p>Each namespace in <code>Redirections</code> has the following elements:</p>
-<table><tr><td><code>HttpStatus</code></td><td>The HTTP status for the request.</td></tr>
-<tr><td><code>HttpMessage</code></td><td>The corresponding HTTP status message for the request.</td></tr>
-<tr><td><code>HttpVersion</code></td><td>The HTTP version that was used in sending the response.</td></tr>
-<tr><td><code>Headers</code></td><td>The headers that were sent by the host. There should be a <code>'Location'</code> header that indicates the redirection location for the requested resource</td></tr>
-<tr><td><code>URL</code></td><td>The URL that was used and produced this redirection.</code></td></tr></table>
+<table>
+<tbody>
+<tr>
+<td><code>HttpStatus</code></td>
+<td>The HTTP status for the request.</td>
+</tr>
+<tr>
+<td><code>HttpMessage</code></td>
+<td>The corresponding HTTP status message for the request.</td>
+</tr>
+<tr>
+<td><code>HttpVersion</code></td>
+<td>The HTTP version that was used in sending the response.</td>
+</tr>
+<tr>
+<td><code>Headers</code></td>
+<td>The headers that were sent by the host. There should be a <code>'Location'</code> header that indicates the redirection location for the requested resource.</td>
+</tr>
+<tr>
+<td><code>URL</code></td>
+<td>The URL that was used and produced this redirection.</td>
+</tr>
+</tbody>
+</table>
 <p>The example below uses <code><a href="http://httpbin.org/relative_redirect/2">httpbin.org/relative_redirect/2</a></code> to redirect the request twice.</p>
 <pre><code>      ⊢result ← HttpCommand.Get 'http://httpbin.org/relative_redirect/2'
 [rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 266]

@@ -954,43 +954,29 @@
 <h3 id="get-issue-an-http-get-request"><code>Get</code> - issue an HTTP GET request</h3>
 <p><code>Get</code> is probably <code>HttpCommand</code>'s most-used feature.  It issues an HTTP GET request and returns the response from the server. It can be used for many purposes including interacting with web services, downloading files, and returning the contents of web pages.</p>
 <table>
-<tr><td>Syntax</td>
-<td><code>r ←{RequestOnly} HttpCommand.Get args</code></td></tr>
-<tr><td><code>args</code></td>
-<td>Either<ul><li>a vector of positional settings (only <code>URL</code> is required)<br/>
-<code><a href="./request-settings#URL">URL</a> 
-<a href="./request-settings#Params">Params</a> 
-<a href="./request-settings#Headers">Headers</a> 
-<a href="./conga-settings#Cert">Cert</a> 
-<a href="./conga-settings#SSLFlags">SSLFlags</a> 
-<a href="./conga-settings#Priority">Priority</a>
-</code><br/>
-Intermediate positional parameters that are not used should be set to <code>''</code></li>
-<li>A namespace containing named variables for the settings for the request.<br/><code>(args ← ⎕NS '').(URL Headers) ← 'someurl.com' ('header1' 'value1')</code>
-</li></ul></td></tr>
-<tr><td><code>RequestOnly</code></td>
-<td>(optional) A Boolean indicating:<ul>
-<li><code>0</code> - (default) send the HTTP request and return the response result. 
-<li><code>1</code> - return the formatted HTTP request that HttpCommand <i>would</i> send if <code>RequestOnly</code> was <code>0</code>.</li></ul></td></tr>
-<tr><td><code>r</code></td>
-<td>If RequestOnly is<ul><li><code>0</code> - a namespace containing the request response.</li>
-<li><code>1</code> - the formatted HTTP request that <code>HttpCommand</code> would send if <code>RequestOnly</code> was <code>0</code>.</td></tr>
-<tr><td>Example(s)</td>
-<td><code>      args ← ⎕NS ''</code><br/>
-<code>      args.URL ← 'httpbin.org'</code><br/>
-<code>      args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
-<code>      HttpCommand.Get args</code></br>
-<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 339]</code><br/><br/>
-<code>      HttpCommand.Get 'httpbin.org/get' (('name' 'Donald')('species' 'duck'))</code><br/>
-<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 339]</code><br/><br/>
-<code>      1 HttpCommand.Get args</code><br/>
-<code>GET /get?name=Donald&species=duck HTTP/1.1</code><br/><br/>
-<code>Host: httpbin.org</code><br/><br/>
-<code>User-Agent: Dyalog-HttpCommand/5.0.2</code><br/><br/>
-<code>Accept: */*</code>
-</td></tr>
+<tbody>
+<tr>
+<td>Syntax</td>
+<td><code>r ←{RequestOnly} HttpCommand.Get args</code></td>
+</tr>
+<tr>
+<td><code>args</code></td>
+<td>Either<ul><li>a vector of positional settings (only <code>URL</code> is required)<br/><a href="../request-settings/#url"><code>URL</code></a><br/><a href="../request-settings/#params"><code>Params</code></a><br/><a href="../request-settings/#headers"><code>Headers</code></a><br/><a href="../conga-settings/#cert"><code>Cert</code></a><br/><a href="../conga-settings/#sslflags"><code>SSLFlags</code></a><br/><a href="../conga-settings/#priority"><code>Priority</code></a><br/>Intermediate positional parameters that are not used should be set to <code>''</code></li><li>A namespace containing named variables for the settings for the request.<br/><code>(args ← ⎕NS '').(URL Headers) ← 'someurl.com' ('header1' 'value1')</code></li></ul></td>
+</tr>
+<tr>
+<td><code>RequestOnly</code></td>
+<td>(optional) A Boolean indicating:<ul><li><code>0</code> - (default) send the HTTP request and return the response result.<li><code>1</code> - return the formatted HTTP request that HttpCommand <em>would</em> send if <code>RequestOnly</code> was <code>0</code></li></ul></td>
+</tr>
+<tr>
+<td><code>r</code></td>
+<td>If <code>RequestOnly</code> is<ul><li><code>0</code> - a namespace containing the request response.</li><li><code>1</code> - the formatted HTTP request that <code>HttpCommand</code> would send if <code>RequestOnly</code> was <code>0</code>.</td>
+</tr>
+<tr>
+<td>Example(s)</td>
+<td><pre style="font-family:APL;">      args ← ⎕NS ''<br/>      args.URL ← 'httpbin.org'<br/>      args.Params ← ('name' 'Donald')('species' 'duck')<br/>      HttpCommand.Get args<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: 339]<br/><br/>      HttpCommand.Get 'httpbin.org/get' (('name' 'Donald')('species' 'duck'))<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: 339]<br/><br/>      1 HttpCommand.Get args<br/>GET /get?name=Donald&amp;species=duck HTTP/1.1<br/><br/>Host: httpbin.org<br/><br/>User-Agent: Dyalog-HttpCommand/5.0.2<br/><br/>Accept: <em>/</em></td>
+</tr>
+</tbody>
 </table>
-
 <h3 id="getjson-issue-a-request-to-a-json-based-web-service"><code>GetJSON</code> - issue a request to a JSON-based web service</h3>
 <p><code>GetJSON</code> is used to interact with web services that use JSON for their request and response payloads. It was originally developed as a convenient way to interact with <a href="https://github.com/dyalog/Jarvis">Jarvis</a>, Dyalog's JSON and REST Service framework. Conveniently, it turns out that there are many web services, including GitHub and Twitter, that use JSON as well. </p>
 <p>When <code>Command</code> is something other than <code>GET</code> or <code>HEAD</code>, <code>GetJSON</code> will automatically convert APL <code>Params</code> into JSON format. For <code>GET</code> and <code>HEAD</code>, <code>HttpCommand</code> will URLEncode <code>Params</code> in the query string of the <code>URL</code>. The rationale behind this is that <code>GET</code> and <code>HEAD</code> requests should not have content; therefore <code>Params</code> should be included in the query string of <code>URL</code> and it doesn't make a lot of sense to include JSON in the query string.  If you really need JSON in the query string, you can use <code>⎕JSON</code> to convert <code>Params</code>.</p>
@@ -1015,104 +1001,63 @@ Intermediate positional parameters that are not used should be set to <code>''</
 </tr>
 <tr>
 <td>Example(s)</td>
-<td>These examples assume you have a <a href="https://github.com/dyalog/Jarvis"><code>Jarvis</code></a> service running at <code>http://localhost:8080</code> and a endpoint of <code>#.sum ← {+/⍵}</code>.<br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<code>args ← ⎕NS ''</code><br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<code>args.Command ← 'post'</code><br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<code>args.URL ← 'localhost:8080/sum'</code><br>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<code>args.Params ← ⍳1000</code><br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<code>⊢r ← HttpCommand.GetJSON args</code><br/><code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: ⍬]</code><br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<code>r.Data</code><br/><code>500500</code><br/><br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<code>Params ← ('per_page' '3')('page' '1')('sort' 'full_name')</code><br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<code>URL ← 'https://api.github.com/orgs/dyalog/repos'</code><br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<code>⊢r ← HttpCommand.GetJSON 'get' URL Params</code><br/><code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 3]</code><br/><br/>&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<code>r.Data.full_name</code><br/><code>Dyalog/a3s-Linux  Dyalog/APLCourse  Dyalog/aplssh</code></td>
+<td>These examples assume you have a <a href="https://github.com/dyalog/Jarvis"><code>Jarvis</code></a> service running at <code>http://localhost:8080</code> and a endpoint of <code>#.sum ← {+/⍵}</code>.<br/><pre style="font-family:APL;">      args ← ⎕NS ''<br/>      args.Command ← 'post'<br/>      args.URL ← 'localhost:8080/sum'<br/>      args.Params ← ⍳1000<br/>      ⊢r ← HttpCommand.GetJSON args<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: ⍬]<br/>      r.Data<br/>500500<br/><br/>      Params ← ('per_page' '3')('page' '1')('sort' 'full_name')<br/>      URL ← 'https://api.github.com/orgs/dyalog/repos'<br/>      ⊢r ← HttpCommand.GetJSON 'get' URL Params<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: 3]<br/><br/>      r.Data.full_name<br/> Dyalog/a3s-Linux  Dyalog/APLCourse  Dyalog/aplssh`</pre></td>
 </tr>
 </tbody>
 </table>
 <h3 id="do-issue-a-generic-http-request"><code>Do</code> - issue a generic HTTP request</h3>
 <p><code>Do</code> is essentially the same as <code>Get</code> except that you specify the HTTP method (<code>Command</code>) to use.</p>
 <table>
-<tr><td>Syntax</td>
-<td><code>r ←{RequestOnly} HttpCommand.Do args</code></td></tr>
-
-<tr><td><code>args</code></td>
-<td>Either<ul><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required)<br/>
-<code><a href="./request-settings#Command">Command</a> 
-<a href="./request-settings#URL">URL</a> 
-<a href="./request-settings#Params">Params</a> 
-<a href="./request-settings#Headers">Headers</a> 
-<a href="./conga-settings#Cert">Cert</a> 
-<a href="./conga-settings#SSLFlags">SSLFlags</a> 
-<a href="./conga-settings#Priority">Priority</a>
-</code><br/>
-Intermediate positional parameters that are not used should be set to <code>''</code></li>
-<li>A namespace containing named variables for the settings for the request.<br/><code>(args ← ⎕NS '').(Command URL Headers) ← 'post' 'someurl.com' ('header1' 'value1')</code>
-</li></ul></td></tr>
-
-<tr><td><code>RequestOnly</code></td>
-<td>(optional) A Boolean indicating:<ul>
-<li><code>0</code> - (default) send the HTTP request and return the response result. 
-<li><code>1</code> - return the formatted HTTP request that HttpCommand <i>would</i> send if <code>RequestOnly</code> was <code>0</code>.</li></ul></td></tr>
-
-<tr><td><code>r</code></td>
-<td>If RequestOnly is<ul><li><code>0</code> - a namespace containing the request response.</li>
-<li><code>1</code> - the formatted HTTP request that <code>HttpCommand</code> would send if <code>RequestOnly</code> was <code>0</code>.</td></tr>
-
-<tr><td>Example(s)</td>
-<td><code>      args ← ⎕NS ''</code><br/>
-<code>      args.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
-<code>      args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
-<code>      HttpCommand.Do args</code></br>
-<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 465]</code><br/><br/>
-</td></tr>
+<tbody>
+<tr>
+<td>Syntax</td>
+<td><code>r ←{RequestOnly} HttpCommand.Do args</code></td>
+</tr>
+<tr>
+<td><code>args</code></td>
+<td>Either<ul><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required)<br/><a href="../request-settings/#command"><code>Command</code></a><br/><a href="../request-settings/#url"><code>URL</code></a><br/><a href="../request-settings/#params"><code>Params</code></a><br/><a href="../request-settings/#headers"><code>Headers</code></a><br/><a href="../conga-settings/#cert"><code>Cert</code></a><br/><a href="../conga-settings/#sslflags"><code>SSLFlags</code></a><br/><a href="../conga-settings/#priority"><code>Priority</code></a><br/>Intermediate positional parameters that are not used should be set to <code>''</code></li><li>A namespace containing named variables for the settings for the request.<br/><code>(args ← ⎕NS '').(Command URL Headers) ← 'post' 'someurl.com' ('header1' 'value1')</code></li></ul></td>
+</tr>
+<tr>
+<td><code>RequestOnly</code></td>
+<td>(optional) A Boolean indicating:<ul><li><code>0</code> - (default) send the HTTP request and return the response result.</li><li><code>1</code> - return the formatted HTTP request that HttpCommand <em>would</em> send if <code>RequestOnly</code> was <code>0</code>.</li></ul></td>
+</tr>
+<tr>
+<td><code>r</code></td>
+<td>If <code>RequestOnly</code> is<ul><li><code>0</code> - a namespace containing the request response.</li><li><code>1</code> - the formatted HTTP request that <code>HttpCommand</code> would send if <code>RequestOnly</code> was <code>0</code>.</td>
+</tr>
+<tr>
+<td>Example(s)</td>
+<td><pre style="font-family:APL;">      args ← ⎕NS ''<br/>      args.(Command URL) ← 'post' 'httpbin.org/post'<br/>      args.Params ← ('name' 'Donald')('species' 'duck')<br/>      HttpCommand.Do args<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: 465]</td>
+</tr>
+</tbody>
 </table>
-
 <h3 id="new-create-a-new-instance-of-httpcommand"><code>New</code> - create a new instance of <code>HttpCommand</code></h3>
 <p><code>New</code> is different than the other shortcut methods in that it returns an instance of <code>HttpCommand</code>.  <code>Get</code>, <code>GetJSON</code>, and <code>Do</code> all create an instance, run it, return the response namespace, and upon exit the instance is destroyed.</p>
 <p><code>New</code> can be useful for maintaining state information, like HTTP cookies across multiple requests or keeping the connection to the host open so that subsequent requests to the host are processed without the overhead of re-establishing the connection.</p>
 <p>After specifying the settings in the instance, run the <code>Run</code> instance method to execute the request. </p>
 <table>
-<tr><td>Syntax</td>
-<td><code>instance ←{RequestOnly} HttpCommand.New args</code></td></tr>
-
-<tr><td><code>args</code></td>
-<td>Either:<ul>
-<li>a vector, possibly empty, of positional settings<br/>
-<code><a href="./request-settings#Command">Command</a> 
-<a href="./request-settings#URL">URL</a> 
-<a href="./request-settings#Params">Params</a> 
-<a href="./request-settings#Headers">Headers</a> 
-<a href="./conga-settings#Cert">Cert</a> 
-<a href="./conga-settings#SSLFlags">SSLFlags</a> 
-<a href="./conga-settings#Priority">Priority</a>
-</code><br/>
-Intermediate positional parameters that are not used should be set to <code>''</code></li>
-<li>A namespace containing named variables for the settings for the request.<br/><code>(args ← ⎕NS '').(Command URL Headers) ← 'post' 'someurl.com' ('header1' 'value1')</code>
-</li></ul></td></tr>
-
-<tr><td><code>RequestOnly</code></td>
-<td>(optional) A Boolean indicating when <code>Run</code> is executed:<ul>
-<li><code>0</code> - (default) send the HTTP request and return the response result. 
-<li><code>1</code> - return the formatted HTTP request that HttpCommand <i>would</i> send if <code>RequestOnly</code> was <code>0</code>.</li></ul></td></tr>
-
-<tr><td><code>instance</code></td>
-<td>An instance of <code>HttpCommmand</code>.</td></tr>
-
-<tr><td>Example(s)</td>
-<td>Use a namespace for the request settings:<br/>
-<code>      args ← ⎕NS ''</code><br/>
-<code>      args.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
-<code>      args.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
-<code>      cmd ← HttpCommand.New args</code></br>
-<code>      cmd.Run</code></br>
-<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 465]</code><br/><br/>
-Create an instance of <code>HttpCommand</code> and set the settings directly:<br/>
-<code>      cmd ← HttpCommand.New '' ⍝ synonym for cmd ← ⎕NEW HttpCommand</code></br>
-<code>      cmd.(Command URL) ← 'post' 'httpbin.org/post'</code><br/>
-<code>      cmd.Params ← ('name' 'Donald')('species' 'duck')</code><br/>
-<code>      cmd.Run</code></br>
-<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 465]</code><br/><br/>
-Set RequestOnly, display the request that would be sent, then send it</br>
-<code>      cmd ← 1 HttpCommand.New 'get' 'dyalog.com'</code></br>
-<code>      cmd.Run</code></br>
-<code>GET / HTTP/1.1</code><br/>
-<code>Host: dyalog.com</code><br/>
-<code>User-Agent: Dyalog-HttpCommand/5.0.4</code><br/>
-<code>Accept: */*</code><br/><br/><br/>
-<code>      cmd.RequestOnly←0</code><br/>
-<code>      cmd.Run</code><br/>
-<code>[rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 23127]</code><br/>
-</td></tr>
+<tbody>
+<tr>
+<td>Syntax</td>
+<td><code>instance ←{RequestOnly} HttpCommand.New args</code></td>
+</tr>
+<tr>
+<td><code>args</code></td>
+<td>Either<ul><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required)<br/><a href="../request-settings/#command"><code>Command</code></a><br/><a href="../request-settings/#url"><code>URL</code></a><br/><a href="../request-settings/#params"><code>Params</code></a><br/><a href="../request-settings/#headers"><code>Headers</code></a><br/><a href="../conga-settings/#cert"><code>Cert</code></a><br/><a href="../conga-settings/#sslflags"><code>SSLFlags</code></a><br/><a href="../conga-settings/#priority"><code>Priority</code></a><br/>Intermediate positional parameters that are not used should be set to <code>''</code></li><li>A namespace containing named variables for the settings for the request.<br/><code>(args ← ⎕NS '').(Command URL Headers) ← 'post' 'someurl.com' ('header1' 'value1')</code></li></ul></td>
+</tr>
+<tr>
+<td><code>RequestOnly</code></td>
+<td>(optional) A Boolean indicating:<ul><li><code>0</code> - (default) send the HTTP request and return the response result.</li><li><code>1</code> - return the formatted HTTP request that HttpCommand <em>would</em> send if <code>RequestOnly</code> was <code>0</code>.</li></ul></td>
+</tr>
+<tr>
+<td><code>instance</code></td>
+<td>An instance of <code>HttpCommmand</code></td>
+</tr>
+<tr>
+<td>Example(s)</td>
+<td>Use a namespace for the request settings:<br/><pre style="font-family:APL;">      args ← ⎕NS ''<br/>      args.(Command URL) ← 'post' 'httpbin.org/post'<br/>      args.Params ← ('name' 'Donald')('species' 'duck')<br/>      cmd ← HttpCommand.New args<br/>      cmd.Run<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: 465]</pre><br/>Create an instance of <code>HttpCommand</code> and set the settings directly:<br/><pre style="font-family:APL;">      cmd ← HttpCommand.New '' ⍝ synonym for cmd ← ⎕NEW HttpCommand<br/>      cmd.(Command URL) ← 'post' 'httpbin.org/post'<br/>      cmd.Params ← ('name' 'Donald')('species' 'duck')<br/>      cmd.Run<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: 465]</pre><br/>Set RequestOnly, display the request that would be sent, then send it<br/><pre style="font-family:APL;">      cmd ← 1 HttpCommand.New 'get' 'dyalog.com'<br/>      cmd.Run<br/>GET / HTTP/1.1<br/>Host: dyalog.com<br/>User-Agent: Dyalog-HttpCommand/5.0.4<br/>Accept: <em>/</em><br/><br/>      cmd.RequestOnly←0<br/>      cmd.Run<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: 23127]</pre></td>
+</tr>
+</tbody>
 </table>
 
 

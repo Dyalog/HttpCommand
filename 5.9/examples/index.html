@@ -1045,8 +1045,8 @@ application/json; charset=utf-8
 <p>Some web services allow you to use HTTP Basic authentication using userid and password credentials. <strong>Any request that includes authentication data should be sent using HTTPS if possible</strong>. <code>HttpCommand</code> allows you to specify these credentials in a few ways:</p>
 <ul>
 <li>in the <code>URL</code> by including <code>userid:password@</code> before the domain name</li>
-<li>by setting <code>AuthType</code> to <code>'Basic'</code> and </br><code>Auth</code> to <code>HttpCommand.Base64Encode 'userid:password'</code></li>
-<li>by including an "Authorization" header in the format</br><code>'Basic ',HttpCommand.Base64Encode 'userid:password'</code></li>
+<li>by setting <code>AuthType</code> to <code>'Basic'</code> and <br/><code>Auth</code> to <code>HttpCommand.Base64Encode 'userid:password'</code></li>
+<li>by including an "Authorization" header in the format<br/><code>'Basic ',HttpCommand.Base64Encode 'userid:password'</code></li>
 </ul>
 <p>The following examples use the "basic-auth" endpoint of the website <a href="http://httpbin.org">http://httpbin.org</a>. httpbin.org provides many useful endpoints for testing HTTP requests. In this case, the userid and password are concatenated to the URL so the endpoint can validate the credentials.</p>
 <p>First, let's try using credentials in the URL...</p>

@@ -1131,9 +1131,9 @@
 <p>See <a href="conga/">HttpCommand and Conga</a> for more information on how <code>HttpCommand</code> interacts with Conga.  See <a href="integrating/">Integrating HttpCommand</a> for more information on how to package Conga and <code>HttpCommand</code> in a distributed application. </p>
 <p>If your application has other components that also use Conga, we recommend that you use the "multiple roots" feature of the <code>Conga</code> namespace:</p>
 <ul>
-<li>Copy the <code>Conga</code> namespace from the <code>conga</code> workspace.</br>
+<li>Copy the <code>Conga</code> namespace from the <code>conga</code> workspace.<br/>
           <code>'Conga' #.⎕CY 'conga'</code></li>
-<li>Set <a href="conga/#overriding-default-locations"><code>HttpCommand.CongaRef</code></a> setting to refer to the <code>Conga</code> namespace.</br>
+<li>Set <a href="conga/#overriding-default-locations"><code>HttpCommand.CongaRef</code></a> setting to refer to the <code>Conga</code> namespace.<br/>
           <code>HttpCommand.CongaRef←#.Conga</code>  </li>
 <li>Similarly configure the other Conga-using components to refer to the <code>Conga</code> namespace.</li>
 <li>Now each component can create their own Conga "root" using <code>Conga.Init</code>.<br/><code>HttpCommand</code> does this for you automatically.</li>
