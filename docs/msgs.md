@@ -96,7 +96,7 @@ These messages report problems with settings that prevent `HttpCommand` from cre
 |Resolution|Either specify a filename of a file that doesn't exist or is empty, or specify that the file is to be overwritten or appended to.|
 
 #### Conga Setting Messages
-The messages in this section are related to the Conga settings in `HttpCommand`, not the actual execution of Conga code whose messages  are described in ["Conga Execution"-Related Messages](#conga-execution-related-errors).
+The messages in this section are related to the Conga settings in `HttpCommand`, not the actual execution of Conga code whose messages  are described in ["Conga Execution"-Related Messages](#conga-execution-messages).
 
 |--|--|
 |Message|`CongaRef {CongaRef} does not point to a valid instance of Conga`|
@@ -231,7 +231,7 @@ The messages in this section are returned when Conga returns a non-zero return c
 
 |--|--|
 |Message|`Response header size exceeds BufferSize {BufferSize}`|
-|Description|The size of the response's HTTPHeader message exceeded the value set for `BufferSize`</size>`.|
+|Description|The size of the response's HTTPHeader message exceeded the value set for `BufferSize`.|
 |Resolution|`BufferSize` is intended to help counteract maliciously large message headers. If the response headers are expected to be very large, increase the value of `BufferSize`.|
 
 |--|--|

@@ -1,4 +1,4 @@
-In general, you will not need to set any of the Conga-related settings since the `HttpCommand`'s defaults will suffice for almost all requests. For more information on Conga, please refer to the <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf" target="_blank">Conga User Guide</a>.
+In general, you will not need to set any of the Conga-related settings since the `HttpCommand`'s defaults will suffice for almost all requests. For more information on Conga, please refer to the [Conga User Guide](https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf).
 
 ## Instance Settings
 

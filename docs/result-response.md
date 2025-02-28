@@ -68,10 +68,10 @@ Each namespace in `Redirections` has the following elements:
 |`Headers`|The headers that were sent by the host. There should be a `'Location'` header that indicates the redirection location for the requested resource.|
 |`URL`|The URL that was used and produced this redirection.|
 
-The example below uses <code><a href="http://httpbin.org/relative_redirect/2">httpbin.org/relative_redirect/2</a></code> to redirect the request twice.
+The example below uses `https://httpbin.org/relative-redirect/2`](https://httpbin.org/relative-redirect/2) to redirect the request twice.
 
 ```
-      ⊢result ← HttpCommand.Get 'http://httpbin.org/relative_redirect/2'
+      ⊢result ← HttpCommand.Get 'https://httpbin.org/relative-redirect/2'
 [rc: 0 | msg:  | HTTP Status: 200 "OK" | ⍴Data: 266]
 ```
 
@@ -79,11 +79,11 @@ Examining the information in the 2 redirections shows that our original `URL`, `
 
 ```
       'URL' 'Was redirected to'⍪result.(Redirections.URL,⍪Redirections.Headers GetHeader¨⊂'location')
-┌───────────────────────────────┬────────────────────┐
-│URL                            │Was redirected to   │
-├───────────────────────────────┼────────────────────┤
-│httpbin.org/relative-redirect/2│/relative-redirect/1│
-├───────────────────────────────┼────────────────────┤
-│httpbin.org/relative-redirect/1│/get                │
-└───────────────────────────────┴────────────────────┘
+┌───────────────────────────────────────┬────────────────────┐
+│URL                                    │Was redirected to   │
+├───────────────────────────────────────┼────────────────────┤
+│https://httpbin.org/relative-redirect/2│/relative-redirect/1│
+├───────────────────────────────────────┼────────────────────┤
+│httpbin.org/relative-redirect/1        │/get                │
+└───────────────────────────────────────┴────────────────────┘
 ```

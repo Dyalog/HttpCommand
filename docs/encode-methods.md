@@ -44,7 +44,7 @@ URLEncode a string or a set of name/value pairs.
 
 |--|--|
 |Syntax|`out←{name} HttpCommand.UrlEncode in`|
-|`in`|One of:<ul><li>a simple character vector to be URLEncoded</li><li>a set of <a href="/request-settings#namevalue-pairs">name/value pairs</a></li></ul>|
+|`in`|One of:<ul><li>a simple character vector to be URLEncoded</li><li>a set of [name/value pairs](./request-settings.md#namevalue-pairs)</li></ul>|
 |`name`|(optional) The name for the URLEncoded right argument. Applies only in the case where `in` is a simple character vector.|
 |`out`|The URLEncoding of `in`.|
 |Example(s)|<pre style="font-family:APL;">      HttpCommand.UrlEncode 'Dyalog ⍺⍴⌊'<br/>Dyalog%20%E2%8D%BA%E2%8D%B4%E2%8C%8A<br/><br/>      'name' HttpCommand.UrlEncode 'Donald Duck'<br/>name=Donald%20Duck<br/><br/>      HttpCommand.UrlEncode ('first' 'Donald') ('last' 'O''Mallard')<br/>first=Donald&last=O%27Mallard|
