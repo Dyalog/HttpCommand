@@ -1166,7 +1166,7 @@
 </tr>
 <tr>
 <td>Example(s)</td>
-<td><pre style="font-family:APL;">      c ← HttpCommand.New ''<br/>      c.URL←'https://www.dyalog.com/uploads/files/student_competition/2022_problems_phase2.pdf'<br/>      c.OutFile←'/tmp/'<br/>      c.Run<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; 399766 bytes written to c:/tmp/2022_problems_phase2.pdf]<br/><br/>      c.OutFile←'/tmp/problems.pdf' 1 ⍝ overwrite existing file<br/>      c.Run<br/>[rc: 0  &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; 399766 bytes written to c:/tmp/problems.pdf]<br/></td>
+<td><pre style="font-family:APL;">      c ← HttpCommand.New ''<br/>      c.URL←'https://www.dyalog.com/uploads/files/student_competition/2022_problems_phase2.pdf'<br/>      c.OutFile←'/tmp/'<br/>      c.Run<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; 399766 bytes written to c:/tmp/2022_problems_phase2.pdf]<br/><br/>      c.OutFile←'/tmp/problems.pdf' 1 ⍝ overwrite existing file<br/>      c.Run<br/>[rc: 0  &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; 399766 bytes written to c:/tmp/problems.pdf]</pre></td>
 </tr>
 <tr>
 <td>Details</td>
@@ -1200,7 +1200,7 @@
 <tbody>
 <tr>
 <td>Description</td>
-<td>If set to 1 (the default), <code>HttpCommand</code> will suppress the display of credentials in the Authorization header, instead replacing them with <code>&amp;gt;&amp;gt;&amp;gt; Secret setting is 1 &amp;lt;&amp;lt;&amp;lt;</code>. This applies when using the <a href="./instance-methods.md#show"><code>Show</code></a> or <a href="./instance-methods.md#config"><code>Config</code></a> methods or setting <a href="#requestonly"><code>RequestOnly</code></a> to 1. <code>Secret</code> will not affect the request that is actually sent to the host.</td>
+<td>If set to 1 (the default), <code>HttpCommand</code> will suppress the display of credentials in the Authorization header, instead replacing them with <code>&amp;gt;&amp;gt;&amp;gt; Secret setting is 1 &amp;lt;&amp;lt;&amp;lt;</code>. This applies when using the <a href="../instance-methods/#show"><code>Show</code></a> or <a href="../instance-methods/#config"><code>Config</code></a> methods or setting <a href="#requestonly"><code>RequestOnly</code></a> to 1. <code>Secret</code> will not affect the request that is actually sent to the host.</td>
 </tr>
 <tr>
 <td>Default</td>
@@ -1217,26 +1217,26 @@
 </tbody>
 </table>
 <h3 id="suppressheaders"><code>SuppressHeaders</code></h3>
-<p>|--|--|
-|Description
-|<code>SuppressHeaders</code> is a Boolean setting indicating whether <code>HttpCommand</code> should suppress the generation of its default HTTP headers for the request.<ul><li><code>1</code> - suppress the default headers</li><li><code>0</code> - generate the default headers|
-|Default
-|<code>0</code> which means <code>HttpCommand</code> will generate its default headers|
-|Example(s)
-|<code>h.SuppressHeaders←1</code>|
-|Details
-|<code>HttpCommand</code> will only generate headers that you have not specified yourself. <code>HttpCommand</code> generates the following default headers:<ul><li><code>Host</code> - the host name in the URL. This header <b>must</b> be supplied.</li></p>
-<li>`User-Agent: Dyalog-HttpCommand/&lt;version&gt;`</li>
-<li>`Accept: */*` By default, `HttpCommand` will accept any response type</li>
-<li>`Accept-Encoding: gzip, deflate` By default, `HttpCommand` will accept compressed response payloads</li>
-<li>`Authorization` set only if you provide HTTP Basic authentication credentials, or set `Auth` and  `AuthType`</li>
-<li>`Cookie` - any saved cookies applicable to the request.</li>
-<li>`Content-Type` is conditionally set as described <a href="../../userguide/#content-types">here</a></li>
-<p></ul>
-Setting <code>SuppressHeaders←1</code> will suppress ALL <code>HttpCommand</code>-generated headers which means you will need to specify any necessary request headers yourself.<br />
-<br/>
-Individual headers can be suppressed by using the <a href="../../instance-methods/#setheader"><code>SetHeader</code></a> instance method and assigning the header a value of <code>''</code>.<br/><br/>Note: Conga will always insert a <code>Content-Length</code> header for any request that has a payload. 
-|</p>
+<table>
+<tbody>
+<tr>
+<td>Description</td>
+<td><code>SuppressHeaders</code> is a Boolean setting indicating whether <code>HttpCommand</code> should suppress the generation of its default HTTP headers for the request.<ul><li><code>1</code> - suppress the default headers</li><li><code>0</code> - generate the default headers</td>
+</tr>
+<tr>
+<td>Default</td>
+<td><code>0</code> which means <code>HttpCommand</code> will generate its default headers</td>
+</tr>
+<tr>
+<td>Example(s)</td>
+<td><code>h.SuppressHeaders←1</code></td>
+</tr>
+<tr>
+<td>Details</td>
+<td><code>HttpCommand</code> will only generate headers that you have not specified yourself. <code>HttpCommand</code> generates the following default headers:<ul><li><code>Host</code> - the host name in the URL. This header <b>must</b> be supplied.</li><li><code>User-Agent: Dyalog-HttpCommand/&amp;lt;version&amp;gt;</code></li><li><code>Accept: */*</code> By default, <code>HttpCommand</code> will accept any response type</li><li><code>Accept-Encoding: gzip, deflate</code> By default, <code>HttpCommand</code> will accept compressed response payloads</li><li><code>Authorization</code> set only if you provide HTTP Basic authentication credentials, or set <code>Auth</code> and  <code>AuthType</code></li><li><code>Cookie</code> - any saved cookies applicable to the request.</li><li><code>Content-Type</code> is conditionally set as described <a href="../content-types/">here</a></li></ul>Setting <code>SuppressHeaders←1</code> will suppress ALL <code>HttpCommand</code>-generated headers which means you will need to specify any necessary request headers yourself.  <br/>Individual headers can be suppressed by using the <a href="../instance-methods/#setheader"><code>SetHeader</code></a> instance method and assigning the header a value of <code>''</code>.<br/><br/>Note: Conga will always insert a <code>Content-Length</code> header for any request that has a payload.</td>
+</tr>
+</tbody>
+</table>
 <h3 id="timeout"><code>Timeout</code></h3>
 <table>
 <tbody>

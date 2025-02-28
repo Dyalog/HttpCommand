@@ -1802,7 +1802,7 @@ Accept: */*
 <tbody>
 <tr>
 <td>Description</td>
-<td>This setting is used in conjunction with <a href="#request-settings-auth">Auth</a> and is a character vector indicating the authentication scheme. Three common authentication schemes are:<ul><li><code>'Basic'</code> for HTTP Basic Authentication</li><li><code>'Bearer'</code> for OAuth 2.0 token authentication</li><li><code>'Token'</code> for other token-based authentication schemes such as GitHub's Personal Access Token scheme</li></ul>Other values may be used as necessary for your particular HTTP request.</td>
+<td>This setting is used in conjunction with <a href="#request-settings-auth"><code>Auth</code></a>) and is a character vector indicating the authentication scheme. Three common authentication schemes are:<ul><li><code>'Basic'</code> for HTTP Basic Authentication</li><li><code>'Bearer'</code> for OAuth 2.0 token authentication</li><li><code>'Token'</code> for other token-based authentication schemes such as GitHub's Personal Access Token scheme</li></ul>Other values may be used as necessary for your particular HTTP request.</td>
 </tr>
 <tr>
 <td>Default</td>
@@ -2019,7 +2019,7 @@ Accept: */*
 </tr>
 <tr>
 <td>Example(s)</td>
-<td><pre style="font-family:APL;">      c ← HttpCommand.New ''<br/>      c.URL←'https://www.dyalog.com/uploads/files/student_competition/2022_problems_phase2.pdf'<br/>      c.OutFile←'/tmp/'<br/>      c.Run<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; 399766 bytes written to c:/tmp/2022_problems_phase2.pdf]<br/><br/>      c.OutFile←'/tmp/problems.pdf' 1 ⍝ overwrite existing file<br/>      c.Run<br/>[rc: 0  &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; 399766 bytes written to c:/tmp/problems.pdf]<br/></td>
+<td><pre style="font-family:APL;">      c ← HttpCommand.New ''<br/>      c.URL←'https://www.dyalog.com/uploads/files/student_competition/2022_problems_phase2.pdf'<br/>      c.OutFile←'/tmp/'<br/>      c.Run<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; 399766 bytes written to c:/tmp/2022_problems_phase2.pdf]<br/><br/>      c.OutFile←'/tmp/problems.pdf' 1 ⍝ overwrite existing file<br/>      c.Run<br/>[rc: 0  &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; 399766 bytes written to c:/tmp/problems.pdf]</pre></td>
 </tr>
 <tr>
 <td>Details</td>
@@ -2053,7 +2053,7 @@ Accept: */*
 <tbody>
 <tr>
 <td>Description</td>
-<td>If set to 1 (the default), <code>HttpCommand</code> will suppress the display of credentials in the Authorization header, instead replacing them with <code>&amp;gt;&amp;gt;&amp;gt; Secret setting is 1 &amp;lt;&amp;lt;&amp;lt;</code>. This applies when using the <a href="#operational-settings-instance-methods.md-show"><code>Show</code></a> or <a href="#operational-settings-instance-methods.md-config"><code>Config</code></a> methods or setting <a href="#operational-settings-requestonly"><code>RequestOnly</code></a> to 1. <code>Secret</code> will not affect the request that is actually sent to the host.</td>
+<td>If set to 1 (the default), <code>HttpCommand</code> will suppress the display of credentials in the Authorization header, instead replacing them with <code>&amp;gt;&amp;gt;&amp;gt; Secret setting is 1 &amp;lt;&amp;lt;&amp;lt;</code>. This applies when using the <a href="#instance-methods-show"><code>Show</code></a> or <a href="#instance-methods-config"><code>Config</code></a> methods or setting <a href="#operational-settings-requestonly"><code>RequestOnly</code></a> to 1. <code>Secret</code> will not affect the request that is actually sent to the host.</td>
 </tr>
 <tr>
 <td>Default</td>
@@ -2070,26 +2070,26 @@ Accept: */*
 </tbody>
 </table>
 <h3 id="operational-settings-suppressheaders"><code>SuppressHeaders</code></h3>
-<p>|--|--|
-|Description
-|<code>SuppressHeaders</code> is a Boolean setting indicating whether <code>HttpCommand</code> should suppress the generation of its default HTTP headers for the request.<ul><li><code>1</code> - suppress the default headers</li><li><code>0</code> - generate the default headers|
-|Default
-|<code>0</code> which means <code>HttpCommand</code> will generate its default headers|
-|Example(s)
-|<code>h.SuppressHeaders←1</code>|
-|Details
-|<code>HttpCommand</code> will only generate headers that you have not specified yourself. <code>HttpCommand</code> generates the following default headers:<ul><li><code>Host</code> - the host name in the URL. This header <b>must</b> be supplied.</li></p>
-<li>`User-Agent: Dyalog-HttpCommand/&lt;version&gt;`</li>
-<li>`Accept: */*` By default, `HttpCommand` will accept any response type</li>
-<li>`Accept-Encoding: gzip, deflate` By default, `HttpCommand` will accept compressed response payloads</li>
-<li>`Authorization` set only if you provide HTTP Basic authentication credentials, or set `Auth` and  `AuthType`</li>
-<li>`Cookie` - any saved cookies applicable to the request.</li>
-<li>`Content-Type` is conditionally set as described <a href="#..-userguide-content-types">here</a></li>
-<p></ul>
-Setting <code>SuppressHeaders←1</code> will suppress ALL <code>HttpCommand</code>-generated headers which means you will need to specify any necessary request headers yourself.<br />
-<br/>
-Individual headers can be suppressed by using the <a href="#..-instance-methods-setheader"><code>SetHeader</code></a> instance method and assigning the header a value of <code>''</code>.<br/><br/>Note: Conga will always insert a <code>Content-Length</code> header for any request that has a payload. 
-|</p>
+<table>
+<tbody>
+<tr>
+<td>Description</td>
+<td><code>SuppressHeaders</code> is a Boolean setting indicating whether <code>HttpCommand</code> should suppress the generation of its default HTTP headers for the request.<ul><li><code>1</code> - suppress the default headers</li><li><code>0</code> - generate the default headers</td>
+</tr>
+<tr>
+<td>Default</td>
+<td><code>0</code> which means <code>HttpCommand</code> will generate its default headers</td>
+</tr>
+<tr>
+<td>Example(s)</td>
+<td><code>h.SuppressHeaders←1</code></td>
+</tr>
+<tr>
+<td>Details</td>
+<td><code>HttpCommand</code> will only generate headers that you have not specified yourself. <code>HttpCommand</code> generates the following default headers:<ul><li><code>Host</code> - the host name in the URL. This header <b>must</b> be supplied.</li><li><code>User-Agent: Dyalog-HttpCommand/&amp;lt;version&amp;gt;</code></li><li><code>Accept: */*</code> By default, <code>HttpCommand</code> will accept any response type</li><li><code>Accept-Encoding: gzip, deflate</code> By default, <code>HttpCommand</code> will accept compressed response payloads</li><li><code>Authorization</code> set only if you provide HTTP Basic authentication credentials, or set <code>Auth</code> and  <code>AuthType</code></li><li><code>Cookie</code> - any saved cookies applicable to the request.</li><li><code>Content-Type</code> is conditionally set as described <a href="#content-types">here</a></li></ul>Setting <code>SuppressHeaders←1</code> will suppress ALL <code>HttpCommand</code>-generated headers which means you will need to specify any necessary request headers yourself.  <br/>Individual headers can be suppressed by using the <a href="#instance-methods-setheader"><code>SetHeader</code></a> instance method and assigning the header a value of <code>''</code>.<br/><br/>Note: Conga will always insert a <code>Content-Length</code> header for any request that has a payload.</td>
+</tr>
+</tbody>
+</table>
 <h3 id="operational-settings-timeout"><code>Timeout</code></h3>
 <table>
 <tbody>
@@ -2146,7 +2146,7 @@ Individual headers can be suppressed by using the <a href="#..-instance-methods-
 <td><pre style="font-family:APL;">      c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'<br/>      c.OutFile←0 ⍝ invalid setting for OutFile<br/>      c.Debug←1<br/>      c.Run<br/>DOMAIN ERROR: Invalid file or directory name<br/>HttpCmd[130] outFile←∊1 ⎕NPARTS outFile<br/>                        ∧<br/><br/>      c.Debug←0<br/>      c.Run<br/>[rc: ¯1 &#124; msg: DOMAIN ERROR while trying to initialize output file '0' &#124; HTTP Status:  "" &#124; ⍴Data: 0]</pre></td>
 </tr>
 </tbody>
-</table></section><section class="print-page" id="conga-settings"><p>In general, you will not need to set any of the Conga-related settings since the <code>HttpCommand</code>'s defaults will suffice for almost all requests. For more information on Conga, please refer to the <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf" target="_blank">Conga User Guide</a>.</p>
+</table></section><section class="print-page" id="conga-settings"><p>In general, you will not need to set any of the Conga-related settings since the <code>HttpCommand</code>'s defaults will suffice for almost all requests. For more information on Conga, please refer to the <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf">Conga User Guide</a>.</p>
 <h2 id="conga-settings-instance-settings">Instance Settings</h2>
 <h3 id="conga-settings-buffersize"><code>BufferSize</code></h3>
 <table>
@@ -2504,7 +2504,7 @@ Individual headers can be suppressed by using the <a href="#..-instance-methods-
 </tr>
 <tr>
 <td><code>args</code></td>
-<td>One of:<ul><li>a simple character vector <a href="#request-settings-url"><code>URL</code></a></li><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required.)<br/><a href="#shortcut-methods-request-settings-command"><code>Command</code></a><br/><a href="#shortcut-methods-request-settings-url"><code>URL</code></a><br/> <a href="#shortcut-methods-request-settings-params"><code>Params</code></a><br/> <a href="#shortcut-methods-request-settings-headers"><code>Headers</code></a><br/> <a href="#shortcut-methods-conga-settings-cert"><code>Cert</code></a><br/><a href="#shortcut-methods-conga-settings-sslflags"><code>SSLFlags</code></a><br/><a href="#shortcut-methods-conga-settings-priority"><code>Priority</code></a><br/>Intermediate positional parameters that are not used should be set to <code>''</code></li><li>A namespace containing named variables for the settings for the request.</li></ul></td>
+<td>One of:<ul><li>a simple character vector <a href="#request-settings-url"><code>URL</code></a></li><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required.)<br/><a href="#request-settings-command"><code>Command</code></a><br/><a href="#request-settings-url"><code>URL</code></a><br/> <a href="#request-settings-params"><code>Params</code></a><br/> <a href="#request-settings-headers"><code>Headers</code></a><br/> <a href="#conga-settings-cert"><code>Cert</code></a><br/><a href="#conga-settings-sslflags"><code>SSLFlags</code></a><br/><a href="#conga-settings-priority"><code>Priority</code></a><br/>Intermediate positional parameters that are not used should be set to <code>''</code></li><li>A namespace containing named variables for the settings for the request.</li></ul></td>
 </tr>
 <tr>
 <td><code>RequestOnly</code></td>
@@ -2748,7 +2748,7 @@ Individual headers can be suppressed by using the <a href="#..-instance-methods-
 </tr>
 <tr>
 <td><code>result</code></td>
-<td><code>result</code> depends on the <code>RequestOnly</code> setting.<br/><br/>If <code>RequestOnly=1</code>, <code>Run</code> will return, if possible, the HTTP request that <i>would</i> be sent if <code>RequestOnly</code> was set to <code>0</code>. If <code>HttpCommand</code> cannot form a proper HTTP request, <code>Run</code> will return a <a href="#result">result namespace</a> with pertinent information.<br/><br/>If <code>RequestOnly=0</code>, <code>Run</code> will return a <a href="#result">result namespace</a> containing the result of attempting to build and send the HTTP request specified by the instance's settings.</td>
+<td><code>result</code> depends on the <code>RequestOnly</code> setting.<br/><br/>If <code>RequestOnly=1</code>, <code>Run</code> will return, if possible, the HTTP request that <i>would</i> be sent if <code>RequestOnly</code> was set to <code>0</code>. If <code>HttpCommand</code> cannot form a proper HTTP request, <code>Run</code> will return a result namespace with pertinent information.<br/><br/>If <code>RequestOnly=0</code>, <code>Run</code> will return a result namespace containing the result of attempting to build and send the HTTP request specified by the instance's settings.</td>
 </tr>
 <tr>
 <td>Examples</td>
@@ -3028,19 +3028,19 @@ Individual headers can be suppressed by using the <a href="#..-instance-methods-
 </tr>
 </tbody>
 </table>
-<p>The example below uses <code><a href="http://httpbin.org/relative_redirect/2">httpbin.org/relative_redirect/2</a></code> to redirect the request twice.</p>
-<pre><code>      ⊢result ← HttpCommand.Get 'http://httpbin.org/relative_redirect/2'
+<p>The example below uses <code>https://httpbin.org/relative-redirect/2</code>](https://httpbin.org/relative-redirect/2) to redirect the request twice.</p>
+<pre><code>      ⊢result ← HttpCommand.Get 'https://httpbin.org/relative-redirect/2'
 [rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 266]
 </code></pre>
 <p>Examining the information in the 2 redirections shows that our original <code>URL</code>, <code>'httpbin.org/relative-redirect/2'</code>, was redirected to <code>/relative-redirect/1</code> which was subsequently redirected to <code>/get</code>.</p>
 <pre><code>      'URL' 'Was redirected to'⍪result.(Redirections.URL,⍪Redirections.Headers GetHeader¨⊂'location')
-┌───────────────────────────────┬────────────────────┐
-│URL                            │Was redirected to   │
-├───────────────────────────────┼────────────────────┤
-│httpbin.org/relative-redirect/2│/relative-redirect/1│
-├───────────────────────────────┼────────────────────┤
-│httpbin.org/relative-redirect/1│/get                │
-└───────────────────────────────┴────────────────────┘
+┌───────────────────────────────────────┬────────────────────┐
+│URL                                    │Was redirected to   │
+├───────────────────────────────────────┼────────────────────┤
+│https://httpbin.org/relative-redirect/2│/relative-redirect/1│
+├───────────────────────────────────────┼────────────────────┤
+│httpbin.org/relative-redirect/1        │/get                │
+└───────────────────────────────────────┴────────────────────┘
 </code></pre></section><h1 class='nav-section-title-end'>Ended: Result Namespace</h1><section class="print-page" id="msgs"><h3 id="msgs-rc-values"><code>rc</code> Values</h3>
 <p>The value of <code>rc</code> may be interpreted as follows:</p>
 <table>
@@ -3321,7 +3321,7 @@ Individual headers can be suppressed by using the <a href="#..-instance-methods-
 </tbody>
 </table>
 <h4 id="msgs-conga-setting-messages">Conga Setting Messages</h4>
-<p>The messages in this section are related to the Conga settings in <code>HttpCommand</code>, not the actual execution of Conga code whose messages  are described in <a href="#msgs-conga-execution-related-errors">"Conga Execution"-Related Messages</a>.</p>
+<p>The messages in this section are related to the Conga settings in <code>HttpCommand</code>, not the actual execution of Conga code whose messages  are described in <a href="#msgs-conga-execution-messages">"Conga Execution"-Related Messages</a>.</p>
 <table>
 <tbody>
 <tr>
@@ -3734,7 +3734,7 @@ Individual headers can be suppressed by using the <a href="#..-instance-methods-
 </tr>
 <tr>
 <td>Description</td>
-<td>The size of the response's HTTPHeader message exceeded the value set for <code>BufferSize</code></size>`.</td>
+<td>The size of the response's HTTPHeader message exceeded the value set for <code>BufferSize</code>.</td>
 </tr>
 <tr>
 <td>Resolution</td>

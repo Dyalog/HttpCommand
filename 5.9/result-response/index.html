@@ -1113,19 +1113,19 @@
 </tr>
 </tbody>
 </table>
-<p>The example below uses <code><a href="http://httpbin.org/relative_redirect/2">httpbin.org/relative_redirect/2</a></code> to redirect the request twice.</p>
-<pre><code>      ⊢result ← HttpCommand.Get 'http://httpbin.org/relative_redirect/2'
+<p>The example below uses <code>https://httpbin.org/relative-redirect/2</code>](https://httpbin.org/relative-redirect/2) to redirect the request twice.</p>
+<pre><code>      ⊢result ← HttpCommand.Get 'https://httpbin.org/relative-redirect/2'
 [rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 266]
 </code></pre>
 <p>Examining the information in the 2 redirections shows that our original <code>URL</code>, <code>'httpbin.org/relative-redirect/2'</code>, was redirected to <code>/relative-redirect/1</code> which was subsequently redirected to <code>/get</code>.</p>
 <pre><code>      'URL' 'Was redirected to'⍪result.(Redirections.URL,⍪Redirections.Headers GetHeader¨⊂'location')
-┌───────────────────────────────┬────────────────────┐
-│URL                            │Was redirected to   │
-├───────────────────────────────┼────────────────────┤
-│httpbin.org/relative-redirect/2│/relative-redirect/1│
-├───────────────────────────────┼────────────────────┤
-│httpbin.org/relative-redirect/1│/get                │
-└───────────────────────────────┴────────────────────┘
+┌───────────────────────────────────────┬────────────────────┐
+│URL                                    │Was redirected to   │
+├───────────────────────────────────────┼────────────────────┤
+│https://httpbin.org/relative-redirect/2│/relative-redirect/1│
+├───────────────────────────────────────┼────────────────────┤
+│httpbin.org/relative-redirect/1        │/get                │
+└───────────────────────────────────────┴────────────────────┘
 </code></pre>
 
 
