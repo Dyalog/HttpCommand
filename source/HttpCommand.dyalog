@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.9.0' '2025-02-24'
+      r←'HttpCommand' '5.9.1' '2025-03-08'
     ∇
 
 ⍝ Request-related fields
@@ -192,8 +192,8 @@
     ⍝ Shared method to perform an HTTP request with JSON data as the request and response payloads
     ⍝ args - [URL] | [Command URL Params Headers Cert SSLFlags Priority]
       :Access public shared
-      :If 0=⎕NC'requestOnly' ⋄ requestOnly←¯1 ⋄ :EndIf                                                      
-
+      :If 0=⎕NC'requestOnly' ⋄ requestOnly←¯1 ⋄ :EndIf
+     
       :If isSimpleChar args ⍝ simple character vector args?
       :AndIf (args≡'localhost')≥∧/args∊over lc ⎕A ⋄ args←'GET'args ⋄ :EndIf ⍝ localhost or only alphabetics?
      
@@ -998,18 +998,15 @@
       :EndTrap
     ∇
 
-    ∇ (payload msg)←boundary multipart parms;name;value;filename;contentType;content
+    ∇ (payload msg)←boundary multipart parms;name;value;filename;contentType;content;fileName
     ⍝ format multipart/form-data payload
     ⍝ parms is a namespace with named objects
     ⍝
       msg←payload←''
       :For name :In parms.⎕NL ¯2
           payload,←'--',boundary
-          (value contentType)←2↑(⊆parms⍎name),⊂''
+          (value contentType fileName)←3↑(⊆parms⍎name),'' ''
           payload,←NL,'Content-Disposition: form-data; name="',name,'"'
-          :If ~0∊⍴contentType
-              payload,←NL,'Content-Type: ',contentType
-          :EndIf
           :If '@<'∊⍨⊃value
               :If ⎕NEXISTS 1↓value
               :AndIf 2=1 ⎕NINFO 1↓value
@@ -1021,6 +1018,8 @@
                   →0⊣msg←'File not found: "',(1↓value),'"'
               :EndIf
           :Else
+              payload,←(~0∊⍴fileName)/'; filename="',(∊¯2↑1 ⎕NPARTS fileName),'"'
+              payload,←(~0∊⍴contentType)/NL,'Content-Type: ',contentType
               payload,←NL,NL,(∊⍕value),NL
           :EndIf
       :EndFor
