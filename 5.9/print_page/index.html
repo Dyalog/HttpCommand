@@ -3982,7 +3982,12 @@ Accept: */*
 <p>Content type <code>multipart/form-data</code> is commonly used to transfer files to a server or to send multiple types of content in the request payload. If you specify a content type of <code>'multipart/form-data'</code>:</p>
 <ul>
 <li><code>Params</code> must be a namespace with named elements.</li>
-<li>Each element in <code>Params</code> consists of the data for the element optionally followed by a content type for the element.</li>
+<li>Each element in <code>Params</code> consists of up to 3 elements:<ul>
+<li>content - the data for the element, if sending a file this is the file name (see the section below) </li>
+<li>type - the MIME content-type type for the element</li>
+<li>filename - if content is to be saved as a file, this is the filename for the content</li>
+</ul>
+</li>
 <li>To send a file, prefix the file name with either:<ul>
 <li><code>@</code> to upload the file's content and its name</li>
 <li><code>&lt;</code> to upload just the file's content</li>
@@ -3995,19 +4000,64 @@ Accept: */*
 <li>Extra newlines have been removed for compactness.</li>
 <li>The file <code>/tmp/foo.txt</code> contains <code>Hello World</code>.</li>
 <li>We create 4 parts to be sent with the request:<ul>
-<li>a simple string</li>
-<li>a named file - both the content and file name will be sent</li>
-<li>an unnamed file - only the content will be sent</li>
 <li>a JSON array (with content type 'application/json')</li>
+<li>a named file - both the content and file name will be sent</li>
+<li>some in-workspace content to be saved as a file named 'data.txt'</li>
+<li>a simple string</li>
+<li>an unnamed file - only the content will be sent</li>
 </ul>
 </li>
 </ul>
+<pre><code>      h←HttpCommand.New 'post' 'someurl.com'
+      p←⎕NS ''                     ⍝ create a namespace
+      p.json←'[1,2,3]' 'application/json' ⍝ value and content type
+      p.namedfile←'@/tmp/foo.txt'   ⍝ @ = include the file name
+      p.saveasfile←'this is the content' 'text/plain' 'data.txt' ⍝ save content as a file
+      p.string←'/tmp/foo.txt'       ⍝ just a value
+      p.unnamedfile←'&lt;/tmp/foo.txt' ⍝ &lt; = do not include the file name
+      h.Params←p                    ⍝ assign the request Params
+      h.ContentType←'multipart/form-data' ⍝
+      h.Show
+POST / HTTP/1.1
+Host: someurl.com
+User-Agent: Dyalog-HttpCommand/5.9.1
+Accept: */*
+Accept-Encoding: gzip, deflate
+Content-Type: multipart/form-data; boundary=YqXdULkJhPcuCBBikV8ffM8zS7uAdFoME4jNpDDs7SxVw9mM4q
+Content-Length: 806
+
+--YqXdULkJhPcuCBBikV8ffM8zS7uAdFoME4jNpDDs7SxVw9mM4q
+Content-Disposition: form-data; name=&quot;json&quot;
+Content-Type: application/json
+[1,2,3]
+
+--YqXdULkJhPcuCBBikV8ffM8zS7uAdFoME4jNpDDs7SxVw9mM4q
+Content-Disposition: form-data; name=&quot;namedfile&quot;; filename=&quot;foo.txt&quot;
+Content-Type: text/plain
+this is a test
+
+--YqXdULkJhPcuCBBikV8ffM8zS7uAdFoME4jNpDDs7SxVw9mM4q
+Content-Disposition: form-data; name=&quot;saveasfile&quot;; filename=&quot;data.txt&quot;
+Content-Type: text/plain
+this is the content
+
+--YqXdULkJhPcuCBBikV8ffM8zS7uAdFoME4jNpDDs7SxVw9mM4q
+Content-Disposition: form-data; name=&quot;string&quot;
+/tmp/foo.txt
+
+--YqXdULkJhPcuCBBikV8ffM8zS7uAdFoME4jNpDDs7SxVw9mM4q
+Content-Disposition: form-data; name=&quot;unnamedfile&quot;
+Content-Type: text/plain
+this is a test
+--YqXdULkJhPcuCBBikV8ffM8zS7uAdFoME4jNpDDs7SxVw9mM4q--
+</code></pre>
 <pre><code>      h←HttpCommand.New 'post' 'someurl.com'
       p←⎕NS ''                     ⍝ create a namespace
       p.string←'/tmp/foo.txt'       ⍝ just a value
       p.namedfile←'@/tmp/foo.txt'   ⍝ @ = include the file name
       p.unnamedfile←'&lt;/tmp/foo.txt' ⍝ &lt; = do not include the file name
       p.json←'[1,2,3]' 'application/json' ⍝ value and content type
+      p.saveasfile←'this is the content' 'text/plain' 'data.txt'
       h.Params←p                    ⍝ assign the request Params
       h.ContentType←'multipart/form-data' ⍝ 
       h.Show
