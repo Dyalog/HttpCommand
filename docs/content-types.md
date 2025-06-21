@@ -10,11 +10,11 @@ If you specify a content type of `'application/json'`, `HttpCommand` will automa
 ### Special Treatment of Content Type `multipart/form-data`
 Content type `multipart/form-data` is commonly used to transfer files to a server or to send multiple types of content in the request payload. If you specify a content type of `'multipart/form-data'`:
 
-* `Params` must be a namespace with named elements.
+* `Params` must be a namespace with named elements. The names correspond to what would be the form &lt;input&gt; names were this request being sent from a browser.
 * Each element in `Params` consists of up to 3 elements:
-    * content - the data for the element, if sending a file this is the file name (see the section below) 
-    * type - the MIME content-type type for the element
-    * filename - if content is to be saved as a file, this is the filename for the content
+    * `[1]` content - the data for the element, if sending a file this is the file name (see the section below) 
+    * `[2]` type - the MIME content-type type for the element
+    * `[3]` filename - if content is to be saved as a file, this is the filename for the content
 * To send a file, prefix the file name with either:
     * `@` to upload the file's content and its name
     * `<` to upload just the file's content

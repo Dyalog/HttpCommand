@@ -1,5 +1,7 @@
 ## Version 5.9
 * Allow [`GetJSON`](./shortcut-methods.md#getjson-issue-a-request-to-a-json-based-web-service) to take a simple character vector URL.
+* Enable uploading of file by specifying using the content of the file and its intended name, rather than reading a file from disk.
+* Create "Method" synonym for "Command"
 ## Version 5.8
 * Added configuration setting [`ChunkSize`](./request-settings.md#chunksize) to enable sending request payloads using "chunked" transfer-encoding.
 ## Version 5.7

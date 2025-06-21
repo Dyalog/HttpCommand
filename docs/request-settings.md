@@ -1,10 +1,11 @@
 Request-related settings are settings you use to specify attributes of the HTTP request that `HttpCommand` will process.
 ## Instance Settings
-### `Command`
+### `Command` or `Method`
 |--|--|
-| Description | The case-insensitive HTTP command (method) for the request. `Command` is not limited to standard HTTP methods like GET, POST, PUT, HEAD, OPTIONS, and DELETE, but can be any string provided that the host has implemented support for it.|
+| Description | The case-insensitive HTTP command (method) for the request. `Command` and `Method` are synomyms and either may be used. This setting is not limited to standard HTTP methods like GET, POST, PUT, HEAD, OPTIONS, and DELETE, but can be any string provided that the host has implemented support for it.|
 | Default |`'GET'`|
-| Example(s) | `h.Command←'POST'`|
+| Example(s) | `h.Command←'POST'`<br>`h.Method←'delete'`|
+| Details | <ul><li>The HTTP specification specifies that the HTTP method should be uppercase - `HttpCommand` will convert the method to uppercase prior to sending the request</li><li>`Command` is the original setting used by `HttpCommand`. The `Method` synonym was introduced because "method" is the more common term in HTTP parlance</li><li>`Command` and `Method` are kept in sync by `HttpCommand`; if you set both, the last one set will be what is used in the HTTP request.</li></ul>|
 
 ### `URL`
 |--|--|
