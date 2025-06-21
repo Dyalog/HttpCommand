@@ -928,11 +928,11 @@
 <h3 id="special-treatment-of-content-type-multipartform-data">Special Treatment of Content Type <code>multipart/form-data</code></h3>
 <p>Content type <code>multipart/form-data</code> is commonly used to transfer files to a server or to send multiple types of content in the request payload. If you specify a content type of <code>'multipart/form-data'</code>:</p>
 <ul>
-<li><code>Params</code> must be a namespace with named elements.</li>
+<li><code>Params</code> must be a namespace with named elements. The names correspond to what would be the form &lt;input&gt; names were this request being sent from a browser.</li>
 <li>Each element in <code>Params</code> consists of up to 3 elements:<ul>
-<li>content - the data for the element, if sending a file this is the file name (see the section below) </li>
-<li>type - the MIME content-type type for the element</li>
-<li>filename - if content is to be saved as a file, this is the filename for the content</li>
+<li><code>[1]</code> content - the data for the element, if sending a file this is the file name (see the section below) </li>
+<li><code>[2]</code> type - the MIME content-type type for the element</li>
+<li><code>[3]</code> filename - if content is to be saved as a file, this is the filename for the content</li>
 </ul>
 </li>
 <li>To send a file, prefix the file name with either:<ul>

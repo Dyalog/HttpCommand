@@ -428,8 +428,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#command" class="md-nav__link">
-    Command
+  <a href="#command-or-method" class="md-nav__link">
+    Command or Method
   </a>
   
 </li>
@@ -1005,8 +1005,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#command" class="md-nav__link">
-    Command
+  <a href="#command-or-method" class="md-nav__link">
+    Command or Method
   </a>
   
 </li>
@@ -1144,12 +1144,12 @@
 
 <p>Request-related settings are settings you use to specify attributes of the HTTP request that <code>HttpCommand</code> will process.</p>
 <h2 id="instance-settings">Instance Settings</h2>
-<h3 id="command"><code>Command</code></h3>
+<h3 id="command-or-method"><code>Command</code> or <code>Method</code></h3>
 <table>
 <tbody>
 <tr>
 <td>Description</td>
-<td>The case-insensitive HTTP command (method) for the request. <code>Command</code> is not limited to standard HTTP methods like GET, POST, PUT, HEAD, OPTIONS, and DELETE, but can be any string provided that the host has implemented support for it.</td>
+<td>The case-insensitive HTTP command (method) for the request. <code>Command</code> and <code>Method</code> are synomyms and either may be used. This setting is not limited to standard HTTP methods like GET, POST, PUT, HEAD, OPTIONS, and DELETE, but can be any string provided that the host has implemented support for it.</td>
 </tr>
 <tr>
 <td>Default</td>
@@ -1157,7 +1157,11 @@
 </tr>
 <tr>
 <td>Example(s)</td>
-<td><code>h.Command←'POST'</code></td>
+<td><code>h.Command←'POST'</code><br><code>h.Method←'delete'</code></td>
+</tr>
+<tr>
+<td>Details</td>
+<td><ul><li>The HTTP specification specifies that the HTTP method should be uppercase - <code>HttpCommand</code> will convert the method to uppercase prior to sending the request</li><li><code>Command</code> is the original setting used by <code>HttpCommand</code>. The <code>Method</code> synonym was introduced because "method" is the more common term in HTTP parlance</li><li><code>Command</code> and <code>Method</code> are kept in sync by <code>HttpCommand</code>; if you set both, the last one set will be what is used in the HTTP request.</li></ul></td>
 </tr>
 </tbody>
 </table>

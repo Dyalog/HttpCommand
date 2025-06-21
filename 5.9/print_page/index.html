@@ -1679,12 +1679,12 @@ Accept: */*
                         </h2>
                         <section class="print-page" id="request-settings"><p>Request-related settings are settings you use to specify attributes of the HTTP request that <code>HttpCommand</code> will process.</p>
 <h2 id="request-settings-instance-settings">Instance Settings</h2>
-<h3 id="request-settings-command"><code>Command</code></h3>
+<h3 id="request-settings-command-or-method"><code>Command</code> or <code>Method</code></h3>
 <table>
 <tbody>
 <tr>
 <td>Description</td>
-<td>The case-insensitive HTTP command (method) for the request. <code>Command</code> is not limited to standard HTTP methods like GET, POST, PUT, HEAD, OPTIONS, and DELETE, but can be any string provided that the host has implemented support for it.</td>
+<td>The case-insensitive HTTP command (method) for the request. <code>Command</code> and <code>Method</code> are synomyms and either may be used. This setting is not limited to standard HTTP methods like GET, POST, PUT, HEAD, OPTIONS, and DELETE, but can be any string provided that the host has implemented support for it.</td>
 </tr>
 <tr>
 <td>Default</td>
@@ -1692,7 +1692,11 @@ Accept: */*
 </tr>
 <tr>
 <td>Example(s)</td>
-<td><code>h.Command←'POST'</code></td>
+<td><code>h.Command←'POST'</code><br><code>h.Method←'delete'</code></td>
+</tr>
+<tr>
+<td>Details</td>
+<td><ul><li>The HTTP specification specifies that the HTTP method should be uppercase - <code>HttpCommand</code> will convert the method to uppercase prior to sending the request</li><li><code>Command</code> is the original setting used by <code>HttpCommand</code>. The <code>Method</code> synonym was introduced because "method" is the more common term in HTTP parlance</li><li><code>Command</code> and <code>Method</code> are kept in sync by <code>HttpCommand</code>; if you set both, the last one set will be what is used in the HTTP request.</li></ul></td>
 </tr>
 </tbody>
 </table>
@@ -3981,11 +3985,11 @@ Accept: */*
 <h3 id="content-types-special-treatment-of-content-type-multipartform-data">Special Treatment of Content Type <code>multipart/form-data</code></h3>
 <p>Content type <code>multipart/form-data</code> is commonly used to transfer files to a server or to send multiple types of content in the request payload. If you specify a content type of <code>'multipart/form-data'</code>:</p>
 <ul>
-<li><code>Params</code> must be a namespace with named elements.</li>
+<li><code>Params</code> must be a namespace with named elements. The names correspond to what would be the form &lt;input&gt; names were this request being sent from a browser.</li>
 <li>Each element in <code>Params</code> consists of up to 3 elements:<ul>
-<li>content - the data for the element, if sending a file this is the file name (see the section below) </li>
-<li>type - the MIME content-type type for the element</li>
-<li>filename - if content is to be saved as a file, this is the filename for the content</li>
+<li><code>[1]</code> content - the data for the element, if sending a file this is the file name (see the section below) </li>
+<li><code>[2]</code> type - the MIME content-type type for the element</li>
+<li><code>[3]</code> filename - if content is to be saved as a file, this is the filename for the content</li>
 </ul>
 </li>
 <li>To send a file, prefix the file name with either:<ul>
@@ -4266,6 +4270,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.</p></section><section class="print-page" id="release-notes"><h2 id="release-notes-version-59">Version 5.9</h2>
 <ul>
 <li>Allow <a href="#shortcut-methods-getjson-issue-a-request-to-a-json-based-web-service"><code>GetJSON</code></a> to take a simple character vector URL.</li>
+<li>Enable uploading of file by specifying using the content of the file and its intended name, rather than reading a file from disk.</li>
+<li>Create "Method" synonym for "Command"</li>
 </ul>
 <h2 id="release-notes-version-58">Version 5.8</h2>
 <ul>
