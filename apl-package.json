@@ -19,5 +19,5 @@
   source: "source/HttpCommand.dyalog",
   tags: "mac-os,windows,linux,http,dyalog,pi",
   userCommandScript: "",
-  version: "5.9.1",
+  version: "5.9.2",
 }
