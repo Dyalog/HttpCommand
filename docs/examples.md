@@ -1,3 +1,5 @@
+Examples of some common `HttpCommand` use cases.
+
 ## Interacting with Web Services
 A web service will generally have a published API which describes how to interact with the service.  This API will be your guide for how to build requests using `HttpCommand` to access the web service. In many cases, the API will also describe the format of the data it returns in the `content-type` header.
 
