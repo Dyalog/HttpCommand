@@ -8,8 +8,11 @@
       
       
       
+      
+      
+      
       <link rel="icon" href="../img/favicon-32.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
     
     
       
@@ -17,15 +20,14 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.975780f9.min.css">
-      
-        
-        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
-        
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
       
       
 
+
     
+    
+      
     
     
       
@@ -37,23 +39,13 @@
       
     
     
-      <link rel="stylesheet" href="../css/print-site-enum-headings2.css">
-    
-      <link rel="stylesheet" href="../css/print-site-enum-headings3.css">
-    
-      <link rel="stylesheet" href="../css/print-site-enum-headings4.css">
-    
-      <link rel="stylesheet" href="../css/print-site-enum-headings5.css">
-    
-      <link rel="stylesheet" href="../css/print-site-enum-headings6.css">
-    
       <link rel="stylesheet" href="../css/print-site.css">
     
       <link rel="stylesheet" href="../css/print-site-material.css">
     
       <link rel="stylesheet" href="../css/main.css">
     
-    <script>__md_scope=new URL("/",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("/",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -69,14 +61,8 @@
         </head>
   
   
-    
-    
-    
-    
-    
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+    <body dir="ltr">
   
-    
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -84,7 +70,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#" class="md-skip">
+        <a href="#index" class="md-skip">
           Skip to content
         </a>
       
@@ -93,14 +79,16 @@
       
     </div>
     
-      <div data-md-component="outdated" hidden>
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
         
       </div>
     
     
       
 
-<header class="md-header" data-md-component="header">
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href=".." title="HttpCommand" class="md-header__button md-logo" aria-label="HttpCommand" data-md-component="logo">
       
@@ -108,7 +96,8 @@
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -128,46 +117,56 @@
     </div>
     
     
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
-      <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
   </div>
 </div>
+      
     
     
       <div class="md-header__source">
         <a href="https://github.com/dyalog/httpcommand" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
   </div>
   <div class="md-source__repository">
     Dyalog/HttpCommand
@@ -197,6 +196,7 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="HttpCommand" class="md-nav__button md-logo" aria-label="HttpCommand" data-md-component="logo">
@@ -211,7 +211,7 @@
       <a href="https://github.com/dyalog/httpcommand" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
   </div>
   <div class="md-source__repository">
     Dyalog/HttpCommand
@@ -223,14 +223,21 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href=".." class="md-nav__link">
-        Overview
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
       </a>
     </li>
   
@@ -238,589 +245,912 @@
     
       
       
-      
-
+  
   
   
   
     
+    
+    
+    
       
+        
+        
+      
+    
     
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_2">
-          Usage
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Usage" data-md-level="1">
-        <label class="md-nav__title" for="__nav_2">
-          <span class="md-nav__icon md-icon"></span>
-          Usage
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
           
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Usage
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Usage
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../quickstart/" class="md-nav__link">
-        Quick Start
+        
+  
+  
+  <span class="md-ellipsis">
+    Quick Start
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../userguide/" class="md-nav__link">
-        Usage Guide
+        
+  
+  
+  <span class="md-ellipsis">
+    Usage Guide
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../examples/" class="md-nav__link">
-        Examples
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../trouble/" class="md-nav__link">
-        Troubleshooting
+        
+  
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+    
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
-      
-
+  
   
   
   
     
+    
+    
+    
       
+        
+        
+      
+    
     
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3">
-          Reference
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_3">
-          <span class="md-nav__icon md-icon"></span>
-          Reference
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
           
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     
+    
+    
+    
+      
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3_1">
-          Settings
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Settings" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_1">
-          <span class="md-nav__icon md-icon"></span>
-          Settings
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
           
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Settings
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            Settings
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../request-settings/" class="md-nav__link">
-        Request-related Settings
+        
+  
+  
+  <span class="md-ellipsis">
+    Request-related Settings
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../operational-settings/" class="md-nav__link">
-        Operational Settings
+        
+  
+  
+  <span class="md-ellipsis">
+    Operational Settings
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../conga-settings/" class="md-nav__link">
-        Conga-related Settings
+        
+  
+  
+  <span class="md-ellipsis">
+    Conga-related Settings
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../proxy-settings/" class="md-nav__link">
-        Proxy-related Settings
+        
+  
+  
+  <span class="md-ellipsis">
+    Proxy-related Settings
+    
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     
+    
+    
+    
+      
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3_2">
-          Shared Methods
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Shared Methods" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_2">
-          <span class="md-nav__icon md-icon"></span>
-          Shared Methods
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
           
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Shared Methods
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Shared Methods
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../shortcut-methods/" class="md-nav__link">
-        Shortcut Methods
+        
+  
+  
+  <span class="md-ellipsis">
+    Shortcut Methods
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../encode-methods/" class="md-nav__link">
-        Encode/Decode Methods
+        
+  
+  
+  <span class="md-ellipsis">
+    Encode/Decode Methods
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../misc-methods/" class="md-nav__link">
-        Miscellaneous Methods
+        
+  
+  
+  <span class="md-ellipsis">
+    Miscellaneous Methods
+    
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../instance-methods/" class="md-nav__link">
-        Instance Methods
+        
+  
+  
+  <span class="md-ellipsis">
+    Instance Methods
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     
+    
+    
+    
+      
+    
+    
     <li class="md-nav__item md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_3_4">
-          Result Namespace
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Result Namespace" data-md-level="2">
-        <label class="md-nav__title" for="__nav_3_4">
-          <span class="md-nav__icon md-icon"></span>
-          Result Namespace
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
           
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Result Namespace
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            Result Namespace
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../result-operational/" class="md-nav__link">
-        Operational Elements
+        
+  
+  
+  <span class="md-ellipsis">
+    Operational Elements
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../result-request/" class="md-nav__link">
-        Request Elements
+        
+  
+  
+  <span class="md-ellipsis">
+    Request Elements
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../result-response/" class="md-nav__link">
-        Response Elements
+        
+  
+  
+  <span class="md-ellipsis">
+    Response Elements
+    
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../msgs/" class="md-nav__link">
-        Messages and Return Codes
+        
+  
+  
+  <span class="md-ellipsis">
+    Messages and Return Codes
+    
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
-      
-
+  
   
   
   
     
+    
+    
+    
       
+        
+        
+      
+    
     
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_4">
-          Advanced Topics
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="Advanced Topics" data-md-level="1">
-        <label class="md-nav__title" for="__nav_4">
-          <span class="md-nav__icon md-icon"></span>
-          Advanced Topics
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
           
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Advanced Topics
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Advanced Topics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../content-types/" class="md-nav__link">
-        Request Content Types
+        
+  
+  
+  <span class="md-ellipsis">
+    Request Content Types
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../conga/" class="md-nav__link">
-        HttpCommand and Conga
+        
+  
+  
+  <span class="md-ellipsis">
+    HttpCommand and Conga
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../secure/" class="md-nav__link">
-        Secure Communications
+        
+  
+  
+  <span class="md-ellipsis">
+    Secure Communications
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../proxy/" class="md-nav__link">
-        Using a Proxy Server
+        
+  
+  
+  <span class="md-ellipsis">
+    Using a Proxy Server
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../integrating/" class="md-nav__link">
-        Integrating HttpCommand
+        
+  
+  
+  <span class="md-ellipsis">
+    Integrating HttpCommand
+    
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
-      
-
+  
   
   
   
     
+    
+    
+    
       
+        
+        
+      
+    
     
     <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
-      
-      
-      
-      
-        <label class="md-nav__link" for="__nav_5">
-          About
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_5">
-          <span class="md-nav__icon md-icon"></span>
-          About
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
           
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    About
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../LICENSE/" class="md-nav__link">
-        License
+        
+  
+  
+  <span class="md-ellipsis">
+    License
+    
+  </span>
+  
+
       </a>
     </li>
   
 
-            
-          
+              
             
               
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../release-notes/" class="md-nav__link">
-        Release Notes
+        
+  
+  
+  <span class="md-ellipsis">
+    Release Notes
+    
+  </span>
+  
+
       </a>
     </li>
   
 
+              
             
-          
-        </ul>
-      </nav>
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Print
+          
+  
+  
+  <span class="md-ellipsis">
+    Print
+    
+  </span>
+  
+
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Print
+        
+  
+  
+  <span class="md-ellipsis">
+    Print
+    
+  </span>
+  
+
       </a>
       
         
@@ -839,15 +1169,19 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#" class="md-nav__link">
-    Overview
+  <a href="#index" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#section-usage" class="md-nav__link">
-    Usage
+  <a href="#section-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Usage">
@@ -855,28 +1189,36 @@
         
           <li class="md-nav__item">
   <a href="#quickstart" class="md-nav__link">
-    Quick Start
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#userguide" class="md-nav__link">
-    Usage Guide
+    <span class="md-ellipsis">
+      Usage Guide
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      Examples
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#trouble" class="md-nav__link">
-    Troubleshooting
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
   </a>
   
 </li>
@@ -887,23 +1229,164 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#section-reference" class="md-nav__link">
-    Reference
+  <a href="#section-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reference
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Reference">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#instance-methods" class="md-nav__link">
-    Instance Methods
+  <a href="#section-3-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Settings
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#request-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Request-related Settings
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
+  <a href="#operational-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operational Settings
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conga-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conga-related Settings
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proxy-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proxy-related Settings
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-3-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shared Methods
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Shared Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shortcut-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shortcut Methods
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encode-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Encode/Decode Methods
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#misc-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Miscellaneous Methods
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Instance Methods
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-3-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Result Namespace
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Result Namespace">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#result-operational" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operational Elements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      Request Elements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      Response Elements
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msgs" class="md-nav__link">
-    Messages and Return Codes
+    <span class="md-ellipsis">
+      Messages and Return Codes
+    </span>
   </a>
   
 </li>
@@ -914,8 +1397,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#section-advanced-topics" class="md-nav__link">
-    Advanced Topics
+  <a href="#section-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Topics
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Advanced Topics">
@@ -923,35 +1408,45 @@
         
           <li class="md-nav__item">
   <a href="#content-types" class="md-nav__link">
-    Request Content Types
+    <span class="md-ellipsis">
+      Request Content Types
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#conga" class="md-nav__link">
-    HttpCommand and Conga
+    <span class="md-ellipsis">
+      HttpCommand and Conga
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#secure" class="md-nav__link">
-    Secure Communications
+    <span class="md-ellipsis">
+      Secure Communications
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#proxy" class="md-nav__link">
-    Using a Proxy Server
+    <span class="md-ellipsis">
+      Using a Proxy Server
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#integrating" class="md-nav__link">
-    Integrating HttpCommand
+    <span class="md-ellipsis">
+      Integrating HttpCommand
+    </span>
   </a>
   
 </li>
@@ -962,8 +1457,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#section-about" class="md-nav__link">
-    About
+  <a href="#section-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      About
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="About">
@@ -971,14 +1468,18 @@
         
           <li class="md-nav__item">
   <a href="#license" class="md-nav__link">
-    License
+    <span class="md-ellipsis">
+      License
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#release-notes" class="md-nav__link">
-    Release Notes
+    <span class="md-ellipsis">
+      Release Notes
+    </span>
   </a>
   
 </li>
@@ -1023,15 +1524,19 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#" class="md-nav__link">
-    Overview
+  <a href="#index" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#section-usage" class="md-nav__link">
-    Usage
+  <a href="#section-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Usage">
@@ -1039,28 +1544,36 @@
         
           <li class="md-nav__item">
   <a href="#quickstart" class="md-nav__link">
-    Quick Start
+    <span class="md-ellipsis">
+      Quick Start
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#userguide" class="md-nav__link">
-    Usage Guide
+    <span class="md-ellipsis">
+      Usage Guide
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#examples" class="md-nav__link">
-    Examples
+    <span class="md-ellipsis">
+      Examples
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#trouble" class="md-nav__link">
-    Troubleshooting
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
   </a>
   
 </li>
@@ -1071,23 +1584,164 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#section-reference" class="md-nav__link">
-    Reference
+  <a href="#section-3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reference
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Reference">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#instance-methods" class="md-nav__link">
-    Instance Methods
+  <a href="#section-3-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Settings
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#request-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Request-related Settings
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
+  <a href="#operational-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operational Settings
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conga-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conga-related Settings
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proxy-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proxy-related Settings
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-3-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shared Methods
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Shared Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shortcut-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shortcut Methods
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#encode-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Encode/Decode Methods
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#misc-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Miscellaneous Methods
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instance-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Instance Methods
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#section-3-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Result Namespace
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Result Namespace">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#result-operational" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operational Elements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result-request" class="md-nav__link">
+    <span class="md-ellipsis">
+      Request Elements
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#result-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      Response Elements
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#msgs" class="md-nav__link">
-    Messages and Return Codes
+    <span class="md-ellipsis">
+      Messages and Return Codes
+    </span>
   </a>
   
 </li>
@@ -1098,8 +1752,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#section-advanced-topics" class="md-nav__link">
-    Advanced Topics
+  <a href="#section-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Topics
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="Advanced Topics">
@@ -1107,35 +1763,45 @@
         
           <li class="md-nav__item">
   <a href="#content-types" class="md-nav__link">
-    Request Content Types
+    <span class="md-ellipsis">
+      Request Content Types
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#conga" class="md-nav__link">
-    HttpCommand and Conga
+    <span class="md-ellipsis">
+      HttpCommand and Conga
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#secure" class="md-nav__link">
-    Secure Communications
+    <span class="md-ellipsis">
+      Secure Communications
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#proxy" class="md-nav__link">
-    Using a Proxy Server
+    <span class="md-ellipsis">
+      Using a Proxy Server
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#integrating" class="md-nav__link">
-    Integrating HttpCommand
+    <span class="md-ellipsis">
+      Integrating HttpCommand
+    </span>
   </a>
   
 </li>
@@ -1146,8 +1812,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#section-about" class="md-nav__link">
-    About
+  <a href="#section-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      About
+    </span>
   </a>
   
     <nav class="md-nav" aria-label="About">
@@ -1155,14 +1823,18 @@
         
           <li class="md-nav__item">
   <a href="#license" class="md-nav__link">
-    License
+    <span class="md-ellipsis">
+      License
+    </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#release-notes" class="md-nav__link">
-    Release Notes
+    <span class="md-ellipsis">
+      Release Notes
+    </span>
   </a>
   
 </li>
@@ -1185,6 +1857,7 @@
               <article class="md-content__inner md-typeset">
                 
                   
+
 
 
 <div id="print-site-page" class="">
@@ -1226,7 +1899,7 @@
 
 
         </section>
-        <section class="print-page" id="index"><p><code>HttpCommand</code> is a utility is designed to make it easy for the APL user to send requests to and receive responses from HTTP servers like web servers and web services.</p>
+        <section class="print-page" id="index" heading-number="1"><h1 id="index-index">Overview</h1><p><code>HttpCommand</code> is a utility is designed to make it easy for the APL user to send requests to and receive responses from HTTP servers like web servers and web services.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>While <code>HttpCommand</code> itself is <code>⎕IO</code> and <code>⎕ML</code> insensitive, the examples in this documentation assume an environment of <code>(⎕IO ⎕ML)←1</code>.</p>
@@ -1328,10 +2001,10 @@
 <li>There are many resources available to learn about HTTP; a good one may be found on the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP">Mozilla Developer Network</a></li>
 <li>For more information on Dyalog classes, please refer to the Object Oriented Programming chapter in the <a href="https://docs.dyalog.com/latest/Dyalog%20Programming%20Reference%20Guide.pdf">Dyalog Programming Reference Guide</a>. </li>
 </ul></section>
-                        <h1 class='nav-section-title' id='section-usage'>
-                            Usage <a class='headerlink' href='#section-usage' title='Permanent link'>↵</a>
+                    <section class='print-page md-section' id='section-2' heading-number='2'>
+                        <h1>Usage<a class='headerlink' href='#section-2' title='Permanent link'></a>
                         </h1>
-                        <section class="print-page" id="quickstart"><h2 id="quickstart-shortcut-methods">Shortcut Methods</h2>
+                    <section class="print-page" id="quickstart" heading-number="2.1"><h1 id="quickstart-quickstart">Quick Start</h1><h2 id="shortcut-methods">Shortcut Methods</h2>
 <p><code>HttpCommand</code> has several shared "shortcut" methods to perform common operations. An overview of these methods is presented here. See the <strong>Reference</strong> section of the documentation for detailed information on all features of HttpCommand.</p>
 <p><code>HttpCommand</code>'s <code>Get</code>, <code>GetJSON</code>, <code>Do</code>, and <code>New</code> methods each accept a right argument which is one of:</p>
 <ul>
@@ -1404,7 +2077,7 @@ Once the instance is created, additional settings can be assigned directly if ne
 </tbody>
 </table>
 <p>See the <a href="#request-settings">Request-related Settings</a> section for more detail on the arguments. </p>
-<p>Each of the above methods also accept 3 additional positional arguments, <code>[Cert [SSLFlags [Priority]]]</code>.  These arguments are used to specify settings for secure connections but are seldom used in practice because <code>HttpCommand</code> automatically supplies an anonymous certificate when using a secure connection. See <a href="#secure">Secure Connections</a> and <a href="#conga-settings">Conga-related Settings</a> for more information.</p></section><section class="print-page" id="userguide"><h2 id="userguide-shortcut-or-instance">Shortcut or Instance?</h2>
+<p>Each of the above methods also accept 3 additional positional arguments, <code>[Cert [SSLFlags [Priority]]]</code>.  These arguments are used to specify settings for secure connections but are seldom used in practice because <code>HttpCommand</code> automatically supplies an anonymous certificate when using a secure connection. See <a href="#secure">Secure Connections</a> and <a href="#conga-settings">Conga-related Settings</a> for more information.</p></section><section class="print-page" id="userguide" heading-number="2.2"><h1 id="userguide-userguide">Usage Guide</h1><h2 id="shortcut-or-instance">Shortcut or Instance?</h2>
 <p>There are two ways to use <code>HttpCommand</code>. </p>
 <ul>
 <li>Use one of its shortcut methods (<code>Get</code>, <code>Do</code>, <code>GetJSON</code>) to execute a single HTTP request and examine the response from the host. When you use a shortcut method, <code>HttpCommand</code> will create a new, local, instance of itself and then use the instance's <code>Run</code> method to send the request and receive the response, then exit thereby destroying the local instance. This is generally fine when your requests are independent of one another and do not require any state to be maintained across requests.<br/></li>
@@ -1454,7 +2127,8 @@ The result namespace contains other elements which are described in detail on th
 <li>Setting <code>Timeout</code> to a negative number means that <code>HttpCommand</code> will not time out as long as data is being received.  This is useful in the case where a large payload may be received but you are uncertain of how long it will take to receive. If no data is received within a period of <code>|Timeout</code> seconds, <code>HttpCommand</code> will time out with a return code (<code>rc</code>) of 100. Any partial payload received will be returned in the <code>Data</code> element of the result.<br/><br/> Using a negative <code>Timeout</code> value is useful in the case where a large payload is being received in chunks but has no benefit if the entire payload is sent in one chunk or if the host takes more than <code>|Timeout</code> seconds to begin sending its response. In that case, you'll need to set <code>|Timeout</code> to a larger value.</li>
 </ul>
 <h2 id="userguide-compressing-response-payload">Compressing Response Payload</h2>
-<p><code>HttpCommand</code> can accept and process response payloads that are compressed using either the gzip or deflate compression schemes. To accomplish this, you need to set the <code>accept-encoding</code> header to <code>'gzip, deflate'</code>.</p></section><section class="print-page" id="examples"><h2 id="examples-interacting-with-web-services">Interacting with Web Services</h2>
+<p><code>HttpCommand</code> can accept and process response payloads that are compressed using either the gzip or deflate compression schemes. To accomplish this, you need to set the <code>accept-encoding</code> header to <code>'gzip, deflate'</code>.</p></section><section class="print-page" id="examples" heading-number="2.3"><h1 id="examples-examples">Examples</h1><p>Examples of some common <code>HttpCommand</code> use cases.</p>
+<h2 id="examples-interacting-with-web-services">Interacting with Web Services</h2>
 <p>A web service will generally have a published API which describes how to interact with the service.  This API will be your guide for how to build requests using <code>HttpCommand</code> to access the web service. In many cases, the API will also describe the format of the data it returns in the <code>content-type</code> header.</p>
 <p>A web service may require authentication in order to gain access to certain resources or perform certain operations. GitHub is a good example of this - it does not require authentication to perform read-only queries on public resources, but authentication is necessary to perform write operations or to access private repositories.</p>
 <p>Let's look at GitHub's <a href="https://docs.github.com/en/rest">REST API</a> as an example. The GitHub API returns its data in JSON format. </p>
@@ -1595,7 +2269,7 @@ dXNlcmlkOnBhc3N3b3Jk
  2022-07-25  Dyalog ’22 – make sure you register for Dyalog ’22 
  2022-07-20  The APL practice problems site https://t.co/1SEoa5 
  2022-07-15  There are only two weeks until the 10% Early Bird  
-</code></pre></section><section class="print-page" id="trouble"><p>In a perfect world, all HTTP requests would be well-formed, target hosts would be available, and APIs well-documented.  Unfortunately, we don't live in a perfect world and so, in this section, we attempt to provide you with some guidance for troubleshooting requests that aren't working as you expect.</p>
+</code></pre></section><section class="print-page" id="trouble" heading-number="2.4"><h1 id="trouble-trouble">Troubleshooting</h1><p>In a perfect world, all HTTP requests would be well-formed, target hosts would be available, and APIs well-documented.  Unfortunately, we don't live in a perfect world and so, in this section, we attempt to provide you with some guidance for troubleshooting requests that aren't working as you expect.</p>
 <p>The result namespace returned by <code>HttpCommand.Run</code> contains information that may help in troubleshooting. The display format of the result contains some useful information:
 * <code>rc</code> is the <code>HttpCommand</code>'s return code
 * <code>msg</code> is a diagnostic message if <code>rc≠0</code>
@@ -1669,22 +2343,22 @@ Accept: */*
 <h4 id="trouble-debug-mode">Debug Mode</h4>
 <p>Setting <code>HttpCommand.Debug←1</code> will disable <code>HttpCommand</code>'s error checking and cause <code>HttpCommand</code> to suspend if and where an error occurs.</p>
 <p>Setting <code>HttpCommand.Debug←2</code> will cause <code>HttpCommand</code> to suspend just before it attempts to create the client connection to the host.  This will give you the opportunity to examine the request's state and step through the code.</p>
-<p><strong>Note:</strong> <code>HttpCommand.Debug</code> is a shared setting and will affect all instances of <code>HttpCommand</code>.</p></section><h1 class='nav-section-title-end'>Ended: Usage</h1>
-                        <h1 class='nav-section-title' id='section-reference'>
-                            Reference <a class='headerlink' href='#section-reference' title='Permanent link'>↵</a>
+<p><strong>Note:</strong> <code>HttpCommand.Debug</code> is a shared setting and will affect all instances of <code>HttpCommand</code>.</p></section></section>
+                    <section class='print-page md-section' id='section-3' heading-number='3'>
+                        <h1>Reference<a class='headerlink' href='#section-3' title='Permanent link'></a>
                         </h1>
-                        
-                        <h2 class='nav-section-title' id='section-settings'>
-                            Settings <a class='headerlink' href='#section-settings' title='Permanent link'>↵</a>
-                        </h2>
-                        <section class="print-page" id="request-settings"><p>Request-related settings are settings you use to specify attributes of the HTTP request that <code>HttpCommand</code> will process.</p>
+                    
+                    <section class='print-page md-section' id='section-3-1' heading-number='3.1'>
+                        <h1>Settings<a class='headerlink' href='#section-3-1' title='Permanent link'></a>
+                        </h1>
+                    <section class="print-page" id="request-settings" heading-number="3.1.1"><h1 id="request-settings-request-settings">Request-related Settings</h1><p>Request-related settings are settings you use to specify attributes of the HTTP request that <code>HttpCommand</code> will process.</p>
 <h2 id="request-settings-instance-settings">Instance Settings</h2>
 <h3 id="request-settings-command-or-method"><code>Command</code> or <code>Method</code></h3>
 <table>
 <tbody>
 <tr>
 <td>Description</td>
-<td>The case-insensitive HTTP command (method) for the request. <code>Command</code> and <code>Method</code> are synomyms and either may be used. This setting is not limited to standard HTTP methods like GET, POST, PUT, HEAD, OPTIONS, and DELETE, but can be any string provided that the host has implemented support for it.</td>
+<td>The case-insensitive HTTP command (method) for the request. <code>Command</code> and <code>Method</code> are synonyms and either may be used. This setting is not limited to standard HTTP methods like GET, POST, PUT, HEAD, OPTIONS, and DELETE, but can be any string provided that the host has implemented support for it.</td>
 </tr>
 <tr>
 <td>Default</td>
@@ -1726,7 +2400,7 @@ Accept: */*
 <tbody>
 <tr>
 <td>Description</td>
-<td>The parameters or payload, if any, for the request. <code>Params</code> can be a set of <a href="#request-settings-namevalue-pairs">name/value pairs</a> or a character vector that is properly formatted for the <a href="#request-settings-contenttype"><code>ContentType</code></a> or <a href="#request-settings-command"><code>Command</code></a> of the request. See details for more information.<br/></td>
+<td>The parameters or payload, if any, for the request. <code>Params</code> can be a set of <a href="#request-settings-namevalue-pairs">name/value pairs</a> or a character vector that is properly formatted for the <a href="#request-settings-contenttype"><code>ContentType</code></a> or <a href="#request-settings-command-or-method"><code>Command</code></a> of the request. See details for more information.<br/></td>
 </tr>
 <tr>
 <td>Default</td>
@@ -1943,7 +2617,7 @@ Accept: */*
 <li>A vector of 2-element vectors, <code>HttpCommand</code> will treat each sub-vector as a name/value pair.<br>      <code>(('name' 'dyalog') ('age' 39))</code></li>
 <li>A 2-column matrix where each row represents a name/value pair.<br>      <code>2 2⍴'name' 'dyalog' 'age' 39</code></li>
 <li>A reference to a namespace, <code>HttpCommand</code> will treat the variables and their values in the namespace as name/value pairs.<br>      <code>ns←⎕NS '' ⋄ ns.(name age)←'dyalog' 39</code><br>Note that the names will be alphabetical in the formatted output.</li>
-</ul></section><section class="print-page" id="operational-settings"><p>Operational settings affect how <code>HttpCommand</code> behaves.</p>
+</ul></section><section class="print-page" id="operational-settings" heading-number="3.1.2"><h1 id="operational-settings-operational-settings">Operational Settings</h1><p>Operational settings affect how <code>HttpCommand</code> behaves.</p>
 <h2 id="operational-settings-instance-settings">Instance settings</h2>
 <h3 id="operational-settings-keepalive"><code>KeepAlive</code></h3>
 <table>
@@ -2150,7 +2824,7 @@ Accept: */*
 <td><pre style="font-family:APL;">      c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'<br/>      c.OutFile←0 ⍝ invalid setting for OutFile<br/>      c.Debug←1<br/>      c.Run<br/>DOMAIN ERROR: Invalid file or directory name<br/>HttpCmd[130] outFile←∊1 ⎕NPARTS outFile<br/>                        ∧<br/><br/>      c.Debug←0<br/>      c.Run<br/>[rc: ¯1 &#124; msg: DOMAIN ERROR while trying to initialize output file '0' &#124; HTTP Status:  "" &#124; ⍴Data: 0]</pre></td>
 </tr>
 </tbody>
-</table></section><section class="print-page" id="conga-settings"><p>In general, you will not need to set any of the Conga-related settings since the <code>HttpCommand</code>'s defaults will suffice for almost all requests. For more information on Conga, please refer to the <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf">Conga User Guide</a>.</p>
+</table></section><section class="print-page" id="conga-settings" heading-number="3.1.3"><h1 id="conga-settings-conga-settings">Conga-related Settings</h1><p>In general, you will not need to set any of the Conga-related settings since the <code>HttpCommand</code>'s defaults will suffice for almost all requests. For more information on Conga, please refer to the <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf">Conga User Guide</a>.</p>
 <h2 id="conga-settings-instance-settings">Instance Settings</h2>
 <h3 id="conga-settings-buffersize"><code>BufferSize</code></h3>
 <table>
@@ -2384,7 +3058,7 @@ Accept: */*
 <td><code>CongaVersion</code> should be treated as a read-only setting. It provides information which may be helpful for debugging and informational purposes.</td>
 </tr>
 </tbody>
-</table></section><section class="print-page" id="proxy-settings"><p>Proxy-related settings are settings you use to specify attributes in order to use a proxy server for your request. See <a href="#proxy">Using a Proxy Server</a> for more information on how to use a proxy server with <code>HttpCommand</code>.</p>
+</table></section><section class="print-page" id="proxy-settings" heading-number="3.1.4"><h1 id="proxy-settings-proxy-settings">Proxy-related Settings</h1><p>Proxy-related settings are settings you use to specify attributes in order to use a proxy server for your request. See <a href="#proxy">Using a Proxy Server</a> for more information on how to use a proxy server with <code>HttpCommand</code>.</p>
 <h2 id="proxy-settings-settings">Settings</h2>
 <h3 id="proxy-settings-proxyurl"><code>ProxyURL</code></h3>
 <table>
@@ -2465,11 +3139,11 @@ Accept: */*
 <td>If <code>ProxyAuthType</code> is not set and <code>ProxyAuth</code> is set to either a character vector in the form <code>'userid:password'</code> or a 2-element vector of character vectors as in <code>('userid' 'password')</code> <code>HttpCommand</code> will infer the <code>ProxyAuthType</code> to be <code>'Basic'</code>.</td>
 </tr>
 </tbody>
-</table></section><h1 class='nav-section-title-end'>Ended: Settings</h1>
-                        <h2 class='nav-section-title' id='section-shared-methods'>
-                            Shared Methods <a class='headerlink' href='#section-shared-methods' title='Permanent link'>↵</a>
-                        </h2>
-                        <section class="print-page" id="shortcut-methods"><p>These "shortcut" methods make it easier to issue HTTP requests or create an instance of <code>HttpCommand</code>.</p>
+</table></section></section>
+                    <section class='print-page md-section' id='section-3-2' heading-number='3.2'>
+                        <h1>Shared Methods<a class='headerlink' href='#section-3-2' title='Permanent link'></a>
+                        </h1>
+                    <section class="print-page" id="shortcut-methods" heading-number="3.2.1"><h1 id="shortcut-methods-shortcut-methods">Shortcut Methods</h1><p>These "shortcut" methods make it easier to issue HTTP requests or create an instance of <code>HttpCommand</code>.</p>
 <h3 id="shortcut-methods-get-issue-an-http-get-request"><code>Get</code> - issue an HTTP GET request</h3>
 <p><code>Get</code> is probably <code>HttpCommand</code>'s most-used feature.  It issues an HTTP GET request and returns the response from the server. It can be used for many purposes including interacting with web services, downloading files, and returning the contents of web pages.</p>
 <table>
@@ -2508,7 +3182,7 @@ Accept: */*
 </tr>
 <tr>
 <td><code>args</code></td>
-<td>One of:<ul><li>a simple character vector <a href="#request-settings-url"><code>URL</code></a></li><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required.)<br/><a href="#request-settings-command"><code>Command</code></a><br/><a href="#request-settings-url"><code>URL</code></a><br/> <a href="#request-settings-params"><code>Params</code></a><br/> <a href="#request-settings-headers"><code>Headers</code></a><br/> <a href="#conga-settings-cert"><code>Cert</code></a><br/><a href="#conga-settings-sslflags"><code>SSLFlags</code></a><br/><a href="#conga-settings-priority"><code>Priority</code></a><br/>Intermediate positional parameters that are not used should be set to <code>''</code></li><li>A namespace containing named variables for the settings for the request.</li></ul></td>
+<td>One of:<ul><li>a simple character vector <a href="#request-settings-url"><code>URL</code></a></li><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required.)<br/><a href="#request-settings-command-or-method"><code>Command</code></a><br/><a href="#request-settings-url"><code>URL</code></a><br/> <a href="#request-settings-params"><code>Params</code></a><br/> <a href="#request-settings-headers"><code>Headers</code></a><br/> <a href="#conga-settings-cert"><code>Cert</code></a><br/><a href="#conga-settings-sslflags"><code>SSLFlags</code></a><br/><a href="#conga-settings-priority"><code>Priority</code></a><br/>Intermediate positional parameters that are not used should be set to <code>''</code></li><li>A namespace containing named variables for the settings for the request.</li></ul></td>
 </tr>
 <tr>
 <td><code>RequestOnly</code></td>
@@ -2534,7 +3208,7 @@ Accept: */*
 </tr>
 <tr>
 <td><code>args</code></td>
-<td>Either<ul><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required)<br/><a href="#request-settings-command"><code>Command</code></a><br/><a href="#request-settings-url"><code>URL</code></a><br/><a href="#request-settings-params"><code>Params</code></a><br/><a href="#request-settings-headers"><code>Headers</code></a><br/><a href="#conga-settings-cert"><code>Cert</code></a><br/><a href="#conga-settings-sslflags"><code>SSLFlags</code></a><br/><a href="#conga-settings-priority"><code>Priority</code></a><br/>Intermediate positional parameters that are not used should be set to <code>''</code></li><li>A namespace containing named variables for the settings for the request.<br/><code>(args ← ⎕NS '').(Command URL Headers) ← 'post' 'someurl.com' ('header1' 'value1')</code></li></ul></td>
+<td>Either<ul><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required)<br/><a href="#request-settings-command-or-method"><code>Command</code></a><br/><a href="#request-settings-url"><code>URL</code></a><br/><a href="#request-settings-params"><code>Params</code></a><br/><a href="#request-settings-headers"><code>Headers</code></a><br/><a href="#conga-settings-cert"><code>Cert</code></a><br/><a href="#conga-settings-sslflags"><code>SSLFlags</code></a><br/><a href="#conga-settings-priority"><code>Priority</code></a><br/>Intermediate positional parameters that are not used should be set to <code>''</code></li><li>A namespace containing named variables for the settings for the request.<br/><code>(args ← ⎕NS '').(Command URL Headers) ← 'post' 'someurl.com' ('header1' 'value1')</code></li></ul></td>
 </tr>
 <tr>
 <td><code>RequestOnly</code></td>
@@ -2562,7 +3236,7 @@ Accept: */*
 </tr>
 <tr>
 <td><code>args</code></td>
-<td>Either<ul><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required)<br/><a href="#request-settings-command"><code>Command</code></a><br/><a href="#request-settings-url"><code>URL</code></a><br/><a href="#request-settings-params"><code>Params</code></a><br/><a href="#request-settings-headers"><code>Headers</code></a><br/><a href="#conga-settings-cert"><code>Cert</code></a><br/><a href="#conga-settings-sslflags"><code>SSLFlags</code></a><br/><a href="#conga-settings-priority"><code>Priority</code></a><br/>Intermediate positional parameters that are not used should be set to <code>''</code></li><li>A namespace containing named variables for the settings for the request.<br/><code>(args ← ⎕NS '').(Command URL Headers) ← 'post' 'someurl.com' ('header1' 'value1')</code></li></ul></td>
+<td>Either<ul><li>a vector of positional settings (<code>Command</code> and <code>URL</code> are required)<br/><a href="#request-settings-command-or-method"><code>Command</code></a><br/><a href="#request-settings-url"><code>URL</code></a><br/><a href="#request-settings-params"><code>Params</code></a><br/><a href="#request-settings-headers"><code>Headers</code></a><br/><a href="#conga-settings-cert"><code>Cert</code></a><br/><a href="#conga-settings-sslflags"><code>SSLFlags</code></a><br/><a href="#conga-settings-priority"><code>Priority</code></a><br/>Intermediate positional parameters that are not used should be set to <code>''</code></li><li>A namespace containing named variables for the settings for the request.<br/><code>(args ← ⎕NS '').(Command URL Headers) ← 'post' 'someurl.com' ('header1' 'value1')</code></li></ul></td>
 </tr>
 <tr>
 <td><code>RequestOnly</code></td>
@@ -2577,7 +3251,7 @@ Accept: */*
 <td>Use a namespace for the request settings:<br/><pre style="font-family:APL;">      args ← ⎕NS ''<br/>      args.(Command URL) ← 'post' 'httpbin.org/post'<br/>      args.Params ← ('name' 'Donald')('species' 'duck')<br/>      cmd ← HttpCommand.New args<br/>      cmd.Run<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: 465]</pre><br/>Create an instance of <code>HttpCommand</code> and set the settings directly:<br/><pre style="font-family:APL;">      cmd ← HttpCommand.New '' ⍝ synonym for cmd ← ⎕NEW HttpCommand<br/>      cmd.(Command URL) ← 'post' 'httpbin.org/post'<br/>      cmd.Params ← ('name' 'Donald')('species' 'duck')<br/>      cmd.Run<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: 465]</pre><br/>Set RequestOnly, display the request that would be sent, then send it<br/><pre style="font-family:APL;">      cmd ← 1 HttpCommand.New 'get' 'dyalog.com'<br/>      cmd.Run<br/>GET / HTTP/1.1<br/>Host: dyalog.com<br/>User-Agent: Dyalog-HttpCommand/5.0.4<br/>Accept: <em>/</em><br/><br/>      cmd.RequestOnly←0<br/>      cmd.Run<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: 23127]</pre></td>
 </tr>
 </tbody>
-</table></section><section class="print-page" id="encode-methods"><h2 id="encode-methods-base64-encoding">Base64 Encoding</h2>
+</table></section><section class="print-page" id="encode-methods" heading-number="3.2.2"><h1 id="encode-methods-encode-methods">Encode/Decode Methods</h1><h2 id="base64-encoding">Base64 Encoding</h2>
 <p>Base64 is a binary-to-text encoding scheme that is used to transmit binary data over channels the only reliably support text content. Among Base64's uses are:</p>
 <ul>
 <li>Embed images or other binary assets in HTML files.</li>
@@ -2684,7 +3358,7 @@ Accept: */*
 <td><pre style="font-family:APL;">      HttpCommand.UrlEncode 'Dyalog ⍺⍴⌊'<br/>Dyalog%20%E2%8D%BA%E2%8D%B4%E2%8C%8A<br/><br/>      'name' HttpCommand.UrlEncode 'Donald Duck'<br/>name=Donald%20Duck<br/><br/>      HttpCommand.UrlEncode ('first' 'Donald') ('last' 'O''Mallard')<br/>first=Donald&amp;last=O%27Mallard</td>
 </tr>
 </tbody>
-</table></section><section class="print-page" id="misc-methods"><p>This section describes <code>HttpCommand</code> shared methods that don't conveniently fit into other categories.</p>
+</table></section><section class="print-page" id="misc-methods" heading-number="3.2.3"><h1 id="misc-methods-misc-methods">Miscellaneous Methods</h1><p>This section describes <code>HttpCommand</code> shared methods that don't conveniently fit into other categories.</p>
 <h3 id="misc-methods-version"><code>Version</code></h3>
 <p>Returns <code>HttpCommand</code> version information.</p>
 <table>
@@ -2741,7 +3415,7 @@ Accept: */*
 <td><pre style="font-family:APL;">      HttpCommand.Upgrade<br/> 0  Already using the most current version: HttpCommand 5.0.2 2022-08-03</pre></td>
 </tr>
 </tbody>
-</table></section><h1 class='nav-section-title-end'>Ended: Shared Methods</h1><section class="print-page" id="instance-methods"><p>The methods documented in this section are instance methods and may be called from an instance of <code>HttpCommand</code>. In the documentation below, we will use the name <code>instance</code> to represent an instance of <code>HttpCommand</code>. </p>
+</table></section></section><section class="print-page" id="instance-methods" heading-number="3.3"><h1 id="instance-methods-instance-methods">Instance Methods</h1><p>The methods documented in this section are instance methods and may be called from an instance of <code>HttpCommand</code>. In the documentation below, we will use the name <code>instance</code> to represent an instance of <code>HttpCommand</code>. </p>
 <h3 id="instance-methods-run"><code>Run</code></h3>
 <p><code>Run</code> "runs" the HTTP request defined by the instance's settings. <code>Run</code> is called internally by the shared "shortcut" methods <code>Get</code>, <code>GetJSON</code>, and <code>Do</code>. </p>
 <table>
@@ -2893,10 +3567,10 @@ Accept: */*
 </tr>
 </tbody>
 </table></section>
-                        <h2 class='nav-section-title' id='section-result-namespace'>
-                            Result Namespace <a class='headerlink' href='#section-result-namespace' title='Permanent link'>↵</a>
-                        </h2>
-                        <section class="print-page" id="result-operational"><p>For the purposes of this document, we will refer to <code>result</code> as the result namespace returned by <a href="#instance-methods-run"><code>Run</code></a> when <code>RequestOnly=0</code>. <code>result</code> contains information about the request and the response, if any, from the host. Some settings from the request are copied into <code>result</code>.</p>
+                    <section class='print-page md-section' id='section-3-4' heading-number='3.4'>
+                        <h1>Result Namespace<a class='headerlink' href='#section-3-4' title='Permanent link'></a>
+                        </h1>
+                    <section class="print-page" id="result-operational" heading-number="3.4.1"><h1 id="result-operational-result-operational">Operational Elements</h1><p>For the purposes of this document, we will refer to <code>result</code> as the result namespace returned by <a href="#instance-methods-run"><code>Run</code></a> when <code>RequestOnly=0</code>. <code>result</code> contains information about the request and the response, if any, from the host. Some settings from the request are copied into <code>result</code>.</p>
 <h3 id="result-operational-rc"><code>rc</code></h3>
 <p>The operational return code. This indicates if <code>HttpCommand</code> was able to form and send an HTTP request and process the response from the host. The sign of <code>rc</code> indicates:</p>
 <ul>
@@ -2926,7 +3600,7 @@ Accept: */*
 <h3 id="result-operational-outfile"><code>OutFile</code></h3>
 <p><code>OutFile</code> is copied from the <a href="#operational-settings-outfile"><code>OutFile</code> setting</a> so that, if the response payload is written to file, the result namespace has a record of the file name.</p>
 <h3 id="result-operational-byteswritten"><code>BytesWritten</code></h3>
-<p>If <code>OutFile</code> is non-empty, and the HTTP request was successful, <code>BytesWritten</code> is the number of bytes written to that file named by <code>OutFile</code>.  Otherwise, <code>BytesWritten</code> is set to <code>¯1</code>. </p></section><section class="print-page" id="result-request"><p>For the purposes of this document, we will refer to <code>result</code> as the result namespace returned by <a href="#instance-methods-run"><code>Run</code></a> when <code>RequestOnly=0</code>. <code>result</code> contains information about the request and the response, if any, from the host.</p>
+<p>If <code>OutFile</code> is non-empty, and the HTTP request was successful, <code>BytesWritten</code> is the number of bytes written to that file named by <code>OutFile</code>.  Otherwise, <code>BytesWritten</code> is set to <code>¯1</code>. </p></section><section class="print-page" id="result-request" heading-number="3.4.2"><h1 id="result-request-result-request">Request Elements</h1><p>For the purposes of this document, we will refer to <code>result</code> as the result namespace returned by <a href="#instance-methods-run"><code>Run</code></a> when <code>RequestOnly=0</code>. <code>result</code> contains information about the request and the response, if any, from the host.</p>
 <p>Request-related elements in the result namespace are either copied or derived from certain <a href="#request-settings">request settings</a>. Not all request settings are included in the result namespace, but they are retained in the <code>HttpCommand</code> instance. </p>
 <h3 id="result-request-command"><code>Command</code></h3>
 <p>The case-insensitive HTTP command (method) for the request.</p>
@@ -2939,7 +3613,7 @@ Accept: */*
 <h3 id="result-request-secure"><code>Secure</code></h3>
 <p>A Boolean indicating whether the final request was sent using HTTPS. If the request was redirected, this may be reflect a different secure state from the original request. </p>
 <h3 id="result-request-url"><code>URL</code></h3>
-<p>The final URL of the HTTP request.  If the request was redirected, this may be different from the <code>URL</code> setting.</p></section><section class="print-page" id="result-response"><p>For the purposes of this document, we will refer to <code>result</code> as the result namespace returned by <a href="#instance-methods-run"><code>Run</code></a> when <code>RequestOnly=0</code>. <code>result</code> contains information about the request and the response, if any, from the host. Some settings from the request are copied into <code>result</code>.</p>
+<p>The final URL of the HTTP request.  If the request was redirected, this may be different from the <code>URL</code> setting.</p></section><section class="print-page" id="result-response" heading-number="3.4.3"><h1 id="result-response-result-response">Response Elements</h1><p>For the purposes of this document, we will refer to <code>result</code> as the result namespace returned by <a href="#instance-methods-run"><code>Run</code></a> when <code>RequestOnly=0</code>. <code>result</code> contains information about the request and the response, if any, from the host. Some settings from the request are copied into <code>result</code>.</p>
 <h3 id="result-response-httpstatus"><code>HttpStatus</code></h3>
 <p>The integer <a href="https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml">HTTP response status code</a> returned by the host. Status codes are split into specific ranges:</p>
 <ul>
@@ -3045,7 +3719,7 @@ Accept: */*
 ├───────────────────────────────────────┼────────────────────┤
 │httpbin.org/relative-redirect/1        │/get                │
 └───────────────────────────────────────┴────────────────────┘
-</code></pre></section><h1 class='nav-section-title-end'>Ended: Result Namespace</h1><section class="print-page" id="msgs"><h3 id="msgs-rc-values"><code>rc</code> Values</h3>
+</code></pre></section></section><section class="print-page" id="msgs" heading-number="3.5"><h1 id="msgs-msgs">Messages and Return Codes</h1><h3 id="rc-values"><code>rc</code> Values</h3>
 <p>The value of <code>rc</code> may be interpreted as follows:</p>
 <table>
 <thead>
@@ -3973,11 +4647,11 @@ Accept: */*
 <td>See <a href="#misc-methods-upgrade"><code>Upgrade</code></a>.</td>
 </tr>
 </tbody>
-</table></section><h1 class='nav-section-title-end'>Ended: Reference</h1>
-                        <h1 class='nav-section-title' id='section-advanced-topics'>
-                            Advanced Topics <a class='headerlink' href='#section-advanced-topics' title='Permanent link'>↵</a>
+</table></section></section>
+                    <section class='print-page md-section' id='section-4' heading-number='4'>
+                        <h1>Advanced Topics<a class='headerlink' href='#section-4' title='Permanent link'></a>
                         </h1>
-                        <section class="print-page" id="content-types"><p>If your HTTP request has a payload and you do not specify the content type, <code>HttpCommand</code> will attempt to determine whether to use a content type of <code>'application/json'</code> or <code>'application/x-www-form-urlencoded'</code>.</p>
+                    <section class="print-page" id="content-types" heading-number="4.1"><h1 id="content-types-content-types">Request Content Types</h1><p>If your HTTP request has a payload and you do not specify the content type, <code>HttpCommand</code> will attempt to determine whether to use a content type of <code>'application/json'</code> or <code>'application/x-www-form-urlencoded'</code>.</p>
 <p>This may be fine for interactively tinkering in the APL session. But when running <code>HttpCommand</code> under program control you should <strong>explicitly specify the content type</strong> for the payload by either setting <code>ContentType</code> or adding a <code>content-type</code> header. </p>
 <p>The exception to this is when using <code>GetJSON</code> which is specifically intended to interact with JSON-based web services and will use a default content type of <code>application/json</code>. </p>
 <h3 id="content-types-special-treatment-of-content-type-applicationjson">Special Treatment of Content Type <code>application/json</code></h3>
@@ -4093,7 +4767,7 @@ Content-Type: text/plain
 Hello World
 
 --rgt7DIuxBqLFsveaLM0fBcR7gdvahhUfbtmuQ9UMEZvv9kDVrd--
-</code></pre></section><section class="print-page" id="conga"><p><code>HttpCommand</code> uses Conga, Dyalog's TCP/IP utility library, for communications. <code>HttpCommand</code> requires Conga version 3.0 or later. Conga consists of two elements:</p>
+</code></pre></section><section class="print-page" id="conga" heading-number="4.2"><h1 id="conga-conga">HttpCommand and Conga</h1><p><code>HttpCommand</code> uses Conga, Dyalog's TCP/IP utility library, for communications. <code>HttpCommand</code> requires Conga version 3.0 or later. Conga consists of two elements:</p>
 <ul>
 <li>Two shared library files whose names begin with "conga" and are found in the Dyalog installation folder. The names of the files varies based on the platform they are running on and the specific version of Conga; for instance <code>conga34_64.dll</code> and <code>conga34ssl64.dll</code> are the shared library files for Conga version 3.4 for the 64-bit version of Dyalog for Windows.</li>
 <li>An APL-based API to communicate with the shared libraries. There are two versions of the API both of which are available in the <code>conga</code> workspace.<ul>
@@ -4143,7 +4817,7 @@ This can be useful when integrating <code>HttpCommand</code> into an application
 <p>The operational setting <a href="#operational-settings-timeout">Timeout</a> should not be confused with the Conga setting <a href="#conga-settings-waittime">WaitTime</a> . Internally, after sending the request to the host, <code>HttpCommand</code> sits in a Conga Wait loop, listening for a response. <code>WaitTime</code> is the number of milliseconds that Conga will wait before timing out. When this happens, <code>HttpCommand</code> checks if the request itself has timed out based on the setting of <code>Timeout</code>. If it has, then <code>HttpCommand</code> will stop with a return code of 100 indicating the timeout. If the request has not timed out, then <code>HttpCommand</code> will perform another 
 iteration of the Conga Wait loop.   </p>
 <p>It is generally unnecessary to adjust the <code>WaitTime</code> setting. If your request is timing out, increase the <code>Timeout</code> setting.</p>
-<p>Note that <code>Timeout</code> is in seconds and <code>WaitTime</code> is in milliseconds. </p></section><section class="print-page" id="secure"><h3 id="secure-https">HTTPS</h3>
+<p>Note that <code>Timeout</code> is in seconds and <code>WaitTime</code> is in milliseconds. </p></section><section class="print-page" id="secure" heading-number="4.3"><h1 id="secure-secure">Secure Communications</h1><h3 id="https">HTTPS</h3>
 <p>In the HTTP world, secure communications is accomplished by using the HTTPS protocol which uses Transport Layer Security (TLS) or Secure Sockets Layer (SSL) to encrypt communications. Both the client (<code>HttpCommand</code>) and the server use certificates for secure communications. The certificates serve a couple of purposes:</p>
 <ul>
 <li>They provide bi-directional encryption of the data sent across the link.</li>
@@ -4198,7 +4872,7 @@ iteration of the Conga Wait loop.   </p>
 <h3 id="secure-other-https-settings">Other HTTPS Settings</h3>
 <p><code>HttpCommand</code> has two more settings <a href="#conga-settings-sslflags"><code>SSLFlags</code></a> and <a href="#conga-settings-priority"><code>Priority</code></a>. The default values for these settings will suffice in almost all cases.  If you need to use something other than the default, refer to the <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf">Conga User Guide</a>.</p>
 <h3 id="secure-further-reading">Further Reading</h3>
-<p>See the <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf">Conga User Guide</a> Chapter 5 for more information on Conga's secure communications and <code>X509Cert</code>. </p></section><section class="print-page" id="proxy"><p>A proxy server is a server that acts as an intermediary between <code>HttpCommand</code> (which makes requests for resources) and the host server that provides those resources. Proxy servers can be used for a number of purposes including load balancing, privacy, and security.</p>
+<p>See the <a href="https://docs.dyalog.com/latest/Conga%20User%20Guide.pdf">Conga User Guide</a> Chapter 5 for more information on Conga's secure communications and <code>X509Cert</code>. </p></section><section class="print-page" id="proxy" heading-number="4.4"><h1 id="proxy-proxy">Using a Proxy Server</h1><p>A proxy server is a server that acts as an intermediary between <code>HttpCommand</code> (which makes requests for resources) and the host server that provides those resources. Proxy servers can be used for a number of purposes including load balancing, privacy, and security.</p>
 <p>To use a proxy server with <code>HttpCommand</code>:</p>
 <ul>
 <li>Set <code>URL</code> to the address of the host server. Be sure to include the proper scheme (either <code>http://</code> or <code>https://</code>).  </li>
@@ -4228,7 +4902,7 @@ What went wrong? We didn't specify the scheme for dyalog.com. Let's try again...
       h.Run
 [rc: 0 | msg:  | HTTP Status: 200 &quot;OK&quot; | ⍴Data: 23043]
 </code></pre>
-<p>With the proper scheme specified, the request succeeds.</p></section><section class="print-page" id="integrating"><h3 id="integrating-considerations">Considerations</h3>
+<p>With the proper scheme specified, the request succeeds.</p></section><section class="print-page" id="integrating" heading-number="4.5"><h1 id="integrating-integrating">Integrating HttpCommand</h1><h3 id="considerations">Considerations</h3>
 <p>Two aspects that need to be considered when integrating <code>HttpCommand</code> into your application.</p>
 <ul>
 <li>Are there other components in your application that also use Conga?</li>
@@ -4247,11 +4921,11 @@ What went wrong? We didn't specify the scheme for dyalog.com. Let's try again...
 <h4 id="integrating-dyalog-installation-folder-is-available">Dyalog Installation Folder is Available</h4>
 <p>If the Dyalog installation folder is available, and there are no other components that use Conga, you can use <code>HttpCommand</code> without any additional configuration. <code>HttpCommand</code> will copy the <code>Conga</code> namespace from the <code>conga</code> workspace in the Dyalog installation and find the shared libraries in the Dyalog APL installation folder.</p>
 <h4 id="integrating-dyalog-installation-folder-is-not-available">Dyalog Installation Folder is Not Available</h4>
-<p>If the Dyalog installation folder is not available, for instance in the case of a runtime application, or a bound or stand-alone executable, then you will need to have a copy of the <code>Conga</code> namespace in your workspace and either put the Conga shared libraries in the same folder as your executable or set <code>CongaPath</code> to the location of the shared libraries. </p></section><h1 class='nav-section-title-end'>Ended: Advanced Topics</h1>
-                        <h1 class='nav-section-title' id='section-about'>
-                            About <a class='headerlink' href='#section-about' title='Permanent link'>↵</a>
+<p>If the Dyalog installation folder is not available, for instance in the case of a runtime application, or a bound or stand-alone executable, then you will need to have a copy of the <code>Conga</code> namespace in your workspace and either put the Conga shared libraries in the same folder as your executable or set <code>CongaPath</code> to the location of the shared libraries. </p></section></section>
+                    <section class='print-page md-section' id='section-5' heading-number='5'>
+                        <h1>About<a class='headerlink' href='#section-5' title='Permanent link'></a>
                         </h1>
-                        <section class="print-page" id="license"><p>MIT License</p>
+                    <section class="print-page" id="license" heading-number="5.1"><p>MIT License</p>
 <p>Copyright (c) 2021 Dyalog</p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -4267,7 +4941,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</p></section><section class="print-page" id="release-notes"><h2 id="release-notes-version-59">Version 5.9</h2>
+SOFTWARE.</p></section><section class="print-page" id="release-notes" heading-number="5.2"><h1 id="release-notes-release-notes">Release Notes</h1><h2 id="version-59">Version 5.9</h2>
 <ul>
 <li>Allow <a href="#shortcut-methods-getjson-issue-a-request-to-a-json-based-web-service"><code>GetJSON</code></a> to take a simple character vector URL.</li>
 <li>Enable uploading of file by specifying using the content of the file and its intended name, rather than reading a file from disk.</li>
@@ -4332,7 +5006,329 @@ SOFTWARE.</p></section><section class="print-page" id="release-notes"><h2 id="re
 <li>More complete setting checking</li>
 <li>Better handling of relative redirections</li>
 <li>New documentation</li>
-</ul></section><h1 class='nav-section-title-end'>Ended: About</h1></div>
+</ul></section></section></div><style>.print-site-enumerate-headings #index > h1:before { content: '1 ' }
+
+                .print-site-enumerate-headings #index h2:before { content: '1.' counter(counter-index-2) ' ' }
+                .print-site-enumerate-headings #index h2 {  counter-reset: counter-index-3  counter-index-4  counter-index-5  counter-index-6 ;  counter-increment: counter-index-2 }
+            
+                .print-site-enumerate-headings #index h3:before { content: '1.' counter(counter-index-2) '.' counter(counter-index-3) ' ' }
+                .print-site-enumerate-headings #index h3 {  counter-reset: counter-index-4  counter-index-5  counter-index-6 ;  counter-increment: counter-index-3 }
+            
+                .print-site-enumerate-headings #index h4:before { content: '1.' counter(counter-index-2) '.' counter(counter-index-3) '.' counter(counter-index-4) ' ' }
+                .print-site-enumerate-headings #index h4 {  counter-reset: counter-index-5  counter-index-6 ;  counter-increment: counter-index-4 }
+            
+                .print-site-enumerate-headings #index h5:before { content: '1.' counter(counter-index-2) '.' counter(counter-index-3) '.' counter(counter-index-4) '.' counter(counter-index-5) ' ' }
+                .print-site-enumerate-headings #index h5 {  counter-reset: counter-index-6 ;  counter-increment: counter-index-5 }
+            
+                .print-site-enumerate-headings #index h6:before { content: '1.' counter(counter-index-2) '.' counter(counter-index-3) '.' counter(counter-index-4) '.' counter(counter-index-5) '.' counter(counter-index-6) ' ' }
+                .print-site-enumerate-headings #index h6 {  counter-increment: counter-index-6 }
+            
+.print-site-enumerate-headings #section-2 > h1:before { content: '2 ' }
+.print-site-enumerate-headings #quickstart > h1:before { content: '2.1 ' }
+
+                .print-site-enumerate-headings #quickstart h2:before { content: '2.1.' counter(counter-quickstart-2) ' ' }
+                .print-site-enumerate-headings #quickstart h2 {  counter-reset: counter-quickstart-3  counter-quickstart-4  counter-quickstart-5 ;  counter-increment: counter-quickstart-2 }
+            
+                .print-site-enumerate-headings #quickstart h3:before { content: '2.1.' counter(counter-quickstart-2) '.' counter(counter-quickstart-3) ' ' }
+                .print-site-enumerate-headings #quickstart h3 {  counter-reset: counter-quickstart-4  counter-quickstart-5 ;  counter-increment: counter-quickstart-3 }
+            
+                .print-site-enumerate-headings #quickstart h4:before { content: '2.1.' counter(counter-quickstart-2) '.' counter(counter-quickstart-3) '.' counter(counter-quickstart-4) ' ' }
+                .print-site-enumerate-headings #quickstart h4 {  counter-reset: counter-quickstart-5 ;  counter-increment: counter-quickstart-4 }
+            
+                .print-site-enumerate-headings #quickstart h5:before { content: '2.1.' counter(counter-quickstart-2) '.' counter(counter-quickstart-3) '.' counter(counter-quickstart-4) '.' counter(counter-quickstart-5) ' ' }
+                .print-site-enumerate-headings #quickstart h5 {  counter-increment: counter-quickstart-5 }
+            
+.print-site-enumerate-headings #userguide > h1:before { content: '2.2 ' }
+
+                .print-site-enumerate-headings #userguide h2:before { content: '2.2.' counter(counter-userguide-2) ' ' }
+                .print-site-enumerate-headings #userguide h2 {  counter-reset: counter-userguide-3  counter-userguide-4  counter-userguide-5 ;  counter-increment: counter-userguide-2 }
+            
+                .print-site-enumerate-headings #userguide h3:before { content: '2.2.' counter(counter-userguide-2) '.' counter(counter-userguide-3) ' ' }
+                .print-site-enumerate-headings #userguide h3 {  counter-reset: counter-userguide-4  counter-userguide-5 ;  counter-increment: counter-userguide-3 }
+            
+                .print-site-enumerate-headings #userguide h4:before { content: '2.2.' counter(counter-userguide-2) '.' counter(counter-userguide-3) '.' counter(counter-userguide-4) ' ' }
+                .print-site-enumerate-headings #userguide h4 {  counter-reset: counter-userguide-5 ;  counter-increment: counter-userguide-4 }
+            
+                .print-site-enumerate-headings #userguide h5:before { content: '2.2.' counter(counter-userguide-2) '.' counter(counter-userguide-3) '.' counter(counter-userguide-4) '.' counter(counter-userguide-5) ' ' }
+                .print-site-enumerate-headings #userguide h5 {  counter-increment: counter-userguide-5 }
+            
+.print-site-enumerate-headings #examples > h1:before { content: '2.3 ' }
+
+                .print-site-enumerate-headings #examples h2:before { content: '2.3.' counter(counter-examples-2) ' ' }
+                .print-site-enumerate-headings #examples h2 {  counter-reset: counter-examples-3  counter-examples-4  counter-examples-5 ;  counter-increment: counter-examples-2 }
+            
+                .print-site-enumerate-headings #examples h3:before { content: '2.3.' counter(counter-examples-2) '.' counter(counter-examples-3) ' ' }
+                .print-site-enumerate-headings #examples h3 {  counter-reset: counter-examples-4  counter-examples-5 ;  counter-increment: counter-examples-3 }
+            
+                .print-site-enumerate-headings #examples h4:before { content: '2.3.' counter(counter-examples-2) '.' counter(counter-examples-3) '.' counter(counter-examples-4) ' ' }
+                .print-site-enumerate-headings #examples h4 {  counter-reset: counter-examples-5 ;  counter-increment: counter-examples-4 }
+            
+                .print-site-enumerate-headings #examples h5:before { content: '2.3.' counter(counter-examples-2) '.' counter(counter-examples-3) '.' counter(counter-examples-4) '.' counter(counter-examples-5) ' ' }
+                .print-site-enumerate-headings #examples h5 {  counter-increment: counter-examples-5 }
+            
+.print-site-enumerate-headings #trouble > h1:before { content: '2.4 ' }
+
+                .print-site-enumerate-headings #trouble h2:before { content: '2.4.' counter(counter-trouble-2) ' ' }
+                .print-site-enumerate-headings #trouble h2 {  counter-reset: counter-trouble-3  counter-trouble-4  counter-trouble-5 ;  counter-increment: counter-trouble-2 }
+            
+                .print-site-enumerate-headings #trouble h3:before { content: '2.4.' counter(counter-trouble-2) '.' counter(counter-trouble-3) ' ' }
+                .print-site-enumerate-headings #trouble h3 {  counter-reset: counter-trouble-4  counter-trouble-5 ;  counter-increment: counter-trouble-3 }
+            
+                .print-site-enumerate-headings #trouble h4:before { content: '2.4.' counter(counter-trouble-2) '.' counter(counter-trouble-3) '.' counter(counter-trouble-4) ' ' }
+                .print-site-enumerate-headings #trouble h4 {  counter-reset: counter-trouble-5 ;  counter-increment: counter-trouble-4 }
+            
+                .print-site-enumerate-headings #trouble h5:before { content: '2.4.' counter(counter-trouble-2) '.' counter(counter-trouble-3) '.' counter(counter-trouble-4) '.' counter(counter-trouble-5) ' ' }
+                .print-site-enumerate-headings #trouble h5 {  counter-increment: counter-trouble-5 }
+            
+.print-site-enumerate-headings #section-3 > h1:before { content: '3 ' }
+.print-site-enumerate-headings #section-3-1 > h1:before { content: '3.1 ' }
+.print-site-enumerate-headings #request-settings > h1:before { content: '3.1.1 ' }
+
+                .print-site-enumerate-headings #request-settings h2:before { content: '3.1.1.' counter(counter-request-settings-2) ' ' }
+                .print-site-enumerate-headings #request-settings h2 {  counter-reset: counter-request-settings-3  counter-request-settings-4 ;  counter-increment: counter-request-settings-2 }
+            
+                .print-site-enumerate-headings #request-settings h3:before { content: '3.1.1.' counter(counter-request-settings-2) '.' counter(counter-request-settings-3) ' ' }
+                .print-site-enumerate-headings #request-settings h3 {  counter-reset: counter-request-settings-4 ;  counter-increment: counter-request-settings-3 }
+            
+                .print-site-enumerate-headings #request-settings h4:before { content: '3.1.1.' counter(counter-request-settings-2) '.' counter(counter-request-settings-3) '.' counter(counter-request-settings-4) ' ' }
+                .print-site-enumerate-headings #request-settings h4 {  counter-increment: counter-request-settings-4 }
+            
+.print-site-enumerate-headings #operational-settings > h1:before { content: '3.1.2 ' }
+
+                .print-site-enumerate-headings #operational-settings h2:before { content: '3.1.2.' counter(counter-operational-settings-2) ' ' }
+                .print-site-enumerate-headings #operational-settings h2 {  counter-reset: counter-operational-settings-3  counter-operational-settings-4 ;  counter-increment: counter-operational-settings-2 }
+            
+                .print-site-enumerate-headings #operational-settings h3:before { content: '3.1.2.' counter(counter-operational-settings-2) '.' counter(counter-operational-settings-3) ' ' }
+                .print-site-enumerate-headings #operational-settings h3 {  counter-reset: counter-operational-settings-4 ;  counter-increment: counter-operational-settings-3 }
+            
+                .print-site-enumerate-headings #operational-settings h4:before { content: '3.1.2.' counter(counter-operational-settings-2) '.' counter(counter-operational-settings-3) '.' counter(counter-operational-settings-4) ' ' }
+                .print-site-enumerate-headings #operational-settings h4 {  counter-increment: counter-operational-settings-4 }
+            
+.print-site-enumerate-headings #conga-settings > h1:before { content: '3.1.3 ' }
+
+                .print-site-enumerate-headings #conga-settings h2:before { content: '3.1.3.' counter(counter-conga-settings-2) ' ' }
+                .print-site-enumerate-headings #conga-settings h2 {  counter-reset: counter-conga-settings-3  counter-conga-settings-4 ;  counter-increment: counter-conga-settings-2 }
+            
+                .print-site-enumerate-headings #conga-settings h3:before { content: '3.1.3.' counter(counter-conga-settings-2) '.' counter(counter-conga-settings-3) ' ' }
+                .print-site-enumerate-headings #conga-settings h3 {  counter-reset: counter-conga-settings-4 ;  counter-increment: counter-conga-settings-3 }
+            
+                .print-site-enumerate-headings #conga-settings h4:before { content: '3.1.3.' counter(counter-conga-settings-2) '.' counter(counter-conga-settings-3) '.' counter(counter-conga-settings-4) ' ' }
+                .print-site-enumerate-headings #conga-settings h4 {  counter-increment: counter-conga-settings-4 }
+            
+.print-site-enumerate-headings #proxy-settings > h1:before { content: '3.1.4 ' }
+
+                .print-site-enumerate-headings #proxy-settings h2:before { content: '3.1.4.' counter(counter-proxy-settings-2) ' ' }
+                .print-site-enumerate-headings #proxy-settings h2 {  counter-reset: counter-proxy-settings-3  counter-proxy-settings-4 ;  counter-increment: counter-proxy-settings-2 }
+            
+                .print-site-enumerate-headings #proxy-settings h3:before { content: '3.1.4.' counter(counter-proxy-settings-2) '.' counter(counter-proxy-settings-3) ' ' }
+                .print-site-enumerate-headings #proxy-settings h3 {  counter-reset: counter-proxy-settings-4 ;  counter-increment: counter-proxy-settings-3 }
+            
+                .print-site-enumerate-headings #proxy-settings h4:before { content: '3.1.4.' counter(counter-proxy-settings-2) '.' counter(counter-proxy-settings-3) '.' counter(counter-proxy-settings-4) ' ' }
+                .print-site-enumerate-headings #proxy-settings h4 {  counter-increment: counter-proxy-settings-4 }
+            
+.print-site-enumerate-headings #section-3-2 > h1:before { content: '3.2 ' }
+.print-site-enumerate-headings #shortcut-methods > h1:before { content: '3.2.1 ' }
+
+                .print-site-enumerate-headings #shortcut-methods h2:before { content: '3.2.1.' counter(counter-shortcut-methods-2) ' ' }
+                .print-site-enumerate-headings #shortcut-methods h2 {  counter-reset: counter-shortcut-methods-3  counter-shortcut-methods-4 ;  counter-increment: counter-shortcut-methods-2 }
+            
+                .print-site-enumerate-headings #shortcut-methods h3:before { content: '3.2.1.' counter(counter-shortcut-methods-2) '.' counter(counter-shortcut-methods-3) ' ' }
+                .print-site-enumerate-headings #shortcut-methods h3 {  counter-reset: counter-shortcut-methods-4 ;  counter-increment: counter-shortcut-methods-3 }
+            
+                .print-site-enumerate-headings #shortcut-methods h4:before { content: '3.2.1.' counter(counter-shortcut-methods-2) '.' counter(counter-shortcut-methods-3) '.' counter(counter-shortcut-methods-4) ' ' }
+                .print-site-enumerate-headings #shortcut-methods h4 {  counter-increment: counter-shortcut-methods-4 }
+            
+.print-site-enumerate-headings #encode-methods > h1:before { content: '3.2.2 ' }
+
+                .print-site-enumerate-headings #encode-methods h2:before { content: '3.2.2.' counter(counter-encode-methods-2) ' ' }
+                .print-site-enumerate-headings #encode-methods h2 {  counter-reset: counter-encode-methods-3  counter-encode-methods-4 ;  counter-increment: counter-encode-methods-2 }
+            
+                .print-site-enumerate-headings #encode-methods h3:before { content: '3.2.2.' counter(counter-encode-methods-2) '.' counter(counter-encode-methods-3) ' ' }
+                .print-site-enumerate-headings #encode-methods h3 {  counter-reset: counter-encode-methods-4 ;  counter-increment: counter-encode-methods-3 }
+            
+                .print-site-enumerate-headings #encode-methods h4:before { content: '3.2.2.' counter(counter-encode-methods-2) '.' counter(counter-encode-methods-3) '.' counter(counter-encode-methods-4) ' ' }
+                .print-site-enumerate-headings #encode-methods h4 {  counter-increment: counter-encode-methods-4 }
+            
+.print-site-enumerate-headings #misc-methods > h1:before { content: '3.2.3 ' }
+
+                .print-site-enumerate-headings #misc-methods h2:before { content: '3.2.3.' counter(counter-misc-methods-2) ' ' }
+                .print-site-enumerate-headings #misc-methods h2 {  counter-reset: counter-misc-methods-3  counter-misc-methods-4 ;  counter-increment: counter-misc-methods-2 }
+            
+                .print-site-enumerate-headings #misc-methods h3:before { content: '3.2.3.' counter(counter-misc-methods-2) '.' counter(counter-misc-methods-3) ' ' }
+                .print-site-enumerate-headings #misc-methods h3 {  counter-reset: counter-misc-methods-4 ;  counter-increment: counter-misc-methods-3 }
+            
+                .print-site-enumerate-headings #misc-methods h4:before { content: '3.2.3.' counter(counter-misc-methods-2) '.' counter(counter-misc-methods-3) '.' counter(counter-misc-methods-4) ' ' }
+                .print-site-enumerate-headings #misc-methods h4 {  counter-increment: counter-misc-methods-4 }
+            
+.print-site-enumerate-headings #instance-methods > h1:before { content: '3.3 ' }
+
+                .print-site-enumerate-headings #instance-methods h2:before { content: '3.3.' counter(counter-instance-methods-2) ' ' }
+                .print-site-enumerate-headings #instance-methods h2 {  counter-reset: counter-instance-methods-3  counter-instance-methods-4  counter-instance-methods-5 ;  counter-increment: counter-instance-methods-2 }
+            
+                .print-site-enumerate-headings #instance-methods h3:before { content: '3.3.' counter(counter-instance-methods-2) '.' counter(counter-instance-methods-3) ' ' }
+                .print-site-enumerate-headings #instance-methods h3 {  counter-reset: counter-instance-methods-4  counter-instance-methods-5 ;  counter-increment: counter-instance-methods-3 }
+            
+                .print-site-enumerate-headings #instance-methods h4:before { content: '3.3.' counter(counter-instance-methods-2) '.' counter(counter-instance-methods-3) '.' counter(counter-instance-methods-4) ' ' }
+                .print-site-enumerate-headings #instance-methods h4 {  counter-reset: counter-instance-methods-5 ;  counter-increment: counter-instance-methods-4 }
+            
+                .print-site-enumerate-headings #instance-methods h5:before { content: '3.3.' counter(counter-instance-methods-2) '.' counter(counter-instance-methods-3) '.' counter(counter-instance-methods-4) '.' counter(counter-instance-methods-5) ' ' }
+                .print-site-enumerate-headings #instance-methods h5 {  counter-increment: counter-instance-methods-5 }
+            
+.print-site-enumerate-headings #section-3-4 > h1:before { content: '3.4 ' }
+.print-site-enumerate-headings #result-operational > h1:before { content: '3.4.1 ' }
+
+                .print-site-enumerate-headings #result-operational h2:before { content: '3.4.1.' counter(counter-result-operational-2) ' ' }
+                .print-site-enumerate-headings #result-operational h2 {  counter-reset: counter-result-operational-3  counter-result-operational-4 ;  counter-increment: counter-result-operational-2 }
+            
+                .print-site-enumerate-headings #result-operational h3:before { content: '3.4.1.' counter(counter-result-operational-2) '.' counter(counter-result-operational-3) ' ' }
+                .print-site-enumerate-headings #result-operational h3 {  counter-reset: counter-result-operational-4 ;  counter-increment: counter-result-operational-3 }
+            
+                .print-site-enumerate-headings #result-operational h4:before { content: '3.4.1.' counter(counter-result-operational-2) '.' counter(counter-result-operational-3) '.' counter(counter-result-operational-4) ' ' }
+                .print-site-enumerate-headings #result-operational h4 {  counter-increment: counter-result-operational-4 }
+            
+.print-site-enumerate-headings #result-request > h1:before { content: '3.4.2 ' }
+
+                .print-site-enumerate-headings #result-request h2:before { content: '3.4.2.' counter(counter-result-request-2) ' ' }
+                .print-site-enumerate-headings #result-request h2 {  counter-reset: counter-result-request-3  counter-result-request-4 ;  counter-increment: counter-result-request-2 }
+            
+                .print-site-enumerate-headings #result-request h3:before { content: '3.4.2.' counter(counter-result-request-2) '.' counter(counter-result-request-3) ' ' }
+                .print-site-enumerate-headings #result-request h3 {  counter-reset: counter-result-request-4 ;  counter-increment: counter-result-request-3 }
+            
+                .print-site-enumerate-headings #result-request h4:before { content: '3.4.2.' counter(counter-result-request-2) '.' counter(counter-result-request-3) '.' counter(counter-result-request-4) ' ' }
+                .print-site-enumerate-headings #result-request h4 {  counter-increment: counter-result-request-4 }
+            
+.print-site-enumerate-headings #result-response > h1:before { content: '3.4.3 ' }
+
+                .print-site-enumerate-headings #result-response h2:before { content: '3.4.3.' counter(counter-result-response-2) ' ' }
+                .print-site-enumerate-headings #result-response h2 {  counter-reset: counter-result-response-3  counter-result-response-4 ;  counter-increment: counter-result-response-2 }
+            
+                .print-site-enumerate-headings #result-response h3:before { content: '3.4.3.' counter(counter-result-response-2) '.' counter(counter-result-response-3) ' ' }
+                .print-site-enumerate-headings #result-response h3 {  counter-reset: counter-result-response-4 ;  counter-increment: counter-result-response-3 }
+            
+                .print-site-enumerate-headings #result-response h4:before { content: '3.4.3.' counter(counter-result-response-2) '.' counter(counter-result-response-3) '.' counter(counter-result-response-4) ' ' }
+                .print-site-enumerate-headings #result-response h4 {  counter-increment: counter-result-response-4 }
+            
+.print-site-enumerate-headings #msgs > h1:before { content: '3.5 ' }
+
+                .print-site-enumerate-headings #msgs h2:before { content: '3.5.' counter(counter-msgs-2) ' ' }
+                .print-site-enumerate-headings #msgs h2 {  counter-reset: counter-msgs-3  counter-msgs-4  counter-msgs-5 ;  counter-increment: counter-msgs-2 }
+            
+                .print-site-enumerate-headings #msgs h3:before { content: '3.5.' counter(counter-msgs-2) '.' counter(counter-msgs-3) ' ' }
+                .print-site-enumerate-headings #msgs h3 {  counter-reset: counter-msgs-4  counter-msgs-5 ;  counter-increment: counter-msgs-3 }
+            
+                .print-site-enumerate-headings #msgs h4:before { content: '3.5.' counter(counter-msgs-2) '.' counter(counter-msgs-3) '.' counter(counter-msgs-4) ' ' }
+                .print-site-enumerate-headings #msgs h4 {  counter-reset: counter-msgs-5 ;  counter-increment: counter-msgs-4 }
+            
+                .print-site-enumerate-headings #msgs h5:before { content: '3.5.' counter(counter-msgs-2) '.' counter(counter-msgs-3) '.' counter(counter-msgs-4) '.' counter(counter-msgs-5) ' ' }
+                .print-site-enumerate-headings #msgs h5 {  counter-increment: counter-msgs-5 }
+            
+.print-site-enumerate-headings #section-4 > h1:before { content: '4 ' }
+.print-site-enumerate-headings #content-types > h1:before { content: '4.1 ' }
+
+                .print-site-enumerate-headings #content-types h2:before { content: '4.1.' counter(counter-content-types-2) ' ' }
+                .print-site-enumerate-headings #content-types h2 {  counter-reset: counter-content-types-3  counter-content-types-4  counter-content-types-5 ;  counter-increment: counter-content-types-2 }
+            
+                .print-site-enumerate-headings #content-types h3:before { content: '4.1.' counter(counter-content-types-2) '.' counter(counter-content-types-3) ' ' }
+                .print-site-enumerate-headings #content-types h3 {  counter-reset: counter-content-types-4  counter-content-types-5 ;  counter-increment: counter-content-types-3 }
+            
+                .print-site-enumerate-headings #content-types h4:before { content: '4.1.' counter(counter-content-types-2) '.' counter(counter-content-types-3) '.' counter(counter-content-types-4) ' ' }
+                .print-site-enumerate-headings #content-types h4 {  counter-reset: counter-content-types-5 ;  counter-increment: counter-content-types-4 }
+            
+                .print-site-enumerate-headings #content-types h5:before { content: '4.1.' counter(counter-content-types-2) '.' counter(counter-content-types-3) '.' counter(counter-content-types-4) '.' counter(counter-content-types-5) ' ' }
+                .print-site-enumerate-headings #content-types h5 {  counter-increment: counter-content-types-5 }
+            
+.print-site-enumerate-headings #conga > h1:before { content: '4.2 ' }
+
+                .print-site-enumerate-headings #conga h2:before { content: '4.2.' counter(counter-conga-2) ' ' }
+                .print-site-enumerate-headings #conga h2 {  counter-reset: counter-conga-3  counter-conga-4  counter-conga-5 ;  counter-increment: counter-conga-2 }
+            
+                .print-site-enumerate-headings #conga h3:before { content: '4.2.' counter(counter-conga-2) '.' counter(counter-conga-3) ' ' }
+                .print-site-enumerate-headings #conga h3 {  counter-reset: counter-conga-4  counter-conga-5 ;  counter-increment: counter-conga-3 }
+            
+                .print-site-enumerate-headings #conga h4:before { content: '4.2.' counter(counter-conga-2) '.' counter(counter-conga-3) '.' counter(counter-conga-4) ' ' }
+                .print-site-enumerate-headings #conga h4 {  counter-reset: counter-conga-5 ;  counter-increment: counter-conga-4 }
+            
+                .print-site-enumerate-headings #conga h5:before { content: '4.2.' counter(counter-conga-2) '.' counter(counter-conga-3) '.' counter(counter-conga-4) '.' counter(counter-conga-5) ' ' }
+                .print-site-enumerate-headings #conga h5 {  counter-increment: counter-conga-5 }
+            
+.print-site-enumerate-headings #secure > h1:before { content: '4.3 ' }
+
+                .print-site-enumerate-headings #secure h2:before { content: '4.3.' counter(counter-secure-2) ' ' }
+                .print-site-enumerate-headings #secure h2 {  counter-reset: counter-secure-3  counter-secure-4  counter-secure-5 ;  counter-increment: counter-secure-2 }
+            
+                .print-site-enumerate-headings #secure h3:before { content: '4.3.' counter(counter-secure-2) '.' counter(counter-secure-3) ' ' }
+                .print-site-enumerate-headings #secure h3 {  counter-reset: counter-secure-4  counter-secure-5 ;  counter-increment: counter-secure-3 }
+            
+                .print-site-enumerate-headings #secure h4:before { content: '4.3.' counter(counter-secure-2) '.' counter(counter-secure-3) '.' counter(counter-secure-4) ' ' }
+                .print-site-enumerate-headings #secure h4 {  counter-reset: counter-secure-5 ;  counter-increment: counter-secure-4 }
+            
+                .print-site-enumerate-headings #secure h5:before { content: '4.3.' counter(counter-secure-2) '.' counter(counter-secure-3) '.' counter(counter-secure-4) '.' counter(counter-secure-5) ' ' }
+                .print-site-enumerate-headings #secure h5 {  counter-increment: counter-secure-5 }
+            
+.print-site-enumerate-headings #proxy > h1:before { content: '4.4 ' }
+
+                .print-site-enumerate-headings #proxy h2:before { content: '4.4.' counter(counter-proxy-2) ' ' }
+                .print-site-enumerate-headings #proxy h2 {  counter-reset: counter-proxy-3  counter-proxy-4  counter-proxy-5 ;  counter-increment: counter-proxy-2 }
+            
+                .print-site-enumerate-headings #proxy h3:before { content: '4.4.' counter(counter-proxy-2) '.' counter(counter-proxy-3) ' ' }
+                .print-site-enumerate-headings #proxy h3 {  counter-reset: counter-proxy-4  counter-proxy-5 ;  counter-increment: counter-proxy-3 }
+            
+                .print-site-enumerate-headings #proxy h4:before { content: '4.4.' counter(counter-proxy-2) '.' counter(counter-proxy-3) '.' counter(counter-proxy-4) ' ' }
+                .print-site-enumerate-headings #proxy h4 {  counter-reset: counter-proxy-5 ;  counter-increment: counter-proxy-4 }
+            
+                .print-site-enumerate-headings #proxy h5:before { content: '4.4.' counter(counter-proxy-2) '.' counter(counter-proxy-3) '.' counter(counter-proxy-4) '.' counter(counter-proxy-5) ' ' }
+                .print-site-enumerate-headings #proxy h5 {  counter-increment: counter-proxy-5 }
+            
+.print-site-enumerate-headings #integrating > h1:before { content: '4.5 ' }
+
+                .print-site-enumerate-headings #integrating h2:before { content: '4.5.' counter(counter-integrating-2) ' ' }
+                .print-site-enumerate-headings #integrating h2 {  counter-reset: counter-integrating-3  counter-integrating-4  counter-integrating-5 ;  counter-increment: counter-integrating-2 }
+            
+                .print-site-enumerate-headings #integrating h3:before { content: '4.5.' counter(counter-integrating-2) '.' counter(counter-integrating-3) ' ' }
+                .print-site-enumerate-headings #integrating h3 {  counter-reset: counter-integrating-4  counter-integrating-5 ;  counter-increment: counter-integrating-3 }
+            
+                .print-site-enumerate-headings #integrating h4:before { content: '4.5.' counter(counter-integrating-2) '.' counter(counter-integrating-3) '.' counter(counter-integrating-4) ' ' }
+                .print-site-enumerate-headings #integrating h4 {  counter-reset: counter-integrating-5 ;  counter-increment: counter-integrating-4 }
+            
+                .print-site-enumerate-headings #integrating h5:before { content: '4.5.' counter(counter-integrating-2) '.' counter(counter-integrating-3) '.' counter(counter-integrating-4) '.' counter(counter-integrating-5) ' ' }
+                .print-site-enumerate-headings #integrating h5 {  counter-increment: counter-integrating-5 }
+            
+.print-site-enumerate-headings #section-5 > h1:before { content: '5 ' }
+.print-site-enumerate-headings #license > h1:before { content: '5.1 ' }
+
+                .print-site-enumerate-headings #license h2:before { content: '5.1.' counter(counter-license-2) ' ' }
+                .print-site-enumerate-headings #license h2 {  counter-reset: counter-license-3  counter-license-4  counter-license-5 ;  counter-increment: counter-license-2 }
+            
+                .print-site-enumerate-headings #license h3:before { content: '5.1.' counter(counter-license-2) '.' counter(counter-license-3) ' ' }
+                .print-site-enumerate-headings #license h3 {  counter-reset: counter-license-4  counter-license-5 ;  counter-increment: counter-license-3 }
+            
+                .print-site-enumerate-headings #license h4:before { content: '5.1.' counter(counter-license-2) '.' counter(counter-license-3) '.' counter(counter-license-4) ' ' }
+                .print-site-enumerate-headings #license h4 {  counter-reset: counter-license-5 ;  counter-increment: counter-license-4 }
+            
+                .print-site-enumerate-headings #license h5:before { content: '5.1.' counter(counter-license-2) '.' counter(counter-license-3) '.' counter(counter-license-4) '.' counter(counter-license-5) ' ' }
+                .print-site-enumerate-headings #license h5 {  counter-increment: counter-license-5 }
+            
+.print-site-enumerate-headings #release-notes > h1:before { content: '5.2 ' }
+
+                .print-site-enumerate-headings #release-notes h2:before { content: '5.2.' counter(counter-release-notes-2) ' ' }
+                .print-site-enumerate-headings #release-notes h2 {  counter-reset: counter-release-notes-3  counter-release-notes-4  counter-release-notes-5 ;  counter-increment: counter-release-notes-2 }
+            
+                .print-site-enumerate-headings #release-notes h3:before { content: '5.2.' counter(counter-release-notes-2) '.' counter(counter-release-notes-3) ' ' }
+                .print-site-enumerate-headings #release-notes h3 {  counter-reset: counter-release-notes-4  counter-release-notes-5 ;  counter-increment: counter-release-notes-3 }
+            
+                .print-site-enumerate-headings #release-notes h4:before { content: '5.2.' counter(counter-release-notes-2) '.' counter(counter-release-notes-3) '.' counter(counter-release-notes-4) ' ' }
+                .print-site-enumerate-headings #release-notes h4 {  counter-reset: counter-release-notes-5 ;  counter-increment: counter-release-notes-4 }
+            
+                .print-site-enumerate-headings #release-notes h5:before { content: '5.2.' counter(counter-release-notes-2) '.' counter(counter-release-notes-3) '.' counter(counter-release-notes-4) '.' counter(counter-release-notes-5) ' ' }
+                .print-site-enumerate-headings #release-notes h5 {  counter-increment: counter-release-notes-5 }
+            </style>
+
+
+
+
+
+
+
 
 
 
@@ -4343,6 +5339,7 @@ SOFTWARE.</p></section><section class="print-page" id="release-notes"><h2 id="re
             </div>
           
           
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
@@ -4369,14 +5366,16 @@ SOFTWARE.</p></section><section class="print-page" id="release-notes"><h2 id="re
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "/", "features": ["navigation.sections", "navigation.instant"], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      
+      <script id="__config" type="application/json">{"base": "/", "features": ["navigation.sections", "navigation.instant"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.56ea9cef.min.js"></script>
       
         <script src="../js/print-site.js"></script>
       
-    
     
   </body>
 </html>
