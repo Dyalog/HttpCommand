@@ -210,7 +210,7 @@
       :If isSimpleChar args ⍝ simple character vector args?
       :AndIf (args≡'localhost')≥∧/args∊over lc ⎕A ⋄ args←'GET'args ⋄ :EndIf ⍝ localhost or only alphabetics?
      
-      →∆EXIT⍴⍨9.1=nameClass cmd←requestOnly New args
+      →∆EXIT⍴⍨9.1=nameClass cmd←r←requestOnly New args
       :If 0∊⍴cmd.Command ⋄ cmd.Command←(1+0∊⍴cmd.Params)⊃'POST' 'GET' ⋄ :EndIf
       :If ~(⊂lc cmd.Command)∊'get' 'head'
           :If 0∊⍴cmd.ContentType ⋄ cmd.ContentType←'application/json;charset=utf-8' ⋄ :EndIf
