@@ -898,7 +898,7 @@
                           JSONimport r
                       :ElseIf ∨/'application/x-www-form-urlencoded'⍷ct
                           r.Data←data
-                          {0::⍵.(rc msg)←¯2 'Could not translate Url Encoded Form payload' ⋄ ParseUrlencodedForm ⍵}r
+                          ParseUrlEncodedForm r
                       :Else
                           r.Data←data
                       :EndIf
@@ -1530,19 +1530,21 @@
       :EndIf
     ∇
 
-    ∇ ParseUrlencodedForm r;data;name;value;formData
+    ∇ ParseUrlEncodedForm r;data;name;value;formData
     ⍝ parse application/x-www-form-urlencoded content
-      data←UrlDecode¨¨(r.Data splitOn'&')splitOn¨'='
-      formData←⎕NS''
-      :For (name value) :In data
-          :If ('.'∊name)∨¯1=⎕NC name
-              r.(rc msg)←¯2 'Could not translate Url Encoded Form payload'
-              →0
-          :EndIf
-          :If 0=formData.⎕NC name ⋄ formData{⍺⍎⍵,'←⍬'}name ⋄ :EndIf
-          formData(name{⍺⍎⍺⍺,',←⍵'})value
-      :EndFor
-      r.Data←formData
+      :Trap 0
+        data←UrlDecode¨¨(r.Data splitOn'&')splitOn¨'='
+        formData←⎕NS''
+        :For (name value) :In data
+            →Oops⍴⍨('.'∊name)∨¯1=⎕NC name
+            :If 0=formData.⎕NC name ⋄ formData{⍺⍎⍵,'←⍬'}name ⋄ :EndIf
+            formData(name{⍺⍎⍺⍺,',←⍵'})value
+        :EndFor
+        r.Data←formData
+      :Else
+     Oops:
+        r.(rc msg)←¯2 'Could not translate Url Encoded Form payload'
+      :EndTrap
     ∇
 
     ∇ w←SafeJSON w;i;c;⎕IO
