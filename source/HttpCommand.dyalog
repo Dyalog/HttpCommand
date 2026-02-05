@@ -1,4 +1,4 @@
-﻿:Class HttpCommand
+:Class HttpCommand
 ⍝ General HTTP Commmand utility
 ⍝ Documentation is found at https://dyalog.github.io/HttpCommand/
 
@@ -896,6 +896,9 @@
                       :ElseIf ∨/'application/json'⍷ct
                           r.Data←data
                           JSONimport r
+                      :ElseIf ∨/'application/x-www-form-urlencoded'⍷ct
+                            r.Data←data
+                            r←ParseUrlencodedForm r
                       :Else
                           r.Data←data
                       :EndIf
@@ -1525,6 +1528,22 @@
           m←(⍴r)⍴1 ⋄ m[(,j),i~fill]←0
           r←m/r
       :EndIf
+    ∇
+
+    ∇ r←ParseUrlencodedForm r;data;name;value;formData
+      ⍝ parse application/x-www-form-urlencoded content
+      
+      
+      data←UrlDecode¨¨(r.Data splitOn'&')splitOn¨'='
+      r.Data←⎕NS''
+      :For (name value) :In data
+          :If ('.'∊name)∨¯1=⎕NC name
+              r.(rc msg)←¯2 'Could not translate Url Encoded Form payload'
+              →0
+          :EndIf
+          :If 0=r.Data.⎕NC name ⋄ r.Data{⍺⍎⍵,'←⍬'}name ⋄ :EndIf
+          r.Data(name{⍺⍎⍺⍺,',←⍵'})value
+      :EndFor
     ∇
 
     ∇ w←SafeJSON w;i;c;⎕IO
