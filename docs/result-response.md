@@ -21,7 +21,11 @@ If the response payload is compressed using 'deflate' or 'gzip' encoding `HttpCo
 
 If the `Content-Type` header indicates that the UTF-8 character set is used, `HttpCommand` will convert the payload to UTF-8. 
 
-`HttpCommand` can translate certain content types into a format that may be more useful in the APL environment.  If the [TranslateData](./operational-settings.md#translatedata) is set to `1`, `HttpCommand` will attempt to translate `application/json` content using `⎕JSON`, and  `text/xml` and `application/xml` using `⎕XML`.
+`HttpCommand` can translate certain content types into a format that may be more useful in the APL environment.  If the [`TranslateData`](./operational-settings.md#translatedata) is set to `1`, `HttpCommand` will attempt to convert the response payload for the following content types:
+
+* `application/json` - `HttpCommand` will use `⎕JSON`
+* `text/xml` or `application/xml` - `HttpCommand` will use `⎕XML`
+* `application/x-www-form-urlencoded` - `HttpCommand` will parse into a namespace.
 ### `Headers`
 `Headers` is the 2-column matrix of response header name/value pairs.
 
