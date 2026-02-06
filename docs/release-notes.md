@@ -1,3 +1,6 @@
+## Version 5.10
+* Allow [`TranslateData`](./operational-settings.md#translatedata) to automatically parse `application/x-www-form-urlencoded` response payloads into a namespace.
+
 ## Version 5.9
 * Allow [`GetJSON`](./shortcut-methods.md#getjson-issue-a-request-to-a-json-based-web-service) to take a simple character vector URL.
 * Enable uploading of file by specifying using the content of the file and its intended name, rather than reading a file from disk.

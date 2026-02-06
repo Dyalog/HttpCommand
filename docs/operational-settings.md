@@ -70,7 +70,7 @@ Operational settings affect how `HttpCommand` behaves.
 ### `TranslateData`
 
 |--|--|
-|Description|Set this to `1` to have `HttpCommand` attempt to convert the response payload for the following content types.<ul><li>`'application/json'` - `HttpCommand` will use `⎕JSON`</li><li>`'text/xml'` or `'application/xml'` - `HttpCommand` will use `⎕XML`</li></ul>|
+|Description|Set this to `1` to have `HttpCommand` attempt to convert the response payload for the following content types.<ul><li>`'application/json'` - `HttpCommand` will use `⎕JSON`</li><li>`'text/xml'` or `'application/xml'` - `HttpCommand` will use `⎕XML`</li><li>`'application/x-www-form-urlencoded'` - `HttpCommand` will parse into a namespace</li></ul>|
 |Default|`0`|
 |Example(s)|<pre style="font-family:APL;">      c←HttpCommand.New 'get' 'https://api.github.com/users/dyalog'<br/>      c.TranslateData←0<br/>      50↑(⎕←c.Run).Data<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: 1306]<br/>{"login":"Dyalog","id":4189495,"node_id":"MDEyOk9y<br/>      c.TranslateData←1<br/>      (⎕←c.Run).Data<br/>[rc: 0 &#124; msg:  &#124; HTTP Status: 200 "OK" &#124; ⍴Data: ⍬]<br/>#.[JSON object]</pre>|
 
