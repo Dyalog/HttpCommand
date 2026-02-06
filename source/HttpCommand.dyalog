@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.9.4' '2025-11-17'
+      r←'HttpCommand' '5.10.0' '2026-02-06'
     ∇
 
 ⍝ Request-related fields
@@ -1543,7 +1543,7 @@
         r.Data←formData
       :Else
      Oops:
-        r.(rc msg)←¯2 'Could not translate Url Encoded Form payload'
+        r.(rc msg)←¯2 'Could not translate URL Encoded Form payload'
       :EndTrap
     ∇
 

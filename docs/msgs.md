@@ -6,7 +6,7 @@ The value of `rc` may be interpreted as follows:
 |-|:-:|-|
 |No error|`0`|`HttpCommand` was able to format and send the request and receive a response without error.|
 |Conga error|`>0`|If `rc` is a positive integer, it is a return code that is signalled by Conga when sending the request and receiving the response. If Conga detects an error at the operating system level, it will return the operating system return code. For instance, 10013 is the Microsoft Windows return code for "port in use".|
-|Translation Error|`¯2`|You specified `TranslateData←1` and `HttpCommand` was unable to translate an XML or JSON response payload using `⎕XML` or `⎕JSON` respectively or you used `GetJSON` and response content-type header was not `'application/json'`. | 
+|Translation Error|`¯2`|You specified `TranslateData←1` and `HttpCommand` was unable to translate an XML, JSON, or URL Encoded Form response payload (using `⎕XML`, `⎕JSON`, or parsing into a namespace respectively), or you used `GetJSON` and response content-type header was not `'application/json'`. | 
 |Everything else|`¯1`|This is the generic return code for any error condition that is not signalled by Conga.|
 
 In general if `rc=0` then `msg` will be empty. There are circumstances where `msg` will contain an informational message even if `rc=0`.  These messages are included below.   
@@ -268,6 +268,11 @@ The messages in this section are returned when Conga returns a non-zero return c
 |Message|`Could not translate JSON payload`|
 |Description|If you specify `TranslateData←1` or use the `GetJSON` shared method and the response content-type header contains `'application/json'`, `HttpCommand` will attempt to use `⎕JSON` to translate the payload.  If `⎕JSON` fails, this message is returned and `rc` is set to `¯2`.|
 |Resolution|This is probably due to the response payload containing incorrectly formatted JSON. The untranslated payload is returned in the `Data` element of the response namespace.|
+
+|--|--|
+|Message|`Could not translate URL Encoded Form payload`|
+|Description|If you specify `TranslateData←1` and the response content-type header contains `'application/x-www-form-urlencoded'`, `HttpCommand` will attempt to parse it. If the parsing fails, this message is returned and `rc` is set to `¯2`.|
+|Resolution|This is probably due to the response payload containing incorrectly formatted form data. This could also be because the URL Encoded Form contains names that are not valid APL names. The untranslated payload is returned in the `Data` element of the response namespace.|
 
 |--|--|
 |Message|`Response content-type is not application/json`|

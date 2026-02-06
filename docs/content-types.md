@@ -44,7 +44,7 @@ In the example below:
       h.Show
 POST / HTTP/1.1
 Host: someurl.com
-User-Agent: Dyalog-HttpCommand/5.9.1
+User-Agent: Dyalog-HttpCommand/5.10.0
 Accept: */*
 Accept-Encoding: gzip, deflate
 Content-Type: multipart/form-data; boundary=YqXdULkJhPcuCBBikV8ffM8zS7uAdFoME4jNpDDs7SxVw9mM4q
