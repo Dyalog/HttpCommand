@@ -1,4 +1,4 @@
-:Class HttpCommand
+﻿:Class HttpCommand
 ⍝ General HTTP Commmand utility
 ⍝ Documentation is found at https://dyalog.github.io/HttpCommand/
 
@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.10.0' '2026-02-06'
+      r←'HttpCommand' '5.10.1' '2026-02-11'
     ∇
 
 ⍝ Request-related fields
@@ -191,7 +191,9 @@
           :Else
               r←##.⎕NEW(⊃⊃⎕CLASS ⎕THIS)(eis⍣(9.1≠nameClass⊃args)⊢args)
           :EndIf
-          r.RequestOnly←requestOnly
+          :If requestOnly≠¯1
+              r.RequestOnly←requestOnly
+          :EndIf
       :Else
           r←initResult #.⎕NS''
           r.(rc msg)←¯1 ⎕DMX.EM
@@ -1533,17 +1535,17 @@
     ∇ ParseUrlEncodedForm r;data;name;value;formData
     ⍝ parse application/x-www-form-urlencoded content
       :Trap 0
-        data←UrlDecode¨¨(r.Data splitOn'&')splitOn¨'='
-        formData←⎕NS''
-        :For (name value) :In data
-            →Oops⍴⍨('.'∊name)∨¯1=⎕NC name
-            :If 0=formData.⎕NC name ⋄ formData{⍺⍎⍵,'←⍬'}name ⋄ :EndIf
-            formData(name{⍺⍎⍺⍺,',←⍵'})value
-        :EndFor
-        r.Data←formData
+          data←UrlDecode¨¨(r.Data splitOn'&')splitOn¨'='
+          formData←⎕NS''
+          :For (name value) :In data
+              →Oops⍴⍨('.'∊name)∨¯1=⎕NC name
+              :If 0=formData.⎕NC name ⋄ formData{⍺⍎⍵,'←⍬'}name ⋄ :EndIf
+              formData(name{⍺⍎⍺⍺,',←⍵'})value
+          :EndFor
+          r.Data←formData
       :Else
      Oops:
-        r.(rc msg)←¯2 'Could not translate URL Encoded Form payload'
+          r.(rc msg)←¯2 'Could not translate URL Encoded Form payload'
       :EndTrap
     ∇
 
