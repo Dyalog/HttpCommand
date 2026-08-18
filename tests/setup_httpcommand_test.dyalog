@@ -1,4 +1,4 @@
-﻿ r←setup_httpcommand_test home;this;last;findFiles;files;pattern;file;root;folders;roots;folder;paths;path
+ r←setup_httpcommand_test home;this;last;findFiles;files;pattern;file;root;folders;roots;folder;paths;path
 ⍝ Setup test
  ⎕IO←⎕ML←1
  r←''
@@ -10,13 +10,16 @@
          :EndIf
      :EndIf
  :EndIf
-
  :If 0∊⍴home
-     home←1 ⎕NPARTS'/git/httpcommand/tests/'
+     :If 2=##.⎕NC'TESTSOURCE'   ⍝ use DTest's path to determine home of test
+         home←##.TESTSOURCE
+     :Else
+         home←1 ⎕NPARTS'/git/httpcommand/tests/'
+     :EndIf
  :Else
      home←⊃1 ⎕NPARTS home
  :EndIf
-
+     
  findFiles←{
      (names type hidden)←0 1 6(⎕NINFO⍠1)∊1 ⎕NPARTS ⍺,'/',⍵
      names/⍨(~hidden)∧type=2
