@@ -47,7 +47,7 @@
  #.HttpCommand.CongaPath←tmpDir
 
 ⍝ Verify that Conga initializes correctly from CongaPath
- resp←#.HttpCommand.Get 'http://httpbin.org/get'
+ resp←#.HttpCommand.Get #._httpbin,'/get'
  →Cleanup⊣r←(~resp.IsOK)/⍕resp
 
 Cleanup:

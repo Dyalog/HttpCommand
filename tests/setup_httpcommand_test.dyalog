@@ -59,7 +59,11 @@
 
  :Trap 0
      {}2 #.⎕FIX'file://',home,'../Source/HttpCommand.dyalog'
-     #._httpbin←'https://httpbin.org'
+     ⍝ HTTPBIN env var (set e.g. via CITA.json5 "env") points at an internal httpbin instance
+     #._httpbin←2 ⎕NQ'.' 'GetEnvironment' 'HTTPBIN'
+     :If 0∊⍴#._httpbin
+         #._httpbin←'https://httpbin.org'
+     :EndIf
      #._typicode←'https://jsonplaceholder.typicode.com/'
      #._websocket←'https://echo.websocket.org/'
  :Else
