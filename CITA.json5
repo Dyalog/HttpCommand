@@ -1,5 +1,8 @@
 /* HttpCommand CITA */
 {
+    defaults: {
+        env: { HTTPBIN: "http://httpbin.cita.dyalog.bramley" }
+    },
     Tests: [{
         "DyalogVersions": "18.2-",
         "Test": "./tests/unit.dyalogtest",
