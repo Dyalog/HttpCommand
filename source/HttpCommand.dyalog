@@ -1622,7 +1622,7 @@
       :Access Public Shared
       ⎕IO←0
       format←{
-          1=≡⍵:⍺(,⍕⍵)
+          1≥≡⍵:1 2⍴⍺(,⍕⍵)
           ↑⍺∘{⍺(,⍕⍵)}¨⍵
       }
       :If 0=⎕NC'name' ⋄ name←'' ⋄ :EndIf
