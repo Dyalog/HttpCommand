@@ -7,7 +7,7 @@
     ∇ r←Version
     ⍝ Return the current version
       :Access public shared
-      r←'HttpCommand' '5.11.1' '2026-05-18'
+      r←'HttpCommand' '5.11.2' '2026-09-29'
     ∇
 
 ⍝ Request-related fields
@@ -1622,7 +1622,7 @@
       :Access Public Shared
       ⎕IO←0
       format←{
-          1=≡⍵:⍺(,⍕⍵)
+          1≥≡⍵:1 2⍴⍺(,⍕⍵)
           ↑⍺∘{⍺(,⍕⍵)}¨⍵
       }
       :If 0=⎕NC'name' ⋄ name←'' ⋄ :EndIf
