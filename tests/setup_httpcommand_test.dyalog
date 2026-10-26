@@ -1,4 +1,4 @@
- r←setup_httpcommand_test home;this;last;findFiles;files;pattern;file;root;folders;roots;folder;paths;path
+﻿ r←setup_httpcommand_test home;this;last;findFiles;files;pattern;file;root;folders;roots;folder;paths;path
 ⍝ Setup test
  ⎕IO←⎕ML←1
  r←''
@@ -58,7 +58,7 @@
  :EndWhile
 
  :Trap 0
-     {}2 #.⎕FIX'file://',home,'../Source/HttpCommand.dyalog'
+     {}2 #.⎕FIX'file://',home,'../source/HttpCommand.dyalog'
      ⍝ HTTPBIN env var (set e.g. via CITA.json5 "env") points at an internal httpbin instance
      #._httpbin←2 ⎕NQ'.' 'GetEnvironment' 'HTTPBIN'
      :If 0∊⍴#._httpbin
